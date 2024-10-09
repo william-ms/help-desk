@@ -1,5 +1,75 @@
 @props(['data', 'route' => null])
 
+
+
+
+<div id="filter" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLiveLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                {{-- <h5 class="modal-title">Filtro</h5> --}}
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="{{ route($route ?? Route::currentRouteName()) }}" method="GET" id="form-filter">
+                    @foreach ($data as $menu)
+                        @if ($menu['type'] == 'text')
+                            <div class="col-12 mb-3">
+                                <label class="ps-1" for="{{ $menu['input_name'] }}">{{ $menu['label'] }}:</label>
+
+                                <input class="form-control" name="{{ $menu['input_name'] }}" id="{{ $menu['input_name'] }}" placeholder="{{ $menu['placeholder'] ?? '' }}" value="{{ !empty(request()->get($menu['input_name'])) ? request()->get($menu['input_name']) : '' }}">
+                            </div>
+                        @elseif ($menu['type'] == 'select')
+                            <div class="col-12 mb-3">
+                                <label class="ps-1" for="{{ $menu['input_name'] }}">{{ $menu['label'] }}:</label>
+
+                                <select name="{{ $menu['input_name'] }}" id="{{ $menu['input_name'] }}" class="form-control" data-live-search="true">
+                                    <option value="">Todos (as)</option>
+
+                                    @foreach ($menu['data'] as $k => $v)
+                                        <option value="{{ $v[$menu['field_key'] ?? 'id'] }}" {{ !empty(request()->get($menu['input_name'])) ? ($v[$menu['field_key'] ?? 'id'] == request()->get($menu['input_name']) ? 'selected' : '') : '' }}>
+                                            {{ $v[$menu['field_value'] ?? 'name'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+                    @endforeach
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <x-button class="" componentType="a" href="{{ route($route ?? Route::currentRouteName()) }}" icon="ti ti-x" color="warning">
+                    Limpar filtro
+                </x-button>
+
+                <x-button class="" icon="ti ti-list-search" color="success" form="form-filter">
+                    Filtrar
+                </x-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{{-- @props(['data', 'route' => null])
+
 @php
     $rows = count($data) <= 4 ? 12 / count($data) : 4;
 @endphp
@@ -97,4 +167,4 @@
             $('select').selectpicker();
         });
     </script>
-@endpush
+@endpush --}}

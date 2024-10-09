@@ -27,9 +27,9 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between gap-1">
-                            <h4 class="mt-2">Listagem de permissões</h4>
+                    <div class="card py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h4 class="m-0">Listagem de permissões</h4>
 
                             <div>
                                 @can(auth()->user()->can('permission.create'))
@@ -40,11 +40,17 @@
                             </div>
                         </div><!-- card-header -->
 
-                        <div class="card-body">
-                            <x-filter :data="$data_filter" />
-
+                        <div class="card-body py-3">
                             <x-alerts.success class="mb-4" />
                             <x-alerts.errors class="mb-4" />
+
+                            <div class="d-flex justify-content-end">
+                                <x-button icon="ti ti-list-search" class="mb-3" title="Filtrar" data-bs-toggle="modal" data-bs-target="#filter">
+                                    Filtrar
+                                </x-button>
+
+                                <x-filter :data="$data_filter" />
+                            </div>
 
                             <table id="dom-jqry" class="table table-sm table-striped table-bordered nowrap">
                                 <thead>
@@ -163,9 +169,8 @@
 
             @if (!$Permissions->isEmpty())
                 var table = $('#dom-jqry').DataTable({
-                    bFilter: false,
                     order: [
-                        [2, 'asc']
+                        [1, 'asc']
                     ],
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",

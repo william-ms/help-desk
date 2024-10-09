@@ -24,34 +24,31 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        $Menus = Menu::with('menu_category')->orderBy('menu_category_id')->orderBy('order');
-
-        if(auth()->user()->can('menu.restore')) {
-            $Menus->withTrashed();
-        }
-
-        if (!empty($request->name)) {
-            $Menus->where('name', 'LIKE', '%'. $request->name .'%');
-        }
-
-        if (!empty($request->menu_category_id)) {
-            $Menus->where('menu_category_id', $request->menu_category_id);
-        }
-
-        $Menus = $Menus->get();
+        $Menus = Menu::with('menu_category')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->menu_category_id, function($query) use ($request) {
+            $query->where('menu_category_id', $request->menu_category_id);
+        })
+        ->when(auth()->user()->can('menu.restore'), function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('menu_category_id')->orderBy('order')
+        ->get();
 
         $data_filter = [
             [
                 'type' => 'text',
                 'label' => 'Menu',
                 'input_name' => 'name',
+                'placeholder' => 'Informe o nome do menu'
             ],
             [
                 'type' => 'select',
                 'label' => 'Categoria',
                 'input_name' => 'menu_category_id',
                 'data' => MenuCategory::get(),
-                'indice' => 'name',
             ],
         ];
 

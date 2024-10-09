@@ -19,23 +19,22 @@ class MenuCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $MenuCategories = MenuCategory::with('log')->orderBy('order', 'ASC');
-
-        if (auth()->user()->can('menu_category.restore')) {
-            $MenuCategories->withTrashed();
-        }
-
-        if (!empty($request->name)) {
-            $MenuCategories->where('name', 'LIKE', '%' . $request->name . '%');
-        }
-
-        $MenuCategories = $MenuCategories->get();
+        $MenuCategories = MenuCategory::with('log')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when(auth()->user()->can('menu_category.restore'), function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('order', 'ASC')
+        ->get();
 
         $data_filter = [
             [
                 'type' => 'text',
                 'label' => 'Categoria de menu',
                 'input_name' => 'name',
+                'placeholder' => 'Informe o nome da categoria de menu'
             ],
         ];
 

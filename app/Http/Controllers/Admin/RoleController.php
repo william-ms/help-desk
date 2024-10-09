@@ -20,28 +20,18 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $Roles = Role::query();
-
-        if (!empty($request->name)) {
-            $Roles->where('name', 'LIKE', '%'. $request->name .'%');
-        }
-
-        if (!empty($request->name)) {
-            $Roles->where('guard_name', 'LIKE', '%'. $request->guard_name .'%');
-        }
-
-        $Roles = $Roles->get();
+        $Roles = Role::query()
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->get();
 
         $data_filter = [
             [
                 'type' => 'text',
                 'label' => 'Função',
                 'input_name' => 'name',
-            ],
-            [
-                'type' => 'text',
-                'label' => 'Guarda',
-                'input_name' => 'guard_name',
+                'placeholder' => 'Informe o nome da função'
             ],
         ];
 

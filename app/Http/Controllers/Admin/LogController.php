@@ -16,40 +16,39 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $Logs = Log::with(['items'])->latest();
-
-
-        // if (!empty($request->name)) {
-        //     $Logs->where('user_id', $request->name);
-        // }
-
-        // if (!empty($request->model_type)) {
-        //     $Logs->where('model_type', 'LIKE', '%'. $request->model_type .'%');
-        // }
-
-        // if (!empty($request->action)) {
-        //     $Logs->where('action', 'LIKE', '%'. $request->action .'%');
-        // }
-
-        $Logs = $Logs->get();
+        $Logs = Log::with(['items'])
+        ->when($request->model_type, function($query) use ($request) {
+            $query->where('model_type', $request->model_type);
+        })
+        ->when($request->model_id, function($query) use ($request) {
+            $query->where('model_id', $request->model_id);
+        })
+        ->when($request->model_name, function($query) use ($request) {
+            $query->where('model_name', 'LIKE', "%{$request->model_name}%");
+        })
+        ->latest()
+        ->get();
 
         $data_filter = [
             [
                 'type' => 'select',
-                'label' => 'Executante',
-                'input_name' => 'user_id',
-                'data' => User::get(),
-                'indice' => 'name',
-            ],
-            [
-                'type' => 'text',
                 'label' => 'Módulo',
                 'input_name' => 'model_type',
+                'data' => Log::select('model_type')->distinct()->get(),
+                'field_key' => 'model_type',
+                'field_value' => 'model_type'
             ],
             [
                 'type' => 'text',
-                'label' => 'Ação',
-                'input_name' => 'action',
+                'label' => 'ID do módulo',
+                'input_name' => 'model_id',
+                'placeholder' => 'Informe o id do módulo'
+            ],
+            [
+                'type' => 'text',
+                'label' => 'Nome do módulo',
+                'input_name' => 'model_name',
+                'placeholder' => 'Informe o nome do módulo'
             ],
         ];
 

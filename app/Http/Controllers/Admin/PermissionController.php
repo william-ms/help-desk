@@ -27,17 +27,14 @@ class PermissionController extends Controller
             $Methods[] = ['id' => $method, 'method' => $method];
         }
 
-        $Permissions = Permission::query();
-
-        if (!empty($request->prefix)) {
-            $Permissions = $Permissions->where('name', 'LIKE', $request->prefix . '.%');
-        }
-
-        if (!empty($request->method)) {
-            $Permissions->where('name', 'LIKE', '%.' . $request->method);
-        }
-
-        $Permissions = $Permissions->get();
+        $Permissions = Permission::query()
+        ->when($request->prefix, function($query) use ($request) {
+            $query->where('name', 'LIKE', "{$request->prefix}.%");
+        })
+        ->when($request->method, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%.{$request->method}");
+        })
+        ->get();
 
         $data_filter = [
             [
@@ -45,14 +42,14 @@ class PermissionController extends Controller
                 'label' => 'Prefixo da rota',
                 'input_name' => 'prefix',
                 'data' => collect($Prefixs)->unique('id'),
-                'indice' => 'prefix',
+                'field_value' => 'prefix',
             ],
             [
                 'type' => 'select',
                 'label' => 'Método',
                 'input_name' => 'method',
                 'data' => collect($Methods)->unique('id'),
-                'indice' => 'method',
+                'field_value' => 'method',
             ],
         ];
 
