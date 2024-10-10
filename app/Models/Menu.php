@@ -77,25 +77,22 @@ class Menu extends Model
                 $data['menu_category_id'] = '';
             }
         } else {
-
-            if($this->wasRecentlyCreated) {
-                $menu_permissions = [
-                    $this->route . '.index',
-                    $this->route . '.show',
-                    $this->route . '.create',
-                    $this->route . '.edit',
-                    $this->route . '.destroy',
-                    $this->route . '.restore',
-                ];
-
-                $permissions = Permission::whereIn('name', $menu_permissions)->get()->pluck('name')->toArray();
-            }
-
             $data = [
                 'icon' => ['value' => "Ícone <i class='{$this->icon}'></i>"],
                 'menu_category' => ['value' => "Categoria de menu <b>{$this->menu_category->name}</b>"],
                 'menu_category_id' => '',
             ];
+            
+            $menu_permissions = [
+                $this->route . '.index',
+                $this->route . '.show',
+                $this->route . '.create',
+                $this->route . '.edit',
+                $this->route . '.destroy',
+                $this->route . '.restore',
+            ];
+
+            $permissions = Permission::whereIn('name', $menu_permissions)->get()->pluck('name')->toArray();
 
             if(!empty($permissions)) {
                 $data['permissions'] = ['values' => $permissions, 'title' => 'Com as permissões'];

@@ -52,9 +52,16 @@ class MenuController extends Controller
             ],
         ];
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Menus',
+            ],
+        ];
+
         return view('admin.menu.index', [
             'Menus' => $Menus,
-            'data_filter' => $data_filter
+            'data_filter' => $data_filter,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -70,16 +77,27 @@ class MenuController extends Controller
         $preset_permissions = [
             ['name' => 'index', 'label' => 'Listar', 'color' => 'info'],
             ['name' => 'show', 'label' => 'Ver', 'color' => 'info'],
-            ['name' => 'create', 'label' => 'Criar', 'color' => 'info'],
-            ['name' => 'edit', 'label' => 'Editar', 'color' => 'warning'],
+            ['name' => 'create', 'label' => 'Criar', 'color' => 'warning'],
+            ['name' => 'edit', 'label' => 'Editar', 'color' => 'danger'],
             ['name' => 'destroy', 'label' => 'Deletar', 'color' => 'danger'],
-            ['name' => 'index', 'label' => 'Restaurar', 'color' => 'info'],
+            ['name' => 'restore', 'label' => 'Restaurar', 'color' => 'warning'],
+        ];
+
+        $data_breadcrumbs = [
+            [
+                'name' => 'Menus',
+                'route' => 'admin.menu.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
         ];
 
         return view('admin.menu.create', [
             'MenuCategories' => $MenuCategories,
             'Icons' => $this->PhosphorDuotoneIcons,
-            'preset_permissions' => $preset_permissions
+            'preset_permissions' => $preset_permissions,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -129,10 +147,21 @@ class MenuController extends Controller
     {
         $MenuCategories = MenuCategory::get();
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Menus',
+                'route' => 'admin.menu.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
         return view('admin.menu.edit', [
             'Menu' => $Menu,
             'MenuCategories' => $MenuCategories,
-            'Icons' => $this->PhosphorDuotoneIcons
+            'Icons' => $this->PhosphorDuotoneIcons,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -164,8 +193,19 @@ class MenuController extends Controller
      */
     public function destroy(Menu $Menu)
     {
+        $menu_permissions = [
+            $Menu->route . '.index', 
+            $Menu->route . '.show',
+            $Menu->route . '.create', 
+            $Menu->route . '.edit', 
+            $Menu->route . '.destroy', 
+            $Menu->route . '.restore'
+        ];
+
         $Menu->delete();
 
+        Permission::whereIn('name', $menu_permissions)->delete();
+        
         return back()->with('success', 'Menu deletado com sucesso!');
     }
 

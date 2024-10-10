@@ -49,7 +49,7 @@
                                         <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="name">Categoria :</label>
                                             <div class="col-10 d-flex align-items-center">
-                                                <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $MenuCategory->name }}" aria-describedby="Categoria de menu a ser editada" placeholder="Informe o nome da categoria de menu" required />
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $MenuCategory->name }}" placeholder="Informe o nome da categoria de menu" required />
                                             </div>
                                         </div>
                                     </div>
@@ -57,7 +57,7 @@
                             </form>
                         </div><!-- card-body -->
 
-                        <div class="card-footer">
+                        <div class="card-footer py-3">
                             <x-button icon="ti ti-checks" form="form-edit">
                                 Salvar
                             </x-button>

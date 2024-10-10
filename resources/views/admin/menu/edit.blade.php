@@ -6,19 +6,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Menus',
-                                'route' => 'admin.menu.index',
-                            ],
-                            [
-                                'name' => 'Editar',
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -31,9 +19,9 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between gap-1">
-                            <h4 class="mt-2">
+                    <div class="card py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h4 class="m-0">
                                 Editar menu
                                 <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>
                                 {{ $Menu->name }}
@@ -48,7 +36,7 @@
                             </div>
                         </div><!-- card-header -->
 
-                        <div class="card-body">
+                        <div class="card-body py-3">
                             <x-alerts.success class="mb-4" />
                             <x-alerts.errors class="mb-4" :errors="$errors" />
 
@@ -58,11 +46,10 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="row mb-3">
-                                            <label class="col-2 col-form-label required" for="menu_category_id">Categoria
-                                                :</label>
-                                            <div class="col-10">
-                                                <select class="form-control" id="menu_category_id" name="menu_category_id" aria-describedby="Categoria a qual o menu pertence" placeholder="Selecione a categoria na lista abaixo." data-live-search="true" required>
+                                        <div class="row my-3">
+                                            <label class="col-2 col-form-label required" for="menu_category_id">Categoria :</label>
+                                            <div class="col-10 d-flex align-items-center">
+                                                <select class="form-control" id="menu_category_id" name="menu_category_id" data-live-search="true" required>
                                                     <option value="">Selecione uma categoria</option>
 
                                                     @foreach ($MenuCategories as $MenuCategory)
@@ -73,18 +60,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
+                                        <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="name">Menu :</label>
-                                            <div class="col-10">
-                                                <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $Menu->name }}" aria-describedby="Menu a ser criado" placeholder="Informe o nome do menu." required />
+                                            <div class="col-10 d-flex align-items-center">
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $Menu->name }}" placeholder="Informe o nome do menu." required />
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
+                                        <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="icon">Ícone :</label>
-
-                                            <div class="col-10">
-                                                <select name="icon" id="icon" class="form-control" aria-describedby="Ícone para o menu" placeholder="Selecione o ícone na lista abaixo." data-live-search="true" required>
+                                            <div class="col-10 d-flex align-items-center">
+                                                <select name="icon" id="icon" class="form-control" data-live-search="true" required>
                                                     <option value="">Selecione um ícone</option>
                                                     @foreach ($Icons as $Icon)
                                                         <option value="ph-duotone {{ $Icon }}" data-icon="ph-duotone {{ $Icon }}" {{ !empty(old('icon')) && old('icon') == "$Icon" ? 'selected' : ($Menu->icon == "ph-duotone $Icon" ? 'selected' : '') }}>
@@ -94,11 +80,16 @@
                                             </div>
                                         </div>
 
-                                        <div class="row mb-3">
+                                        <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="icon">Prefixo da rota :</label>
+                                            <div class="col-10 d-flex align-items-center">
+                                                <input type="text" class="form-control" id="route" name="route" value="{{ !empty(old('route')) ? old('route') : $Menu->route }}" placeholder="Informe o prefixo da rota." required />
+                                            </div>
+
+                                            <div class="col-2"></div>
                                             <div class="col-10">
-                                                <input type="text" class="form-control" id="route" name="route" value="{{ !empty(old('route')) ? old('route') : $Menu->route }}" aria-describedby="Rota para o menu" placeholder="Informe o prefixo da rota." required />
-                                                <p>Informe o prefixo da rota que você deseja criar o menu. ex: se a rota principal for <code>categoria.index</code> informe apenas <code>categoria</code>.</p>
+                                                <p class="ms-2 mb-0 f-12">Informe o prefixo da rota que você deseja criar o menu. ex: se a rota principal for <code>categoria.index</code> informe apenas <code>categoria</code>.</p>
+                                                <p class="ms-2 mb-0 f-12">A rota deve possuir apenas letras, use <code>_</code> caso precise separar as palavras.</p>
                                             </div>
                                         </div>
                                     </div>
@@ -106,7 +97,7 @@
                             </form>
                         </div><!-- card-body -->
 
-                        <div class="card-footer">
+                        <div class="card-footer m-0 py-3">
                             <x-button icon="ti ti-check" form="form-edit">
                                 Salvar
                             </x-button>

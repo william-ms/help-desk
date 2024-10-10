@@ -6,15 +6,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Menus',
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -53,7 +45,7 @@
                             <x-alerts.errors class="mb-4" />
 
                             <div class="d-flex justify-content-end">
-                                <x-button icon="ti ti-list-search" class="mb-3" title="Filtrar" data-bs-toggle="modal" data-bs-target="#filter">
+                                <x-button icon="ti ti-list-search" class="mb-2" title="Filtrar" data-bs-toggle="modal" data-bs-target="#filter">
                                     Filtrar
                                 </x-button>
 
