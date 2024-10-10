@@ -6,15 +6,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Categorias de menu',
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -91,7 +83,7 @@
                                                         @endcan
 
                                                         @can('menu_category.destroy')
-                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.menu_category.destroy', $MenuCategory->id) }}" />
+                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-menus="{{ json_encode($MenuCategory->menus->pluck('name')->toArray()) }}" data-link="{{ route('admin.menu_category.destroy', $MenuCategory->id) }}" />
                                                         @endcan
                                                     @else
                                                         @can('menu_category.restore')
@@ -151,20 +143,39 @@
         $(document).ready(function() {
             $(".destroy").on("click", function() {
 
-                Swal.fire({
-                    title: 'Oops!!',
-                    text: 'Deseja realmente deletar essa categoria de menu?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    confirmButtonText: '<i class="ti ti-trash"></i> Deletar',
-                    cancelButtonColor: '#f06548',
-                    cancelButtonText: '<i class="ti ti-x"></i> Cancelar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $(".delete").attr('action', $(this).attr('data-link')).submit();
-                    }
-                })
+                let menus = $(this).data('menus');
+
+                if (menus.length > 0) {
+                    let list_menus = '<ul class="list-group">';
+                    menus.forEach(function(menu, key) {
+                        list_menus += `<li class="list-group-item f-14 p-2">${menu}</li>`
+                    });
+                    list_menus += '</ul>';
+
+                    Swal.fire({
+                        title: 'Oops!!',
+                        html: `
+                            <h4 class="mb-3">Foi encontrado menus associados a essa categoria</h4>
+                            <p class="f-16 text-start">É necessário remover os seguintes menus antes de deletar esta categoria:</p>
+                            ${list_menus}
+                        `,
+                        icon: 'error',
+                        confirmButtonText: '<i class="ti ti-checks"></i> Ok',
+                    });
+                } else {
+                    Swal.fire({
+                        text: 'Deseja realmente deletar essa categoria de menu?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="ti ti-trash"></i> Deletar',
+                        cancelButtonColor: '#f06548',
+                        cancelButtonText: '<i class="ti ti-x"></i> Cancelar',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $(".delete").attr('action', $(this).attr('data-link')).submit();
+                        }
+                    })
+                }
             });
 
             $(".restore").on("click", function() {

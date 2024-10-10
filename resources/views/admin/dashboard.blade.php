@@ -7,11 +7,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                            ],
-                        ]" />
+                        <x-breadcrumb />
 
                         <div class="col-md-12">
                             <div class="page-header-title">

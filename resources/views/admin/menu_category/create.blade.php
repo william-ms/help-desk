@@ -6,19 +6,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Categorias de menu',
-                                'route' => 'admin.menu_category.index',
-                            ],
-                            [
-                                'name' => 'Cadastrar',
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -31,9 +19,9 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between gap-1">
-                            <h4 class="mt-2">Cadastrar categoria de menu</h4>
+                    <div class="card py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h4 class="m-0">Cadastrar categoria de menu</h4>
 
                             <div>
                                 @can('menu_category.index')
@@ -44,7 +32,7 @@
                             </div>
                         </div><!-- card-header -->
 
-                        <div class="card-body">
+                        <div class="card-body py-3">
                             <x-alerts.success class="mb-4" />
                             <x-alerts.errors class="mb-4" />
 
@@ -53,19 +41,19 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="row mb-3">
+                                        <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="name">Categoria :</label>
-                                            <div class="col-10">
+                                            <div class="col-10 d-flex align-items-center">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" aria-describedby="Categoria de menu a ser criada" placeholder="Informe o nome da categoria de menu" required />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </form>
-                        </div><!-- card-footer -->
+                        </div><!-- card-body -->
 
                         <div class="card-footer">
-                            <x-button icon="ti ti-check" form="form-create">
+                            <x-button icon="ti ti-checks" form="form-create">
                                 Enviar
                             </x-button>
 

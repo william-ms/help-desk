@@ -19,7 +19,7 @@ class MenuCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $MenuCategories = MenuCategory::with('log')
+        $MenuCategories = MenuCategory::with('menus', 'log')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
@@ -38,9 +38,16 @@ class MenuCategoryController extends Controller
             ],
         ];
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Categorias de menu',
+            ],
+        ];
+
         return view('admin.menu_category.index', [
             'MenuCategories' =>  $MenuCategories,
-            'data_filter' => $data_filter
+            'data_filter' => $data_filter,
+            'data_breadcrumbs' => $data_breadcrumbs,
         ]);
     }
 
@@ -51,7 +58,19 @@ class MenuCategoryController extends Controller
      */
     public function create()
     {
-        return view('admin.menu_category.create');
+        $data_breadcrumbs = [
+            [
+                'name' => 'Categorias de menu',
+                'route' => 'admin.menu_category.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
+        ];
+
+        return view('admin.menu_category.create', [
+            'data_breadcrumbs' => $data_breadcrumbs,
+        ]);
     }
 
     /**
@@ -62,8 +81,16 @@ class MenuCategoryController extends Controller
      */
     public function store(StoreMenuCategoryRequest $request)
     {
+        $MenuCategories = MenuCategory::withTrashed()->get();
+
         $data = $request->validated();
-        $data['order'] = MenuCategory::max('order') + 1;
+        $data['order'] = $MenuCategories->count() + 1;
+
+        $Equals = $MenuCategories->where('name', $data['name']);
+
+        if(!$Equals->isEmpty()) {
+            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa categoria!"])->withInput();
+        }
 
         MenuCategory::create($data);
 
@@ -89,8 +116,19 @@ class MenuCategoryController extends Controller
      */
     public function edit(MenuCategory $MenuCategory)
     {
+        $data_breadcrumbs = [
+            [
+                'name' => 'Categorias de menu',
+                'route' => 'admin.menu_category.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
         return view('admin.menu_category.edit', [
-            'MenuCategory' => $MenuCategory
+            'MenuCategory' => $MenuCategory,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -104,6 +142,12 @@ class MenuCategoryController extends Controller
     public function update(UpdateMenuCategoryRequest $request, MenuCategory $MenuCategory)
     {
         $data = $request->validated();
+
+        $Equals = MenuCategory::where('id', '!=', $MenuCategory->id)->where('name', $data['name'])->withTrashed()->get();
+
+        if(!$Equals->isEmpty()) {
+            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa categoria!"])->withInput();
+        }
 
         $MenuCategory->update($data);
 

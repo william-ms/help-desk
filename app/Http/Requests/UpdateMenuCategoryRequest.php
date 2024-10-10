@@ -25,7 +25,7 @@ class UpdateMenuCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'regex:/^[a-zA-Z\sÀ-ú]*$/', Rule::unique('menu_categories')->ignore($this->menu_category->id)]
+            'name' => ['required', 'string', Rule::unique('menu_categories')->whereNull('deleted_at')->ignore($this->menu_category->id)]
         ];
     }
 
