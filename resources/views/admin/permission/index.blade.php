@@ -6,15 +6,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Permissões',
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -45,7 +37,7 @@
                             <x-alerts.errors class="mb-4" />
 
                             <div class="d-flex justify-content-end">
-                                <x-button icon="ti ti-list-search" class="mb-3" title="Filtrar" data-bs-toggle="modal" data-bs-target="#filter">
+                                <x-button icon="ti ti-list-search" class="mb-2" title="Filtrar" data-bs-toggle="modal" data-bs-target="#filter">
                                     Filtrar
                                 </x-button>
 
@@ -56,7 +48,8 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
-                                        <th style="width: 80%">Permissão</th>
+                                        <th>Predixo da rota</th>
+                                        <th style="width: 80%">Método da rota</th>
                                         <th class="text-center" style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -66,7 +59,8 @@
                                         <tr>
                                             <td>{{ $Permission->id }}</td>
 
-                                            <td>{{ $Permission->name }}</td>
+                                            <td>{{ explode('.', $Permission->name)[0] }}</td>
+                                            <td>{{ explode('.', $Permission->name)[1] }}</td>
 
                                             <td class="text-center">
                                                 @if (empty($Permission->deleted_at))
@@ -120,12 +114,23 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.bootstrap5.css" />
+
+    <style>
+        table.dataTable tr.dtrg-group.dtrg-level-0 th {
+            /* padding-left: 11%; */
+            text-align: center;
+            text-transform: uppercase;
+        }
+    </style>
 @endpush
 
 @push('scripts')
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/rowGroup.bootstrap5.js"></script>
 
     <!-- Sweet Alerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -175,6 +180,14 @@
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },
+                    rowGroup: {
+                        dataSrc: 1
+                    },
+                    columnDefs: [{
+                        target: 1,
+                        visible: false,
+                        // searchable: false
+                    }, ]
                 });
             @endif
         });

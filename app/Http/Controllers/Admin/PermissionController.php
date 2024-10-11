@@ -53,9 +53,16 @@ class PermissionController extends Controller
             ],
         ];
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Permissões',
+            ],
+        ];
+
         return view('admin.permission.index', [
             'Permissions' => $Permissions,
             'data_filter' => $data_filter,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -66,7 +73,20 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        return view('admin.permission.create');
+
+        $data_breadcrumbs = [
+            [
+                'name' => 'Permissões',
+                'route' => 'admin.permission.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
+        ];
+
+        return view('admin.permission.create', [
+            'data_breadcrumbs' => $data_breadcrumbs,
+        ]);
     }
 
     /**
@@ -113,8 +133,20 @@ class PermissionController extends Controller
         //Separa o nome da permissão em prefixo e método
         [$Permission->prefix, $Permission->method] = explode('.', $Permission->name);
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Permissões',
+                'route' => 'admin.permission.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
+
         return view('admin.permission.edit', [
-            'Permission' => $Permission
+            'Permission' => $Permission,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

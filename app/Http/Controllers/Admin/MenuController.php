@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
 
 class MenuController extends Controller
 {
@@ -205,6 +206,8 @@ class MenuController extends Controller
         $Menu->delete();
 
         Permission::whereIn('name', $menu_permissions)->delete();
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
         
         return back()->with('success', 'Menu deletado com sucesso!');
     }
