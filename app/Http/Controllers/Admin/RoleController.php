@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
-use App\Models\Log;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
@@ -35,9 +34,16 @@ class RoleController extends Controller
             ],
         ];
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+            ],
+        ];
+
         return view('admin.role.index', [
             'Roles' =>  $Roles,
-            'data_filter' => $data_filter
+            'data_filter' => $data_filter,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -48,12 +54,11 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $Permissions = Permission::get();
-        $Menus = Menu::get();
+        $PermissionsGroupByName = Permission::get()->groupBy(function($Permission) {
+            return explode('.', $Permission->name)[0];
+        });
 
-        foreach ($Permissions as $Permission) {
-            $PermissionsGroupByName[preg_replace('/\..*/', '', $Permission->name)][] = $Permission;
-        }
+        $Menus = Menu::select('name', 'route')->get();
 
         foreach ($Menus as $Menu) {
             if(!empty($PermissionsGroupByName[$Menu->route])) {
@@ -63,8 +68,19 @@ class RoleController extends Controller
             }
         }
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+                'route' => 'admin.role.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
+        ];
+
         return view('admin.role.create', [
-            'PermissionsGroupByName' => $PermissionsGroupByName
+            'PermissionsGroupByName' => $PermissionsGroupByName,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -128,9 +144,20 @@ class RoleController extends Controller
             }
         }
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+                'route' => 'admin.role.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
         return view('admin.role.edit', [
             'Role' => $Role,
-            'PermissionsGroupByName' => $PermissionsGroupByName
+            'PermissionsGroupByName' => $PermissionsGroupByName,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
