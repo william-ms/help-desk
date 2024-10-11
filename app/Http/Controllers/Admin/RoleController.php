@@ -102,7 +102,7 @@ class RoleController extends Controller
         $permissions = $Role->permissions->pluck('name');
 
         if(!empty($permissions)) {
-            create_log_item($Role, 'update', 200, [
+            register_log($Role, 'update', 200, [
                 'permissions' => ['values' => $permissions, 'title' => 'Atribuiu à função as permissões'],
             ]);
         }
@@ -182,7 +182,7 @@ class RoleController extends Controller
         $revoked = $Permissions->diff($Role->permissions)->pluck('name')->toArray();
 
         if(!empty($assigned) || !empty($revoked)) {
-            create_log_item($Role, 'update', 200, [
+            register_log($Role, 'update', 200, [
                 'assigned' => ['values' => $assigned, 'title' => 'Atribuiu à função as permissões'],
                 'revoked' => ['values' => $revoked, 'title' => 'Revogou da função as permissões'],
             ]);

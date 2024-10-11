@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMenuCategoryRequest;
 use App\Http\Requests\UpdateMenuCategoryRequest;
-use App\Models\Log;
 use App\Models\MenuCategory;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -164,16 +163,6 @@ class MenuCategoryController extends Controller
     {
         $MenuCategory->delete();
 
-        Log::create([
-            'user_id' => auth()->id(),
-            'model_type' => 'MenuCategory',
-            'model_id' => $MenuCategory->id,
-            'model_name' => $MenuCategory->name,
-            'status' => 200,
-            'action' => 'Deletou a categoria de menu de id "' . $MenuCategory->id . '", nome "' . $MenuCategory->name . '"',
-            'body' => json_encode($MenuCategory->toArray())
-        ]);
-
         return back()->with('success', 'Categoria de menu deletada com sucesso!');
     }
 
@@ -199,16 +188,6 @@ class MenuCategoryController extends Controller
             $MenuCategory->update(['order' => MenuCategory::max('order') + 1]);
         }
 
-        Log::create([
-            'user_id' => auth()->id(),
-            'model_type' => 'MenuCategory',
-            'model_id' => $MenuCategory->id,
-            'model_name' => $MenuCategory->name,
-            'status' => 200,
-            'action' => 'Restaurou a categoria de menu de id "' . $MenuCategory->id . '", nome "' . $MenuCategory->name . '"',
-            'body' => json_encode($MenuCategory->toArray())
-        ]);
-
         return back()->with('success', 'Categoria de menu restaurada com sucesso!');
     }
 
@@ -228,25 +207,10 @@ class MenuCategoryController extends Controller
 
         $MenuCategories = MenuCategory::select('id', 'name', 'order')->get();
 
-        $old_data = [];
-        $new_data = [];
-
         foreach ($MenuCategories as $MenuCategory) {
             if ($MenuCategory->order != $request->order[$MenuCategory->id]) {
-                $old_data[$MenuCategory->name] = $MenuCategory->order;
                 $MenuCategory->update(['order' => $request->order[$MenuCategory->id]]);
-                $new_data[$MenuCategory->name] = $MenuCategory->order;
             }
-        }
-
-        if ($old_data != $new_data) {
-            Log::create([
-                'user_id' => auth()->id(),
-                'model_type' => 'MenuCategory',
-                'status' => 200,
-                'action' => 'Atualizou a ordem das categorias de menu',
-                'body' => json_encode(['old_data' => $old_data, 'new_data' => $new_data]),
-            ]);
         }
 
         return back()->with('success', 'Ordem das categorias de menu alterada com sucesso!');

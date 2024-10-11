@@ -4,10 +4,32 @@ use App\Models\Log;
 use App\Models\LogItem;
 use Illuminate\Database\Eloquent\Model;
 
-function create_log_item(Model $Model, string $type, int $status, array $data = [], $body = null): LogItem
+function register_log(Model $Model, string $type, int $status, array $data = [], $body = null): array
 {
-    $Log = create_log($Model, $data['model_name'] ?? null);
+    $Log = create_log($Model);
 
+    $LogItem = create_log_item($Log, $Model, $type, $status, $data, $body);
+
+    return ['Log' => $Log, 'LogItem' => $LogItem];
+}
+
+function create_log(Model $Model): Log
+{
+    $Log = Log::where('model_type', $Model->type)->where('model_id', $Model->id)->first();
+
+    if(empty($Log)) {
+        $Log = Log::create([
+            'model_type' => $Model->type,
+            'model_id' => $Model->id,
+            'model_name' => $Model->name,
+        ]);
+    }
+
+    return $Log;
+}
+
+function create_log_item(Log $Log, Model $Model, string $type, int $status, array $data = [], $body = null): LogItem
+{
     $labels = [
         'create' => 'Cadastro',
         'update' => 'Atualizado',
@@ -17,6 +39,10 @@ function create_log_item(Model $Model, string $type, int $status, array $data = 
 
     if ($type == 'update' && !array_key_exists('deleted_at', $Model->getDirty())) {
         $data = array_merge($Model->getDirty(), $data);
+
+        if(!empty($data['name'])) {
+            $Log->update(['model_name' => $Model->name]);
+        }
     } else {
         $data = array_merge($Model->getAttributes(), $data);
     }
@@ -34,24 +60,9 @@ function create_log_item(Model $Model, string $type, int $status, array $data = 
     return $LogItem;
 }
 
-function create_log(Model $Model, string $model_name = null): Log
-{
-    $Log = Log::where('model_type', $Model->type)->where('model_id', $Model->id)->first();
-
-    if(empty($Log)) {
-        $Log = Log::create([
-            'model_type' => $Model->type,
-            'model_id' => $Model->id,
-            'model_name' => $Model->name ?? $model_name,
-        ]);
-    }
-
-    return $Log;
-}
 
 function create_action(Model $Model, array $data, string $type): string
 {
-
     $labels = [
         'create' => 'Cadastrou',
         'delete' => 'Deletou',
@@ -71,7 +82,7 @@ function create_action(Model $Model, array $data, string $type): string
         $action[] = "<{$x['p']['element']} {$x['p']['style']}>{$labels[$type]} {$Model->type} de id <b>{$Model->id}</b>;</{$x['p']['element']}>";
     }
 
-    unset($data['created_at'], $data['updated_at'], $data['deleted_at'], $data['model_name'], $data['id']);
+    unset($data['created_at'], $data['updated_at'], $data['deleted_at'], $data['id']);
 
     foreach($data as $k => $v) {
         if(!empty($v['values'])) {

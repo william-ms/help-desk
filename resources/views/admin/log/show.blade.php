@@ -7,19 +7,7 @@
             <div class="page-header">
                 <div class="page-block">
                     <div class="row align-items-center">
-                        <x-breadcrumb :breadcrumbs="[
-                            [
-                                'name' => 'Dashboard',
-                                'route' => 'admin.dashboard.index',
-                            ],
-                            [
-                                'name' => 'Logs',
-                                'route' => 'admin.log.index',
-                            ],
-                            [
-                                'name' => 'Log #' . $Log->id,
-                            ],
-                        ]" />
+                        <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
 
                         <div class="col-md-12">
                             <div class="page-header-title">
@@ -32,9 +20,9 @@
 
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between">
-                            <h4 class="mt-2">
+                    <div class="card py-3">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h4 class="m-0">
                                 <span class="align-middle">{{ ucfirst($Log->model_type) }}</span>
                                 <i class="ti ti-chevrons-right text-primary position-relative" style="top: 3px"></i>
                                 <span class="align-middle">{{ $Log->model_name }} (#{{ $Log->model_id }})</span>
@@ -49,7 +37,7 @@
                             </div>
                         </div><!-- card-header -->
 
-                        <div class="card-body">
+                        <div class="card-body py-3">
                             <x-alerts.success class="mb-4" />
                             <x-alerts.errors class="mb-4" />
 
@@ -79,17 +67,17 @@
                             <div class="row px-3">
                                 <div class="col-12 ">
                                     <div id="secondary" style="display: none;">
-                                        <div class="row mb-3 border-bottom align-items-center">
+                                        <div class="row my-3 border-bottom align-items-center">
                                             <p class="col-2 fw-bold">Id do módulo</p>
                                             <p class="col-10">{{ $Log->model_id }}</p>
                                         </div>
 
-                                        <div class="row mb-3 border-bottom align-items-center">
+                                        <div class="row my-3 border-bottom align-items-center">
                                             <p class="col-2 fw-bold">Nome do módulo</p>
                                             <p class="col-10">{{ $Log->model_name }}</p>
                                         </div>
 
-                                        <div class="row mb-3 border-bottom align-items-center">
+                                        <div class="row my-3 border-bottom align-items-center">
                                             <p class="col-2 fw-bold">Tipo do módulo</p>
                                             <p class="col-10">{{ $Log->model_type }}</p>
                                         </div>
@@ -114,45 +102,41 @@
                                             @endif
                                         @endforeach
                                     </ul>
-                                </div>
-                            </div>
+                                </div><!-- log-items-header -->
 
-                            <div class="row px-3">
                                 <div class="col-12">
                                     <div class="tab-content" id="myTabContent">
                                         @foreach ($Log->items as $LogItem)
                                             @if (!empty($LogItem->label))
                                                 <div class="tab-pane fade" id="{{ mb_strtolower(str_replace(' ', '', $LogItem->label)) . $LogItem->id }}" role="tabpanel" aria-labelledby="{{ mb_strtolower(str_replace(' ', '', $LogItem->label)) . $LogItem->id }}-tab">
-
-                                                    <div class="row">
+                                                    <div class="row px-3">
                                                         <div class="col-12">
-                                                            <div class="row mb-3 border-bottom align-items-center">
+                                                            <div class="row my-3 border-bottom align-items-center">
                                                                 <p class="col-2 fw-bold">Usuário que executou</p>
                                                                 <p class="col-10">{{ $LogItem->user->name }}</p>
                                                             </div>
 
-                                                            <div class="row mb-3 border-bottom align-items-center">
+                                                            <div class="row my-3 border-bottom align-items-center">
                                                                 <p class="col-2 fw-bold">Data e hora de execução</p>
                                                                 <p class="col-10">{{ $LogItem->created_at->format('d/m/Y H:i:s') }}</p>
                                                             </div>
 
-                                                            <div class="row mb-3 border-bottom align-items-center">
+                                                            <div class="row my-3 border-bottom align-items-center">
                                                                 <p class="col-2 fw-bold">Ação</p>
                                                                 <div class="col-10 pb-3">{!! $LogItem->action_as_string() !!}</div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div><!-- tab-pane -->
                                             @endif
                                         @endforeach
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- card-body -->
-                </div><!-- card -->
+                                    </div><!-- tab-content -->
+                                </div><!-- log-items-body -->
+                            </div><!-- log-items -->
+                        </div><!-- card-body -->
+                    </div><!-- card -->
+                </div>
             </div>
-        </div>
         </div><!-- pc-content -->
     </section><!-- pc-container -->
 @endsection

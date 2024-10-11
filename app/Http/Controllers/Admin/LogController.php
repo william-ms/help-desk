@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Log;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class LogController extends Controller
@@ -52,9 +51,16 @@ class LogController extends Controller
             ],
         ];
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Logs',
+            ],
+        ];
+
         return view('admin.log.index', [
             'Logs' => $Logs,
-            'data_filter' => $data_filter
+            'data_filter' => $data_filter,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -68,8 +74,19 @@ class LogController extends Controller
     {
         $Log->load('items');
 
+        $data_breadcrumbs = [
+            [
+                'name' => 'Logs',
+                'route' => 'admin.log.index',
+            ],
+            [
+                'name' => 'Log',
+            ],
+        ];
+
         return view('admin.log.show', [
-            'Log' => $Log
+            'Log' => $Log,
+            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 }
