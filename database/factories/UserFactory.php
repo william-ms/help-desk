@@ -33,8 +33,16 @@ class UserFactory extends Factory
         return $this->create([
             'name' => "Administrador MedMais",
             'email' => "admin@medmaistickets.com.br",
-            'is_admin' => 1,
             'first_login' => 1,
+            'email_verified_at' => now(),
+        ]);
+    }
+
+    public function user()
+    {
+        return $this->create([
+            'name' => "Usuário MedMais",
+            'email' => "user@medmaistickets.com.br",
             'email_verified_at' => now(),
         ]);
     }

@@ -62,7 +62,7 @@
                                             <td>{{ $Log->items->last()->created_at->format('d/m/Y H:i:s') }}</td>
 
                                             <td class="text-center">
-                                                @can(auth()->user()->can('log.show'))
+                                                @can('log.show')
                                                     <x-button-icon icon="ti ti-eye" color="info" style="light" componentType="a" href="{{ route('admin.log.show', $Log->id) }}" />
                                                 @endcan
                                             </td>

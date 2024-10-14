@@ -61,6 +61,7 @@ class MenuFactory extends Factory
             'order' => 1
         ]);
     }
+
     public function roles()
     {
         return $this->create([
@@ -72,6 +73,17 @@ class MenuFactory extends Factory
         ]);
     }
 
+    public function users()
+    {
+        return $this->create([
+            'menu_category_id' => 4,
+            'name' => 'Usuários',
+            'icon' => 'ph-duotone ph-users-three',
+            'route' => 'user',
+            'order' => 1
+        ]);
+    }
+
     public function logs()
     {
         return $this->create([
@@ -79,7 +91,7 @@ class MenuFactory extends Factory
             'name' => 'Logs',
             'icon' => 'ph-duotone ph-notepad',
             'route' => 'log',
-            'order' => 1
+            'order' => 2
         ]);
     }
 }

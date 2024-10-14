@@ -32,5 +32,6 @@ class EventServiceProvider extends ServiceProvider
         \App\Models\Menu::observe(LogObserver::class);
         \Spatie\Permission\Models\Permission::observe(LogObserver::class);
         \Spatie\Permission\Models\Role::observe(LogObserver::class);
+        \App\Models\User::observe(LogObserver::class);
     }
 }

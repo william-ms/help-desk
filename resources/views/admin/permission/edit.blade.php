@@ -28,7 +28,7 @@
                             </h4>
 
                             <div>
-                                @can(auth()->user()->can('permission.index'))
+                                @can('permission.index')
                                     <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.permission.index') }}">
                                         Listar permissões
                                     </x-button>
