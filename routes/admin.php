@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LogController;
@@ -61,6 +62,16 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::put('/{user}', [UserController::class, 'update'])->name('update')->can('user.edit');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy')->can('user.destroy');
         Route::get('/restore/{user}', [UserController::class, 'restore'])->name('restore')->can('user.restore');
+    });
+
+    Route::group(['prefix' => 'company', 'as' => 'company.'], function() {
+        Route::get('/', [CompanyController::class, 'index'])->name('index')->can('company.index');
+        Route::get('/create', [CompanyController::class, 'create'])->name('create')->can('company.create');
+        Route::post('/', [CompanyController::class, 'store'])->name('store')->can('company.create');
+        Route::get('/edit/{company}', [CompanyController::class, 'edit'])->name('edit')->can('company.edit');
+        Route::put('/{company}', [CompanyController::class, 'update'])->name('update')->can('company.edit');
+        Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('destroy')->can('company.destroy');
+        Route::get('/restore/{company}', [CompanyController::class, 'restore'])->name('restore')->can('company.restore');
     });
 
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');;

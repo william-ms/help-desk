@@ -6,7 +6,6 @@ use App\Observers\LogObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Spatie\Permission\Models\Permission;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,5 +32,6 @@ class EventServiceProvider extends ServiceProvider
         \Spatie\Permission\Models\Permission::observe(LogObserver::class);
         \Spatie\Permission\Models\Role::observe(LogObserver::class);
         \App\Models\User::observe(LogObserver::class);
+        \App\Models\Company::observe(LogObserver::class);
     }
 }
