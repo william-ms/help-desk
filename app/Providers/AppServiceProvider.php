@@ -32,10 +32,27 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer(['admin.menu'], function($view) {
-            $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function($query){
-                $query->orderBy('order');
-            }])->whereHas('menus')->orderBy('order')->get();
+            if (auth()->user()->hasRole(1)) {
+                $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) {
+                    $query->orderBy('order');
+                }])->whereHas('menus')->orderBy('order')->get();
+            } else {
+                $permissions = auth()->user()->permissions->filter(function ($item) {
+                    if (str_contains($item->name, '.index')) {
+                        $item->name = str_replace('.index', '', $item->name);
+                        return true;
+                    }
+    
+                    return false;
+                })->pluck('name');
+            
+                $permissions->push('dashboard');
 
+                $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) use ($permissions) {
+                    $query->whereIn('route', $permissions)->orderBy('order');
+                }])->orderBy('order')->get();
+            }
+            
             $view->with([
                 'CategoriesAndMenusForSidebar' => $CategoriesAndMenusForSidebar,
             ]);
