@@ -114,15 +114,18 @@ class MenuController extends Controller
         $data['order'] = Menu::where('menu_category_id', '=', $data['menu_category_id'])->max('order') + 1;
         $data['route'] = Str::lower($data['route']);
 
+        $Permissions = collect([]);
+
         if (!empty($request->permissions)) {
             foreach ($request->permissions as $permission) {
-                Permission::firstOrCreate(['name' => $data['route'] . '.' . $permission], [
+                $Permissions[] = Permission::firstOrCreate(['name' => $data['route'] . '.' . $permission], [
                     'guard_name' => 'web'
                 ]);
             }
         }
 
-        Menu::create($data);
+        $Menu = Menu::create($data);
+        $Menu->permissions()->sync($Permissions->pluck('id')->toArray());
 
         return back()->with('success', 'Menu cadastrado com sucesso!');
     }
@@ -194,18 +197,9 @@ class MenuController extends Controller
      */
     public function destroy(Menu $Menu)
     {
-        $menu_permissions = [
-            $Menu->route . '.index', 
-            $Menu->route . '.show',
-            $Menu->route . '.create', 
-            $Menu->route . '.edit', 
-            $Menu->route . '.destroy', 
-            $Menu->route . '.restore'
-        ];
-
         $Menu->delete();
-
-        Permission::whereIn('name', $menu_permissions)->delete();
+        Permission::whereIn('name', $Menu->permissions->pluck('name'))->delete();
+        $Menu->permissions()->sync([]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
         

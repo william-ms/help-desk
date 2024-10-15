@@ -89,7 +89,7 @@
                                                         @endcan
 
                                                         @can('menu.destroy')
-                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.menu.destroy', $Menu->id) }}" />
+                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.menu.destroy', $Menu->id) }}" data-permissions="{{ json_encode($Menu->permissions->pluck('name')->toArray()) }}" />
                                                         @endcan
                                                     @else
                                                         @can('menu.restore')
@@ -148,11 +148,27 @@
     <script>
         $(document).ready(function() {
             $(".destroy").on("click", function() {
-                var link = $(this).attr('data-link');
+                let link = $(this).attr('data-link');
+                let permissions = $(this).data('permissions');
+                let html = '';
+
+                if (permissions.length > 0) {
+                    html += `
+                            <p class="f-18">Deseja realmente deletar esse menu?</p>
+                            <p class="f-16 m-0 mb-1">As seguintes permissões também serão deletadas:</p>
+                            <ul class="list-group">
+                        `;
+
+                    permissions.forEach(function(menu, key) {
+                        html += `<li class="list-group-item f-14 p-2">${menu}</li>`
+                    });
+                    html += '</ul>';
+                }
 
                 Swal.fire({
                     title: 'Oops!!',
                     text: 'Deseja realmente deletar esse menu?',
+                    html: html,
                     icon: 'warning',
                     input: false,
                     showCancelButton: true,

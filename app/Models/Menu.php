@@ -51,6 +51,10 @@ class Menu extends Model
         return $this->belongsTo(MenuCategory::class);
     }
 
+    public function permissions() {
+        return $this->belongsToMany(Permission::class);
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);
