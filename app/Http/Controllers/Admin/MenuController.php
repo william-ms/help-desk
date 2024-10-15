@@ -111,6 +111,13 @@ class MenuController extends Controller
     public function store(StoreMenuRequest $request)
     {
         $data = $request->validated();
+
+        $Equals = Menu::where('name', $data['name'])->withTrashed()->get();
+
+        if(!$Equals->isEmpty()) {
+            return back()->withErrors(['name' => "Já existe um menu cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse menu!"])->withInput();
+        }
+
         $data['order'] = Menu::where('menu_category_id', '=', $data['menu_category_id'])->max('order') + 1;
         $data['route'] = Str::lower($data['route']);
 
@@ -180,6 +187,12 @@ class MenuController extends Controller
     {
         $data = $request->validated();
 
+        $Equals = Menu::where('name', $data['name'])->withTrashed()->get();
+
+        if(!$Equals->isEmpty()) {
+            return back()->withErrors(['name' => "Já existe um menu cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse menu!"])->withInput();
+        }
+
         if($data['menu_category_id'] != $Menu->menu_category_id) {
             $data['order'] = Menu::where('menu_category_id', $data['menu_category_id'])->max('order') + 1;
         }
@@ -214,11 +227,7 @@ class MenuController extends Controller
      */
     public function restore(int $Menu)
     {    
-        $Menu = Menu::withTrashed()->where('id', $Menu)->firstOrFail();
-
-        if (Menu::where('id', '!=', $Menu->id)->where('menu_category_id', $Menu->menu_category_id)->where('name', $Menu->name)->first()) {
-            return back()->withErrors(['name' => 'Não é possível restaurar esse menu pois já existe um novo menu utilizando o mesmo nome.']);
-        }
+        $Menu = Menu::where('id', $Menu)->withTrashed()->first();
 
         if ($Menu->trashed()) {
             $Menu->restore();

@@ -28,12 +28,11 @@ class StoreMenuRequest extends FormRequest
 
         return [
             'menu_category_id' => ['required'],
-            'name' => ['required', 'string', Rule::unique('menus')->where('menu_category_id', $request['menu_category_id'])],
+            'name' => ['required', 'string', Rule::unique('menus')->where('menu_category_id', $request['menu_category_id'])->whereNull('deleted_at')],
             'icon' => ['required', 'string'],
             'route' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
         ];
     }
-
 
     public function messages()
     {

@@ -213,6 +213,7 @@
 
             @if (!$Menus->isEmpty())
                 var table = $('#table').DataTable({
+                    order: 3,
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },

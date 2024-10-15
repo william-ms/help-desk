@@ -28,7 +28,7 @@ class UpdateMenuRequest extends FormRequest
 
         return [
             'menu_category_id' => ['required', 'integer'],
-            'name' => ['required', 'string', Rule::unique('menus')->where('menu_category_id', $request['menu_category_id'])->ignore($this->menu->id)],
+            'name' => ['required', 'string', Rule::unique('menus')->where('menu_category_id', $request['menu_category_id'])->whereNull('deleted_at')->ignore($this->menu->id)],
             'icon' => ['required', 'string'],
             'route' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
         ];
