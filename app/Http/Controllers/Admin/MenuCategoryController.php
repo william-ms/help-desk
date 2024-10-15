@@ -88,7 +88,7 @@ class MenuCategoryController extends Controller
         $Equals = $MenuCategories->where('name', $data['name']);
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria de menu!"])->withInput();
         }
 
         MenuCategory::create($data);
@@ -145,7 +145,7 @@ class MenuCategoryController extends Controller
         $Equals = MenuCategory::where('id', '!=', $MenuCategory->id)->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe uma categoria de menu cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria de menu"])->withInput();
         }
 
         $MenuCategory->update($data);

@@ -155,8 +155,7 @@
                     Swal.fire({
                         title: 'Oops!!',
                         html: `
-                            <h4 class="mb-3">Foi encontrado menus associados a essa categoria</h4>
-                            <p class="f-16 text-start">É necessário remover os seguintes menus antes de deletar esta categoria:</p>
+                            <p class="f-16">Antes de deletar essa categoria, desvincule os seguintes menus que estão vinculados a essa categoria:</p>
                             ${list_menus}
                         `,
                         icon: 'error',
