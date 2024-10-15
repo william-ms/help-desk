@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Menu::factory()->roles();
         \App\Models\Menu::factory()->users();
         \App\Models\Menu::factory()->companies();
+        \App\Models\Menu::factory()->departaments();
         \App\Models\Menu::factory()->logs();
 
         \Spatie\Permission\Models\Permission::create(['name' => 'menu.index', 'guard_name' => 'web']);
@@ -63,6 +64,12 @@ class DatabaseSeeder extends Seeder
         \Spatie\Permission\Models\Permission::create(['name' => 'company.edit', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Permission::create(['name' => 'company.destroy', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Permission::create(['name' => 'company.restore', 'guard_name' => 'web']);
+
+        \Spatie\Permission\Models\Permission::create(['name' => 'departament.index', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Permission::create(['name' => 'departament.create', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Permission::create(['name' => 'departament.edit', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Permission::create(['name' => 'departament.destroy', 'guard_name' => 'web']);
+        \Spatie\Permission\Models\Permission::create(['name' => 'departament.restore', 'guard_name' => 'web']);
 
         \Spatie\Permission\Models\Permission::create(['name' => 'log.index', 'guard_name' => 'web']);
         \Spatie\Permission\Models\Permission::create(['name' => 'log.show', 'guard_name' => 'web']);

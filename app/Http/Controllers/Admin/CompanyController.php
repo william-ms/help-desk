@@ -84,7 +84,7 @@ class CompanyController extends Controller
         $Equals = Company::where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma empresa cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa empresa!"])->withInput();
+            return back()->withErrors(['name' => "Já existe uma empresa cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa empresa!"])->withInput();
         }
 
         Company::create($data);
@@ -141,7 +141,7 @@ class CompanyController extends Controller
         $Equals = Company::where('id', '!=', $Company->id)->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma empresa cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restuarar essa empresa!"])->withInput();
+            return back()->withErrors(['name' => "Já existe uma empresa cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa empresa!"])->withInput();
         }
 
         $Company->update($data);

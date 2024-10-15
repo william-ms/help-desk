@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DepartamentController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
@@ -72,6 +73,16 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::put('/{company}', [CompanyController::class, 'update'])->name('update')->can('company.edit');
         Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('destroy')->can('company.destroy');
         Route::get('/restore/{company}', [CompanyController::class, 'restore'])->name('restore')->can('company.restore');
+    });
+
+    Route::group(['prefix' => 'departament', 'as' => 'departament.'], function() {
+        Route::get('/', [DepartamentController::class, 'index'])->name('index')->can('departament.index');
+        Route::get('/create', [DepartamentController::class, 'create'])->name('create')->can('departament.create');
+        Route::post('/', [DepartamentController::class, 'store'])->name('store')->can('departament.create');
+        Route::get('/edit/{departament}', [DepartamentController::class, 'edit'])->name('edit')->can('departament.edit');
+        Route::put('/{departament}', [DepartamentController::class, 'update'])->name('update')->can('departament.edit');
+        Route::delete('/{departament}', [DepartamentController::class, 'destroy'])->name('destroy')->can('departament.destroy');
+        Route::get('/restore/{departament}', [DepartamentController::class, 'restore'])->name('restore')->can('departament.restore');
     });
 
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');;

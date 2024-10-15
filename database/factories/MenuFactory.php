@@ -95,6 +95,17 @@ class MenuFactory extends Factory
         ]);
     }
 
+    public function departaments()
+    {
+        return $this->create([
+            'menu_category_id' => 4,
+            'name' => 'Departamentos',
+            'icon' => 'ph-duotone ph-archive',
+            'route' => 'departament',
+            'order' => 3
+        ]);
+    }
+
     public function logs()
     {
         return $this->create([
@@ -102,7 +113,7 @@ class MenuFactory extends Factory
             'name' => 'Logs',
             'icon' => 'ph-duotone ph-notepad',
             'route' => 'log',
-            'order' => 3
+            'order' => 4
         ]);
     }
 }
