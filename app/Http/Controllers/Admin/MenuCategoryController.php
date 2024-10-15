@@ -83,7 +83,7 @@ class MenuCategoryController extends Controller
         $MenuCategories = MenuCategory::withTrashed()->get();
 
         $data = $request->validated();
-        $data['order'] = $MenuCategories->count() + 1;
+        $data['order'] = MenuCategory::max('order') + 1;
 
         $Equals = $MenuCategories->where('name', $data['name']);
 
@@ -174,11 +174,7 @@ class MenuCategoryController extends Controller
      */
     public function restore(int $MenuCategory)
     {
-        $MenuCategory = MenuCategory::withTrashed()->where('id', $MenuCategory)->firstOrFail();
-
-        if (MenuCategory::where('id', '!=', $MenuCategory->id)->where('name', $MenuCategory->name)->first()) {
-            return back()->withErrors(['name' => 'Não é possível restaurar essa categoria de menu pois já existe uma nova categoria de menu utilizando o mesmo nome.']);
-        }
+        $MenuCategory = MenuCategory::where('id', $MenuCategory)->withTrashed()->first();
 
         if ($MenuCategory->trashed()) {
             $MenuCategory->restore();

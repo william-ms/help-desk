@@ -73,7 +73,7 @@
                                                 <td>{{ $MenuCategory->name }}</td>
 
                                                 <td class="text-end">
-                                                    <input type="number" name="order[{{ $MenuCategory->id }}]" class="form-control p-1 text-end" value="{{ $MenuCategory->order }}" style="min-width: 0;">
+                                                    <input type="number" name="order[{{ $MenuCategory->id }}]" class="form-control p-1 text-end" value="{{ $MenuCategory->order }}" @if ($MenuCategory->trashed()) disabled @endif>
                                                 </td>
 
                                                 <td class="text-center">
@@ -183,7 +183,6 @@
                     text: 'Deseja realmente restaurar essa categoria de menu?',
                     icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonColor: '#28a745',
                     confirmButtonText: '<i class="ti ti-upload"></i> Restaurar',
                     cancelButtonColor: '#f06548',
                     cancelButtonText: '<i class="ti ti-x"></i> Cancelar',
@@ -192,6 +191,12 @@
                         document.location.href = $(this).attr('data-link');
                     }
                 })
+            });
+
+            $('table input[type="number"]').keypress(function(event) {
+                if (event.which === 13) {
+                    event.preventDefault();
+                }
             });
 
             @if (!$MenuCategories->isEmpty())
