@@ -135,12 +135,23 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.bootstrap5.css" />
+
+    <style>
+        table.dataTable tr.dtrg-group.dtrg-level-0 th {
+            /* padding-left: 11%; */
+            text-align: center;
+            text-transform: uppercase;
+        }
+    </style>
 @endpush
 
 @push('scripts')
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/rowGroup.bootstrap5.js"></script>
 
     <!-- Sweet Alerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -205,6 +216,13 @@
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },
+                    rowGroup: {
+                        dataSrc: 3
+                    },
+                    columnDefs: [{
+                        target: 3,
+                        visible: false,
+                    }]
                 });
             @endif
         });
