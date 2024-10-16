@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Company;
+use App\Models\Departament;
 use App\Models\Menu;
 use App\Models\User;
 use App\Traits\PhosphorDuotoneTrait;
@@ -26,9 +28,19 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $Users = User::with('log')
+        $Users = User::with('log', 'departaments', 'companies', 'roles')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->company, function($query) use ($request) {
+            $query->whereHas('companies', function ($q) use ($request) {
+                $q->where('companies.id', $request->company);
+            });
+        })
+        ->when($request->departament, function($query) use ($request) {
+            $query->whereHas('departaments', function ($q) use ($request) {
+                $q->where('departaments.id', $request->departament);
+            });
         })
         ->when($request->role, function($query) use ($request) {
             $query->whereHas('roles', function ($q) use ($request) {
@@ -50,6 +62,18 @@ class UserController extends Controller
                 'label' => 'Usuário',
                 'input_name' => 'name',
                 'placeholder' => 'Informe o nome do usuário'
+            ],
+            [
+                'type' => 'select',
+                'label' => 'Empresa',
+                'input_name' => 'company',
+                'data' => Company::orderBy('name')->get(),
+            ],
+            [
+                'type' => 'select',
+                'label' => 'Departamento',
+                'input_name' => 'departament',
+                'data' => Departament::orderBy('name')->get(),
             ],
             [
                 'type' => 'select',
@@ -113,6 +137,8 @@ class UserController extends Controller
         ];
 
         return view('admin.user.create', [
+            'Companies' => Company::get(),
+            'Departaments' => Departament::get(),
             'Roles' => $Roles,
             'PermissionsGroupByName' => $PermissionsGroupByName,
             'data_breadcrumbs' => $data_breadcrumbs
@@ -129,6 +155,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
+        $log_data = [];
 
         if($data['role'] == 1 && !auth()->user()->hasRole(1)) {
             return back()->withErrors(['name' => "Parece que você está tentando burlar o sistema! Seu ip foi registrado em nossos dados para análise"])->withInput();
@@ -138,22 +165,32 @@ class UserController extends Controller
         if(!$Equals->isEmpty()) {
             return back()->withErrors(['name' => "Já existe um usuário cadastrado com esse email, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse usuário!"])->withInput();
         }
-
+        
         $User = User::create($data);
+
+        $User->companies()->sync($data['companies']);
+        $log_data['companies'] = ['values' => $User->companies->pluck('name'), 'title' => "Atribuiu o usuário as <b>empresas</b>"];
+
+        $User->departaments()->sync($data['departaments']);
+        $log_data['departaments'] = ['values' => $User->departaments->pluck('name'), 'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
 
         $User->assignRole((int) $data['role']);
         $Role = $User->roles->first();
-        register_log($User, 'update', 200, ['role' => ['value' => "Atribuiu o usuário à função de <b>{$Role->name}</b>"]]);
+        $log_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$Role->name}</b>"];
 
         // Se o novo usuário não for um administrador e existem permissões passadas pelo request
         if ($data['role'] != 1 && !empty($request->permissions)) {
             $permissions = array_diff($request->permissions, $Role->permissions->pluck('name')->toArray());
 
             if(!empty($permissions)) {
-                register_log($User, 'update', 200, ['permissions' => ['values' => $permissions, 'title' => 'Atribuiu ao usuário as permissões']]);
+                $log_data['permissions'] = ['values' => $permissions, 'title' => 'Atribuiu ao usuário as <b>permissões</b>'];
             }
 
             $User->syncPermissions($permissions);
+        }
+
+        if(!empty($log_data)) {
+            register_log($User, 'update', 200, $log_data);
         }
 
         return back()->with('success', 'Usuário cadastrado com sucesso!');
@@ -206,6 +243,8 @@ class UserController extends Controller
 
         return view('admin.user.edit', [
             'User' => $User,
+            'Companies' => Company::get(),
+            'Departaments' => Departament::get(),
             'Roles' => $Roles,
             'PermissionsGroupByName' => $PermissionsGroupByName,
             'data_breadcrumbs' => $data_breadcrumbs
@@ -222,6 +261,7 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, User $User)
     {
         $data = $request->validated();
+        $log_data = [];
 
         if($data['role'] == 1 && !auth()->user()->hasRole(1)) {
             return back()->withErrors(['name' => "Parece que você está tentando burlar o sistema! Seu ip foi registrado em nossos dados para análise"])->withInput();
@@ -240,16 +280,50 @@ class UserController extends Controller
         }
 
         $User->update($data);
+        
+        $CompaniesSync = $User->companies()->sync($data['companies']);
+        
+        if(!empty($CompaniesSync['attached']) || !empty($CompaniesSync['detached'])) {
+            if(!empty($CompaniesSync['attached'])) {
+                $CompaniesAttached = Company::whereIn('id', $CompaniesSync['attached'])->get();
+                $log_data['companies_attached'] =  ['values' => $CompaniesAttached->pluck('name'), 'title' => "Atribuiu o usuário as <b>empresas</b>"];
+            }
+
+            if(!empty($CompaniesSync['detached'])) {
+                $CompaniesDetached = Company::whereIn('id', $CompaniesSync['detached'])->get();  
+                $log_data['companies_detached'] =  ['values' => $CompaniesDetached->pluck('name'), 'title' => "Removeu o usuário das <b>empresas</b>"];
+            }
+        }
+
+        $DepartamentsSync = $User->departaments()->sync($data['departaments']);
+
+        if(!empty($DepartamentsSync['attached']) || !empty($DepartamentsSync['detached'])) {
+            if(!empty($DepartamentsSync['attached'])) {
+                $DepartamentsAttached = Company::whereIn('id', $DepartamentsSync['attached'])->get();
+                $log_data['departaments_attached'] =  ['values' => $DepartamentsAttached->pluck('name'), 'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
+            }
+
+            if(!empty($DepartamentsSync['detached'])) {
+                $DepartamentsDetached = Company::whereIn('id', $DepartamentsSync['detached'])->get();  
+                $log_data['departaments_detached'] =  ['values' => $DepartamentsDetached->pluck('name'), 'title' => "Removeu o usuário dos <b>departamentos</b>"];
+            }
+        }
+
         $Role = $User->roles->first();
         
         if($data['role'] != $Role->id) {
             $User->syncRoles((int) $data['role']);
             $OldRole = $Role;
             $Role = $User->roles->first();
-            register_log($User, 'update', 200, ['role' => ['value' => "Alterou a função do usuário de <b>{$OldRole->name}</b> para <b>{$Role->name}</b>"]]);
+            $log_data['role'] = ['value' => "Alterou a função do usuário de <b>{$OldRole->name}</b> para <b>{$Role->name}</b>"];
         }
 
-        if (empty($User->is_admin) && !empty($request->permissions)) {
+        if ($User->hasRole(1)) {
+            $User->syncPermissions([]);
+        } else {
+            if(empty($request->permissions)) {
+                $request->permissions = [];
+            }
 
             //Permissões selecionadas que não estão associadas a função
             $permissions = array_diff($request->permissions, $Role->permissions->pluck('name')->toArray());
@@ -261,19 +335,21 @@ class UserController extends Controller
                 $data = [];
 
                 if(!empty($assigned)) {
-                    $data['assigned'] = ['values' => $assigned, 'title' => 'Atribuiu ao usuário as permissões'];
+                    $log_data['assigned'] = ['values' => $assigned, 'title' => 'Atribuiu ao usuário as <b>permissões</b>'];
                 }
 
                 if(!empty($revoked)) {
-                    $data['revoked'] = ['values' => $revoked, 'title' => 'Revogou do usuário as permissões'];
+                    $log_data['revoked'] = ['values' => $revoked, 'title' => 'Revogou do usuário as <b>permissões</b>'];
                 }
-
-                register_log($User, 'update', 200, $data);
             }
 
             $User->syncPermissions($permissions);
-        }
+        } 
 
+        if(!empty($log_data)) {
+            register_log($User, 'update', 200, $log_data);
+        }
+        
         return back()->with('success', 'Usuário atualizado com sucesso!');
     }
 

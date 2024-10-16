@@ -46,35 +46,63 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <!-- [input] - Nome do usuário -->
-                                        <div class="row my-3">
+                                        <!-- [input] - Nome -->
+                                        <div class="row my-3 align-items-center">
                                             <label class="col-2 col-form-label required" for="name">Nome :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                            <div class="col-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $User->name }}" placeholder="Informe o nome do usuário." required />
                                             </div>
                                         </div>
 
-                                        <!-- [input] - Email do usuário -->
-                                        <div class="row my-3">
+                                        <!-- [input] - Email -->
+                                        <div class="row my-3 align-items-center">
                                             <label class="col-2 col-form-label required" for="email">Email :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                            <div class="col-10">
                                                 <input type="email" class="form-control" id="email" name="email" value="{{ !empty(old('email')) ? old('email') : $User->email }}" placeholder="Informe o email do usuário." required />
                                             </div>
                                         </div>
 
-                                        <!-- [input] - Senha do usuário -->
-                                        <div class="row my-3">
+                                        <!-- [input] - Senha -->
+                                        <div class="row my-3 align-items-center">
                                             <label class="col-2 col-form-label" for="password">Senha :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                            <div class="col-10">
                                                 <input type="password" class="form-control" id="password" name="password" value="{{ old('password') }}" placeholder="Informe a senha do usuário." />
                                             </div>
                                         </div>
 
-                                        <!-- [input] - Status do usuário -->
+                                        {{-- [select] - Empresas --}}
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-2 col-form-label required" for="companies">Empresas :</label>
+                                            <div class="col-10">
+                                                <select class="form-control" id="companies" name="companies[]" multiple required>
+                                                    @foreach ($Companies as $Company)
+                                                        <option value="{{ $Company->id }}" {{ !empty(old('companies')) ? (collect(old('companies'))->contains($Company->id) ? 'selected' : '') : ($User->companies->contains('id', $Company->id) ? 'selected' : '') }}>
+                                                            {{ $Company->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {{-- [select] - Departamentos --}}
+                                        <div class="row mb-3 align-items-center">
+                                            <label class="col-2 col-form-label required" for="departaments">Departamentos :</label>
+                                            <div class="col-10">
+                                                <select class="form-control" id="departaments" name="departaments[]" multiple required>
+                                                    @foreach ($Departaments as $Departament)
+                                                        <option value="{{ $Departament->id }}" {{ !empty(old('departaments')) ? (collect(old('departaments'))->contains($Departament->id) ? 'selected' : '') : ($User->departaments->contains('id', $Departament->id) ? 'selected' : '') }}>
+                                                            {{ $Departament->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- [select] - Status do usuário -->
                                         @if ($User->id != auth()->id())
-                                            <div class="row my-3">
+                                            <div class="row my-3 align-items-center">
                                                 <label class="col-2 col-form-label required" for="status">Ativo :</label>
-                                                <div class="col-10 d-flex align-items-center">
+                                                <div class="col-10">
                                                     <select name="status" id="status" class="form-control">
                                                         <option value="1" {{ !empty(old('status')) && old('status') == 1 ? 'selected' : ($User->status == 1 ? 'selected' : '') }}>Sim</option>
                                                         <option value="2" {{ !empty(old('status')) && old('status') == 2 ? 'selected' : ($User->status == 2 ? 'selected' : '') }}>Não</option>
@@ -82,12 +110,12 @@
                                                 </div>
                                             </div>
 
-                                            {{-- [input] - Função do usuário --}}
-                                            <div class="row my-3">
+                                            {{-- [select] - Função --}}
+                                            <div class="row my-3 align-items-center">
                                                 <label class="col-2 col-form-label required" for="role">Função do usuário:</label>
-                                                <div class="col-10 d-flex align-items-center">
+                                                <div class="col-10">
                                                     <select id="role" class="form-control" name="role" data-live-search="true" required>
-                                                        <option value="">Selecione uma função para o usuário</option>
+                                                        <option value="">Selecione uma função</option>
 
                                                         @foreach ($Roles as $Role)
                                                             @if (!auth()->user()->hasRole(1) && $Role->id == 1)
@@ -101,7 +129,7 @@
                                             </div>
                                         @endif
 
-                                        {{-- Permissões do usuário --}}
+                                        {{-- [input] - Permissões --}}
                                         @if (auth()->user()->can('user.permissions') && $User->id != auth()->id())
                                             <div class="row" id="permissions">
                                                 <div class="col-12">
@@ -203,11 +231,22 @@
 
 @push('scripts')
     <script src="{{ asset('assets/js/plugins/bootstrap-select.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/choices.min.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
             //=========================== SELECT PICKER ==========================//
-            $('select').selectpicker();
+            $('#role').selectpicker();
+
+            new Choices('#companies', {
+                removeItemButton: true,
+                placeholderValue: 'Selecione uma empresa',
+            });
+
+            new Choices('#departaments', {
+                removeItemButton: true,
+                placeholderValue: 'Selecione um departamento',
+            });
 
             //========================== ALTERAR FUNÇÃO ==========================//
             let permissions_checked = $('.single-check:checked');

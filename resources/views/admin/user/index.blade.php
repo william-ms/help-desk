@@ -48,9 +48,11 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
-                                        <th class="text-center" style="width: 35%">Nome</th>
-                                        <th style="width: 35%">Função</th>
-                                        <th style="width: 10%">Status</th>
+                                        <th style="width: 20%">Nome</th>
+                                        <th style="width: 20%">Empresas</th>
+                                        <th style="width: 20%">Departamentos</th>
+                                        <th style="width: 15%">Função</th>
+                                        <th style="width: 5%">Status</th>
                                         <th class="text-center"style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -61,6 +63,22 @@
                                             <td>{{ $User->id }}</td>
 
                                             <td>{{ $User->name }}</td>
+
+                                            <td>
+                                                <ul class="list-group">
+                                                    @foreach ($User->companies as $Company)
+                                                        <li class="list-group-item p-0 bg-transparent border-0">{{ $Company->name }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
+
+                                            <td>
+                                                <ul class="list-group">
+                                                    @foreach ($User->departaments as $Departament)
+                                                        <li class="list-group-item p-0 bg-transparent border-0">{{ $Departament->name }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </td>
 
                                             <td>{{ $User->roles->first()->name }}</td>
 
@@ -91,13 +109,13 @@
                                     @empty
                                         @if (empty(request()->all()))
                                             <tr id="emptyTable">
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="7" class="text-center">
                                                     <h3>Nenhum usuário cadastrado no momento!</h3>
                                                 </td>
                                             </tr>
                                         @else
                                             <tr id="emptyTable">
-                                                <td colspan="6" class="text-center table-warning">
+                                                <td colspan="7" class="text-center table-warning">
                                                     <h3>Não encontramos nada usando os dados da sua pesquisa!</h3>
                                                 </td>
                                             </tr>

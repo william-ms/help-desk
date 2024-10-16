@@ -28,6 +28,8 @@ class UpdateUserRequest extends FormRequest
             'name' => ['required', 'string'],
             'email' => ['required', 'email', Rule::unique('users')->whereNull('deleted_at')->ignore($this->user->id)],
             'password' => ['nullable', 'string'],
+            'companies' => ['required', 'array'],
+            'departaments' => ['required', 'array'],
             'status' => ['required', 'integer'],
             'role' => ['required', 'integer'],
         ];

@@ -55,6 +55,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function companies()
+    {
+        return $this->belongsToMany(Company::class, 'user_company');
+    }
+
+    public function departaments()
+    {
+        return $this->belongsToMany(Departament::class, 'user_departament');
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);
