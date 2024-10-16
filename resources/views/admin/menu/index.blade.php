@@ -60,7 +60,7 @@
                                         <tr>
                                             <th style="width: 10%">#</th>
                                             <th class="text-center" style="width: 10%">Ícone</th>
-                                            <th style="width: 30%">Menu</th>
+                                            <th style="width: 60%">Menu</th>
                                             <th style="width: 30%">Categoria</th>
                                             <th class="text-end" style="width: 10%">Ordem</th>
                                             <th class="text-center"style="width: 10%">Ações</th>
@@ -79,7 +79,7 @@
                                                 <td>{{ $Menu->menu_category->name }}</td>
 
                                                 <td class="text-end">
-                                                    <input type="number" name="order[{{ $Menu->menu_category_id }}][{{ $Menu->id }}]" class="form-control p-1 text-end" value="{{ $Menu->order }}" style="min-width: 0;">
+                                                    <input type="number" name="order[{{ $Menu->menu_category_id }}][{{ $Menu->id }}]" class="form-control text-end" value="{{ $Menu->order }}">
                                                 </td>
 
                                                 <td class="text-center">
@@ -142,6 +142,10 @@
             /* padding-left: 11%; */
             text-align: center;
             text-transform: uppercase;
+        }
+
+        .form-control:not(.dropdown) {
+            padding: 4px 9px !important;
         }
     </style>
 @endpush
