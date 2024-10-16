@@ -5,11 +5,11 @@
 @endphp
 
 @if ($componentType == 'button')
-    <button {{ $attributes->merge(['class' => "btn btn-icon btn{$style}-{$color} rounded border border-{$color}", 'type' => 'submit']) }} style="width: 35px; height: 35px;">
+    <button {{ $attributes->merge(['class' => "btn btn-icon btn{$style}-{$color} rounded border border-{$color}", 'type' => 'submit']) }} style="width: 30px; height: 30px;">
         <i class="{{ $icon }}"></i>
     </button>
 @else
-    <a {{ $attributes->merge(['class' => "btn btn-icon btn{$style}-{$color} rounded border border-{$color}"]) }} style="width: 35px; height: 35px;">
+    <a {{ $attributes->merge(['class' => "btn btn-icon btn{$style}-{$color} rounded border border-{$color}"]) }} style="width: 30px; height: 30px;">
         <i class="{{ $icon }}"></i>
     </a>
 @endif
