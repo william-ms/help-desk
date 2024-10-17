@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -83,6 +84,16 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::put('/{departament}', [DepartamentController::class, 'update'])->name('update')->can('departament.edit');
         Route::delete('/{departament}', [DepartamentController::class, 'destroy'])->name('destroy')->can('departament.destroy');
         Route::get('/restore/{departament}', [DepartamentController::class, 'restore'])->name('restore')->can('departament.restore');
+    });
+
+    Route::group(['prefix' => 'category', 'as' => 'category.'], function() {
+        Route::get('/', [CategoryController::class, 'index'])->name('index')->can('category.index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create')->can('category.create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store')->can('category.create');
+        Route::get('/edit/{category}', [CategoryController::class, 'edit'])->name('edit')->can('category.edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('update')->can('category.edit');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy')->can('category.destroy');
+        Route::get('/restore/{category}', [CategoryController::class, 'restore'])->name('restore')->can('category.restore');
     });
 
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');;

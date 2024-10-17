@@ -34,5 +34,6 @@ class EventServiceProvider extends ServiceProvider
         \App\Models\User::observe(LogObserver::class);
         \App\Models\Company::observe(LogObserver::class);
         \App\Models\Departament::observe(LogObserver::class);
+        \App\Models\Category::observe(LogObserver::class);
     }
 }
