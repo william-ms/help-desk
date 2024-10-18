@@ -151,16 +151,9 @@
                                             </div><!-- permissions -->
 
                                             <div id="admin-alert" class="d-none">
-                                                <div class="alert alert-warning" role="alert">
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="ti ti-alert-triangle f-20 me-1"></i>
-                                                        <strong class="f-18">Atenção</strong>
-                                                    </div>
-
-                                                    <div>
-                                                        <span>O usuário com a função de <b>{{ $Roles->find(1)->name }}</b> possui todas as permissões do sistema!</span>
-                                                    </div>
-                                                </div>
+                                                <x-alerts.custom status="warning" icon="ti ti-alert-triangle" title="Atenção">
+                                                    <span>O usuário com a função de <b>{{ $Roles->find(1)->name }}</b> possui todas as permissões do sistema!</span>
+                                                </x-alerts.custom>
                                             </div>
                                         @endif
                                     </div>

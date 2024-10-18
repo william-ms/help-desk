@@ -1,8 +1,8 @@
 @if ($errors->any())
     <div class="alert alert-danger" role="alert">
-        <div class="col-12">
-            <i class="ti ti-alert-triangle align-middle f-20"></i>
-            <strong class="f-18 align-middle">{{ __('Whoops! Something went wrong.') }}</strong>
+        <div class="d-flex align-items-center">
+            <i class="ti ti-alert-octagon f-20 me-1"></i>
+            <strong class="f-18">{{ __('Whoops! Something went wrong.') }}</strong>
         </div>
 
         <div>
