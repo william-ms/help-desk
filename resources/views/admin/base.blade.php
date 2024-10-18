@@ -48,7 +48,7 @@
     @stack('css')
 </head>
 
-<body data-pc-preset="preset-1" data-pc-sidebar-theme="light" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+<body data-pc-preset="{{ $UserSettings['theme-preset'] ?? 'preset-1' }}" data-pc-sidebar-theme="{{ $UserSettings['theme-sidebar'] ?? 'light' }}" data-pc-sidebar-caption="{{ $UserSettings['theme-container'] ?? 'false' }}" data-pc-direction="ltr" data-pc-theme="{{ $UserSettings['theme'] ?? 'light' }}">
 
     {{-- LOADER --}}
     <div class="loader-bg">
@@ -490,9 +490,9 @@
                             <div class="row theme-color theme-layout">
 
                                 {{-- TEMA CLARO --}}
-                                <div class="col-4">
+                                <div class="col-6">
                                     <div class="d-grid">
-                                        <button class="preset-btn btn active" data-value="true" onclick="layout_change('light');">
+                                        <button class="preset-btn btn theme-btn active" data-value="true" data-type="theme" data-theme="light" onclick="layout_change('light');">
                                             <span class="btn-label">Claro</span>
                                             <span class="pc-lay-icon"><span></span><span></span><span></span><span></span></span>
                                         </button>
@@ -500,23 +500,11 @@
                                 </div>
 
                                 {{-- TEMA ESCURO --}}
-                                <div class="col-4">
+                                <div class="col-6">
                                     <div class="d-grid">
-                                        <button class="preset-btn btn" data-value="false" onclick="layout_change('dark');">
+                                        <button class="preset-btn btn theme-btn" data-value="false" data-type="theme" data-theme="dark" onclick="layout_change('dark');">
                                             <span class="btn-label">Escuro</span>
                                             <span class="pc-lay-icon"><span></span><span></span><span></span><span></span></span>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {{-- TEMA PADRÃO --}}
-                                <div class="col-4">
-                                    <div class="d-grid">
-                                        <button class="preset-btn btn" data-value="default" onclick="layout_change_default();" data-bs-toggle="tooltip" title="Automatically sets the theme based on user's operating system's color scheme.">
-                                            <span class="btn-label">Padrão</span>
-                                            <span class="pc-lay-icon d-flex align-items-center justify-content-center">
-                                                <i class="ph-duotone ph-cpu"></i>
-                                            </span>
                                         </button>
                                     </div>
                                 </div>
@@ -534,7 +522,7 @@
                             {{-- TEMA ESCURO --}}
                             <div class="col-6">
                                 <div class="d-grid">
-                                    <button class="preset-btn btn" data-value="true" onclick="layout_sidebar_change('dark');">
+                                    <button class="preset-btn btn theme-btn" data-value="true" data-type="theme-sidebar" data-theme="dark" onclick="layout_sidebar_change('dark');">
                                         <span class="btn-label">Escuro</span>
                                         <span class="pc-lay-icon"><span></span><span></span><span></span><span></span></span>
                                     </button>
@@ -544,7 +532,7 @@
                             {{-- TEMA CLARO --}}
                             <div class="col-6">
                                 <div class="d-grid">
-                                    <button class="preset-btn btn active" data-value="false" onclick="layout_sidebar_change('light');">
+                                    <button class="preset-btn btn theme-btn active" data-value="false" data-type="theme-sidebar" data-theme="light" onclick="layout_sidebar_change('light');">
                                         <span class="btn-label">Claro</span>
                                         <span class="pc-lay-icon"><span></span><span></span><span></span><span></span></span>
                                     </button>
@@ -560,41 +548,16 @@
                         <p class="text-muted text-sm">Escolha a cor principal do seu tema</p>
 
                         <div class="theme-color preset-color">
-                            <a href="#!" class="active" data-value="preset-1"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-2"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-3"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-4"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-5"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-6"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-7"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-8"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-9"><i class="ti ti-check"></i></a>
-                            <a href="#!" data-value="preset-10"><i class="ti ti-check"></i></a>
-                        </div>
-                    </li>
-
-                    {{-- #----- TÍTULOS DA BARRA LATERAL -----# --}}
-                    <li class="list-group-item">
-                        <h6 class="mb-1">Títulosa da barra lateral</h6>
-                        <p class="text-muted text-sm">Escolha se os títulos na barra lateral serão exibidos</p>
-                        <div class="row theme-color theme-nav-caption">
-                            <div class="col-6">
-                                <div class="d-grid">
-                                    <button class="preset-btn btn active" data-value="true" onclick="layout_caption_change('true');">
-                                        <span class="btn-label">Exibir</span>
-                                        <span class="pc-lay-icon"><span></span><span></span><span><span></span><span></span></span><span></span></span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="col-6">
-                                <div class="d-grid">
-                                    <button class="preset-btn btn" data-value="false" onclick="layout_caption_change('false');">
-                                        <span class="btn-label">Esconder</span>
-                                        <span class="pc-lay-icon"><span></span><span></span><span><span></span><span></span></span><span></span></span>
-                                    </button>
-                                </div>
-                            </div>
+                            <a href="#!" class="theme-btn active" data-value="preset-1"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-2" data-type="theme-preset" data-theme="preset-2"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-3" data-type="theme-preset" data-theme="preset-3"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-4" data-type="theme-preset" data-theme="preset-4"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-5" data-type="theme-preset" data-theme="preset-5"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-6" data-type="theme-preset" data-theme="preset-6"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-7" data-type="theme-preset" data-theme="preset-7"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-8" data-type="theme-preset" data-theme="preset-8"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-9" data-type="theme-preset" data-theme="preset-9"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn" data-value="preset-10" data-type="theme-preset" data-theme="preset-10"><i class="ti ti-check"></i></a>
                         </div>
                     </li>
 
@@ -631,7 +594,9 @@
 
                     <li class="list-group-item">
                         <div class="d-grid">
-                            <button class="btn btn-light-danger" id="layoutreset">Reset Layout</button>
+                            <button class="btn btn-light-danger" id="theme-reset">
+                                Resetar mudanças
+                            </button>
                         </div>
                     </li>
                 </ul>
@@ -648,12 +613,65 @@
     <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
 
     <script>
-        layout_change('light');
-        layout_sidebar_change('light');
-        change_box_container('false');
-        layout_caption_change('true');
-        layout_rtl_change('false');
-        preset_change("preset-1");
+        layout_change("{{ $UserSettings['theme'] ?? 'light' }}");
+        layout_sidebar_change("{{ $UserSettings['theme-sidebar'] ?? 'light' }}");
+        change_box_container("{{ $UserSettings['theme-container'] ?? 'false' }}");
+        preset_change("{{ $UserSettings['theme-preset'] ?? 'preset-1' }}");
+        // layout_caption_change('true');
+        // layout_rtl_change('false');
+
+        $(document).ready(function() {
+            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::://
+            // Evento definido para salvar as configurações do layout //
+            $('.theme-btn').on('click', function() {
+                var type = $(this).data('type');
+                var value = $(this).data('theme');
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                var posting = $.post("{{ route('ajax.setting.theme') }}", {
+                    type,
+                    value
+                }, "json");
+
+                posting.fail(function(data) {
+                    Swal.fire('Oops',
+                        'Erro ao atualizar as configurações, tente novamente mais tarde!',
+                        'danger');
+                });
+            })
+
+            //::::::::::::::::::::::::::::::::::::::::::::::::::::::::://
+            // Evento definido para resetar as configurações do layout //
+            $('#theme-reset').on('click', function() {
+                layout_change('light');
+                layout_sidebar_change('light');
+                change_box_container('false');
+                preset_change('preset-1');
+
+                let theme_reset = true;
+
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                var posting = $.post("{{ route('ajax.setting.theme') }}", {
+                    theme_reset
+                }, "json");
+
+                posting.fail(function(data) {
+                    Swal.fire('Oops',
+                        'Erro ao atualizar as configurações, tente novamente mais tarde!',
+                        'danger');
+                });
+            });
+        });
     </script>
 
     @stack('scripts')

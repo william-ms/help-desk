@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        view()->composer(['admin.menu'], function($view) {
+        view()->composer(['admin.base'], function($view) {
             if (auth()->user()->hasRole(1)) {
                 $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) {
                     $query->orderBy('order');
@@ -52,9 +52,21 @@ class AppServiceProvider extends ServiceProvider
                     $query->whereIn('route', $permissions)->orderBy('order');
                 }])->orderBy('order')->get();
             }
-            
+
+            //Cria uma sessão com as configurações do usuário para serem utilizados na view base
+            if(!session()->has('UserSettings')) {
+                $UserSettings = [];
+
+                foreach (auth()->user()->settings as $Setting) {
+                    $UserSettings[$Setting->key] = $Setting->value;
+                }
+
+                session()->put('UserSettings', $UserSettings);
+            }
+
             $view->with([
                 'CategoriesAndMenusForSidebar' => $CategoriesAndMenusForSidebar,
+                'UserSettings' => session()->get('UserSettings'),
             ]);
         });
     }
