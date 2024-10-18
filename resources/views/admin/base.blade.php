@@ -48,7 +48,7 @@
     @stack('css')
 </head>
 
-<body data-pc-preset="{{ $UserSettings['theme-preset'] ?? 'preset-1' }}" data-pc-sidebar-theme="{{ $UserSettings['theme-sidebar'] ?? 'light' }}" data-pc-sidebar-caption="{{ $UserSettings['theme-container'] ?? 'false' }}" data-pc-direction="ltr" data-pc-theme="{{ $UserSettings['theme'] ?? 'light' }}">
+<body data-pc-preset="{{ $UserSettings['theme-preset'] ?? 'preset-1' }}" data-pc-sidebar-theme="{{ $UserSettings['theme-sidebar'] ?? 'light' }}" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="{{ $UserSettings['theme'] ?? 'light' }}">
 
     {{-- LOADER --}}
     <div class="loader-bg">
@@ -67,7 +67,24 @@
 
             {{-- MENU DA SIDEBAR --}}
             <div class="navbar-content">
-                @include('admin.menu')
+                <ul class="pc-navbar">
+                    @foreach ($CategoriesAndMenusForSidebar as $Category)
+                        @if (!$Category->menus->isEmpty())
+                            <li class="pc-item pc-caption">
+                                <label>{{ $Category->name }}</label>
+                            </li>
+
+                            @foreach ($Category->menus as $Menu)
+                                <li class="pc-item pc-not-caption {{ request()->routeIs($Menu->route . '.*') ? 'active' : '' }}">
+                                    <a href="{{ Route::has('admin.' . $Menu->route . '.index') ? route('admin.' . $Menu->route . '.index') : '' }}" class="pc-link {{ request()->routeIs($Menu->route . '.*') ? 'active' : '' }}">
+                                        <span class="pc-micon"><i class="{{ $Menu->icon }}"></i></span>
+                                        <span class="pc-mtext">{{ $Menu->name }}</span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        @endif
+                    @endforeach
+                </ul>
             </div>
 
             {{-- MENU DO USUÁRIO NA SIDEBAR --}}
