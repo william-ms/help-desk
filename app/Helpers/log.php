@@ -49,13 +49,15 @@ function create_log_item(Log $Log, Model $Model, string $type, int $status, arra
 
     $LogItem = LogItem::create([
         'log_id' => $Log->id,
-        'user_id' => auth()->id() || 1,
+        'user_id' => auth()->id() ?? 1,
         'type' => $type,
         'label' => $labels[$type] ?? null,
         'status' => $status,
         'action' => create_action($Model, $data, $type),
         'body' => $body,
     ]);
+
+    $Log->touch();
 
     return $LogItem;
 }

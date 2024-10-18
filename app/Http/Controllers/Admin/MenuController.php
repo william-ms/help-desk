@@ -112,7 +112,7 @@ class MenuController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Menu::where('name', $data['name'])->withTrashed()->get();
+        $Equals = Menu::where('name', $data['name'])->where('menu_category_id', $data['menu_category_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
             return back()->withErrors(['name' => "Já existe um menu cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse menu!"])->withInput();
@@ -187,7 +187,7 @@ class MenuController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Menu::where('name', $data['name'])->withTrashed()->get();
+        $Equals = Menu::where('id', '!=', $Menu->id)->where('name', $data['name'])->where('menu_category_id', $data['menu_category_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
             return back()->withErrors(['name' => "Já existe um menu cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse menu!"])->withInput();
