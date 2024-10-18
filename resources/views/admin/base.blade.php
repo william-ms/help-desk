@@ -565,7 +565,7 @@
                         <p class="text-muted text-sm">Escolha a cor principal do seu tema</p>
 
                         <div class="theme-color preset-color">
-                            <a href="#!" class="theme-btn active" data-value="preset-1"><i class="ti ti-check"></i></a>
+                            <a href="#!" class="theme-btn active" data-value="preset-1" data-type="theme-preset" data-theme="preset-1"><i class="ti ti-check"></i></a>
                             <a href="#!" class="theme-btn" data-value="preset-2" data-type="theme-preset" data-theme="preset-2"><i class="ti ti-check"></i></a>
                             <a href="#!" class="theme-btn" data-value="preset-3" data-type="theme-preset" data-theme="preset-3"><i class="ti ti-check"></i></a>
                             <a href="#!" class="theme-btn" data-value="preset-4" data-type="theme-preset" data-theme="preset-4"><i class="ti ti-check"></i></a>

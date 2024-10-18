@@ -33,7 +33,7 @@
                                 @endif
 
                                 @can('menu_category.create')
-                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu_category.create') }}" title="Cadastrar categoria de menu">
+                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu_category.create') }}">
                                         Cadastrar categoria de menu
                                     </x-button>
                                 @endcan

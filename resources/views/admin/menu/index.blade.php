@@ -26,7 +26,7 @@
                             <div>
                                 @if (empty(request()->all()))
                                     @can('menu.order')
-                                        <x-button form="order" icon="ti ti-arrows-down-up">
+                                        <x-button form="order" icon="ti ti-arrows-down-up" title="Atualizar ordem dos menus">
                                             Atualizar ordem
                                         </x-button>
                                     @endcan
