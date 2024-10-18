@@ -18,7 +18,7 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $Categories = Category::with('log')
+        $Categories = Category::with('log', 'company')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
@@ -92,15 +92,15 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('name', $data['name'])->withTrashed()->get();
+        $Equals = Category::where('name', $data['name'])->where('company_id', $data['company_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para essa empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
         Category::create($data);
 
-        return redirect()->route('admin.category.create')->with('success', 'Categoria cadastrada com sucesso!');
+        return back()->with('success', 'Categoria cadastrada com sucesso!');
     }
 
     /**
@@ -150,10 +150,10 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('id', '!=', $Category->id)->where('name', $data['name'])->withTrashed()->get();
+        $Equals = Category::where('id', '!=', $Category->id)->where('company_id', $data['company_id'])->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para essa empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
         $Category->update($data);

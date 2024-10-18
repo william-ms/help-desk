@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -94,6 +95,16 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::put('/{category}', [CategoryController::class, 'update'])->name('update')->can('category.edit');
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy')->can('category.destroy');
         Route::get('/restore/{category}', [CategoryController::class, 'restore'])->name('restore')->can('category.restore');
+    });
+
+    Route::group(['prefix' => 'subcategory', 'as' => 'subcategory.'], function() {
+        Route::get('/', [SubcategoryController::class, 'index'])->name('index')->can('subcategory.index');
+        Route::get('/create', [SubcategoryController::class, 'create'])->name('create')->can('subcategory.create');
+        Route::post('/', [SubcategoryController::class, 'store'])->name('store')->can('subcategory.create');
+        Route::get('/edit/{subcategory}', [SubcategoryController::class, 'edit'])->name('edit')->can('subcategory.edit');
+        Route::put('/{subcategory}', [SubcategoryController::class, 'update'])->name('update')->can('subcategory.edit');
+        Route::delete('/{subcategory}', [SubcategoryController::class, 'destroy'])->name('destroy')->can('subcategory.destroy');
+        Route::get('/restore/{subcategory}', [SubcategoryController::class, 'restore'])->name('restore')->can('subcategory.restore');
     });
 
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');;

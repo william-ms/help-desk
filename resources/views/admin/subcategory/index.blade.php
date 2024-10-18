@@ -10,7 +10,7 @@
 
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Categorias</h2>
+                                <h2 class="mb-0">Subcategorias</h2>
                             </div>
                         </div>
                     </div>
@@ -21,12 +21,12 @@
                 <div class="col-md-12">
                     <div class="card py-3">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h4 class="m-0">Listagem de categorias</h4>
+                            <h4 class="m-0">Listagem de subcategorias</h4>
 
                             <div>
-                                @can('category.create')
-                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.category.create') }}">
-                                        Cadastrar categoria
+                                @can('subcategory.create')
+                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.subcategory.create') }}">
+                                        Cadastrar subcategoria
                                     </x-button>
                                 @endcan
                             </div>
@@ -48,51 +48,54 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
-                                        <th style="width: 40%">Categoria</th>
-                                        <th style="width: 40%">Empresa</th>
+                                        <th style="width: 30%">Subcategoria</th>
+                                        <th style="width: 25%">Categoria</th>
+                                        <th style="width: 25%">Empresa</th>
                                         <th class="text-center"style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    @forelse ($Categories as $Category)
+                                    @forelse ($Subcategories as $Subcategory)
                                         <tr>
-                                            <td>{{ $Category->id }}</td>
+                                            <td>{{ $Subcategory->id }}</td>
 
-                                            <td>{{ $Category->name }}</td>
+                                            <td>{{ $Subcategory->name }}</td>
 
-                                            <td>{{ $Category->company->name }}</td>
+                                            <td>{{ $Subcategory->category->name }}</td>
+
+                                            <td>{{ $Subcategory->category->company->name }}</td>
 
                                             <td class="text-center">
-                                                @if (empty($Category->deleted_at))
-                                                    @can('category.edit')
-                                                        <x-button-icon icon="ti ti-edit" componentType="a" color="info" style="light" href="{{ route('admin.category.edit', $Category->id) }}" />
+                                                @if (empty($Subcategory->deleted_at))
+                                                    @can('subcategory.edit')
+                                                        <x-button-icon icon="ti ti-edit" componentType="a" color="info" style="light" href="{{ route('admin.subcategory.edit', $Subcategory->id) }}" />
                                                     @endcan
 
-                                                    @can('category.destroy')
-                                                        <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.category.destroy', $Category->id) }}" />
+                                                    @can('subcategory.destroy')
+                                                        <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.subcategory.destroy', $Subcategory->id) }}" />
                                                     @endcan
                                                 @else
-                                                    @can('category.restore')
-                                                        <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.category.restore', $Category->id) }}" />
+                                                    @can('subcategory.restore')
+                                                        <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.subcategory.restore', $Subcategory->id) }}" />
                                                     @endcan
                                                 @endif
 
                                                 @can('log.show')
-                                                    <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Category->log->id) }}" />
+                                                    <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Subcategory->log->id) }}" />
                                                 @endcan
                                             </td>
                                         </tr>
                                     @empty
                                         @if (empty(request()->all()))
                                             <tr id="emptyTable">
-                                                <td colspan="6" class="text-center">
-                                                    <h3>Nenhuma categoria cadastrada no momento!</h3>
+                                                <td colspan="7" class="text-center">
+                                                    <h3>Nenhuma subcategoria cadastrada no momento!</h3>
                                                 </td>
                                             </tr>
                                         @else
                                             <tr id="emptyTable">
-                                                <td colspan="6" class="text-center table-warning">
+                                                <td colspan="7" class="text-center table-warning">
                                                     <h3>Não encontramos nada usando os dados da sua pesquisa!</h3>
                                                 </td>
                                             </tr>
@@ -132,7 +135,7 @@
 
                 Swal.fire({
                     title: 'Oops!!',
-                    text: 'Deseja realmente deletar essa categoria?',
+                    text: 'Deseja realmente deletar essa subcategoria?',
                     icon: 'warning',
                     input: false,
                     showCancelButton: true,
@@ -150,7 +153,7 @@
             $(".restore").on("click", function() {
                 Swal.fire({
                     title: 'Oops!!',
-                    text: 'Deseja realmente restaurar essa categoria?',
+                    text: 'Deseja realmente restaurar essa subcategoria?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#28a745',
@@ -164,7 +167,7 @@
                 })
             });
 
-            @if (!$Categories->isEmpty())
+            @if (!$Subcategories->isEmpty())
                 var table = $('#table').DataTable({
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",

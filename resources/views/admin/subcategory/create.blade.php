@@ -10,7 +10,7 @@
 
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Editar</h2>
+                                <h2 class="mb-0">Cadastrar</h2>
                             </div>
                         </div>
                     </div>
@@ -21,16 +21,12 @@
                 <div class="col-md-12">
                     <div class="card py-3">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h4 class="m-0">
-                                Editar categoria
-                                <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>
-                                {{ $Category->name }}
-                            </h4>
+                            <h4 class="m-0">Cadastrar subcategoria</h4>
 
                             <div>
-                                @can('category.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.category.index') }}">
-                                        Listar categorias
+                                @can('subcategory.index')
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.subcategory.index') }}">
+                                        Listar subcategorias
                                     </x-button>
                                 @endcan
                             </div>
@@ -38,33 +34,32 @@
 
                         <div class="card-body py-3">
                             <x-alerts.success class="mb-4" />
-                            <x-alerts.errors class="mb-4" :errors="$errors" />
+                            <x-alerts.errors class="mb-4" />
 
-                            <form method="POST" action="{{ route('admin.category.update', $Category->id) }}" id="form-edit">
+                            <form method="POST" action="{{ route('admin.subcategory.store') }}" id="form-create">
                                 @csrf
-                                @method('PUT')
 
-                                {{-- [select] - Empresa --}}
+                                {{-- [select] - Categoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
+                                    <label class="col-2 col-form-label required" for="category_id">Categoria :</label>
                                     <div class="col-10">
-                                        <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
-                                            <option value="">Selecione uma empresa</option>
+                                        <select class="form-control" id="category_id" name="category_id" data-live-search="true" required>
+                                            <option value="">Selecione uma categoria</option>
 
-                                            @foreach ($Companies as $Company)
-                                                <option value="{{ $Company->id }}" {{ !empty(old('company_id')) ? (old('company_id') == $Company->id ? 'selected' : '') : ($Category->company_id == $Company->id ? 'selected' : '') }}>
-                                                    {{ $Company->name }}
+                                            @foreach ($Categories as $Category)
+                                                <option value="{{ $Category->id }}" {{ collect(old('category_id'))->contains($Category->id) ? 'selected' : '' }}>
+                                                    {{ $Category->name }}
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
-                                {{-- [input] - Categoria --}}
+                                {{-- [input] - Subcategoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="name">Categoria :</label>
+                                    <label class="col-2 col-form-label required" for="name">Subcategoria :</label>
                                     <div class="col-10">
-                                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') ?? ($Category->name ?? '') }}" placeholder="Informe o nome da categoria" required />
+                                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Informe o nome da subcategoria" required />
                                     </div>
                                 </div>
 
@@ -72,24 +67,15 @@
                                 <div class="row my-3 align-items-center">
                                     <label class="col-2 col-form-label required" for="automatic_response">Resposta automática :</label>
                                     <div class="col-10">
-                                        <textarea class="form-control" id="automatic_response" rows="10" name="automatic_response">{{ old('automatic_response') ?? ($Category->automatic_response ?? '') }}</textarea>
-                                    </div>
-                                </div>
-
-
-                                {{-- [input] -  Tempo de resolução --}}
-                                <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="automatic_response">Tempo de resolução :</label>
-                                    <div class="col-10">
-                                        <input type="time" step="2" class="form-control" id="resolution_time" name="resolution_time" value="{{ old('resolution_time') ?? ($Category->resolution_time ?? '') }}" placeholder="Informe o tempo de resoulção" required />
+                                        <textarea class="form-control" id="automatic_response" rows="10" name="automatic_response">{{ old('automatic_response') }}</textarea>
                                     </div>
                                 </div>
                             </form>
                         </div><!-- card-body -->
 
                         <div class="card-footer py-3">
-                            <x-button icon="ti ti-checks" form="form-edit">
-                                Salvar
+                            <x-button icon="ti ti-checks" form="form-create">
+                                Enviar
                             </x-button>
 
                             <div class="col-md-12 mb-2">

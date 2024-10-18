@@ -39,9 +39,9 @@
                             <form method="POST" action="{{ route('admin.category.store') }}" id="form-create">
                                 @csrf
 
-                                {{-- [select] - Empresas --}}
+                                {{-- [select] - Empresa --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="company_id">Empresas :</label>
+                                    <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
                                     <div class="col-10">
                                         <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
                                             <option value="">Selecione uma empresa</option>

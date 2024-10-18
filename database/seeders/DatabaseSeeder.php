@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         Menu::factory()->companies();
         Menu::factory()->departaments();
         Menu::factory()->categories();
+        Menu::factory()->subcategories();
         Menu::factory()->logs();
 
         Permission::create(['name' => 'menu.index', 'guard_name' => 'web']);
@@ -84,6 +85,12 @@ class DatabaseSeeder extends Seeder
         Permission::create(['name' => 'category.edit', 'guard_name' => 'web']);
         Permission::create(['name' => 'category.destroy', 'guard_name' => 'web']);
         Permission::create(['name' => 'category.restore', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'subcategory.index', 'guard_name' => 'web']);
+        Permission::create(['name' => 'subcategory.create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web']);
+        Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web']);
 
         Permission::create(['name' => 'log.index', 'guard_name' => 'web']);
         Permission::create(['name' => 'log.show', 'guard_name' => 'web']);
