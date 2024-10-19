@@ -25,6 +25,12 @@ class LogController extends Controller
         ->when($request->model_name, function($query) use ($request) {
             $query->where('model_name', 'LIKE', "%{$request->model_name}%");
         })
+        ->when($request->begin_date, function($query) use ($request) {
+            $query->where('updated_at', '>', $request->begin_date . ' ' . ($request->begin_time ?? ''));
+        })
+        ->when($request->end_date, function($query) use ($request) {
+            $query->where('updated_at', '<', $request->end_date . ' ' . ($request->end_time ?? ''));
+        })
         ->latest()
         ->get();
 
@@ -38,17 +44,45 @@ class LogController extends Controller
                 'field_value' => 'model_type'
             ],
             [
-                'type' => 'text',
-                'label' => 'ID do módulo',
+                'type' => 'number',
+                'label' => 'ID',
                 'input_name' => 'model_id',
                 'placeholder' => 'Informe o id do módulo'
             ],
             [
                 'type' => 'text',
-                'label' => 'Nome do módulo',
+                'label' => 'Nome',
                 'input_name' => 'model_name',
                 'placeholder' => 'Informe o nome do módulo'
             ],
+            [
+                'type' => 'group',
+                'label' => 'Período - Início',
+                'inputs' => [
+                    [
+                        'type' => 'date',
+                        'input_name' => 'begin_date',
+                    ],
+                    [
+                        'type' => 'time',
+                        'input_name' => 'begin_time',
+                    ]
+                ]
+                    ],
+            [
+                'type' => 'group',
+                'label' => 'Período - Fim',
+                'inputs' => [
+                    [
+                        'type' => 'date',
+                        'input_name' => 'end_date',
+                    ],
+                    [
+                        'type' => 'time',
+                        'input_name' => 'end_time',
+                    ]
+                ]
+            ]
         ];
 
         $data_breadcrumbs = [

@@ -41,9 +41,9 @@
                                     <tr>
                                         <th style="width: 10%">#</th>
                                         <th style="width: 25%">Módulo</th>
-                                        <th style="width: 15%">Id do módulo</th>
-                                        <th style="width: 25%">Nome do módulo</th>
-                                        <th style="width: 15%">Última alteração</th>
+                                        <th style="width: 10%">Id</th>
+                                        <th style="width: 25%">Nome</th>
+                                        <th style="width: 20%">Última alteração</th>
                                         <th class="text-center" style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -59,7 +59,7 @@
 
                                             <td class="td-limit" title="{{ $Log->model_name }}" data-bs-toggle="tooltip">{{ $Log->model_name }}</td>
 
-                                            <td>{{ $Log->items->last()->created_at->format('d/m/Y H:i:s') }}</td>
+                                            <td>{{ $Log->updated_at->format('d/m/Y H:i:s') }}</td>
 
                                             <td class="text-center">
                                                 @can('log.show')
