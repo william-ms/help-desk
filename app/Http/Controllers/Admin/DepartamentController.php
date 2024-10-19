@@ -7,6 +7,7 @@ use App\Http\Requests\StoreDepartamentRequest;
 use App\Http\Requests\UpdateDepartamentRequest;
 use App\Models\Departament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class DepartamentController extends Controller
 {
@@ -17,15 +18,11 @@ class DepartamentController extends Controller
      */
     public function index(Request $request)
     {
-        $Departaments = Departament::with('log')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when(auth()->user()->can('departament.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('name', 'ASC')
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Departamentos',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -35,17 +32,30 @@ class DepartamentController extends Controller
                 'placeholder' => 'Informe o nome do departamento'
             ],
         ];
-
-        $data_breadcrumbs = [
-            [
-                'name' => 'Departamentos',
-            ],
+     
+        $gates = [
+            'create' => Gate::allows('departament.create'),
+            'edit' => Gate::allows('departament.edit'),
+            'destroy' => Gate::allows('departament.destroy'),
+            'restore' => Gate::allows('departament.restore'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Departaments = Departament::with('log')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('name', 'ASC')
+        ->get();
+
         return view('admin.departament.index', [
-            'Departaments' =>  $Departaments,
-            'data_filter' => $data_filter,
             'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
+            'Departaments' =>  $Departaments,
         ]);
     }
 
@@ -122,8 +132,8 @@ class DepartamentController extends Controller
         ];
 
         return view('admin.departament.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Departament' => $Departament,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

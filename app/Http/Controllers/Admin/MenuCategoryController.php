@@ -7,6 +7,7 @@ use App\Http\Requests\StoreMenuCategoryRequest;
 use App\Http\Requests\UpdateMenuCategoryRequest;
 use App\Models\MenuCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 
 class MenuCategoryController extends Controller
@@ -18,16 +19,12 @@ class MenuCategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $MenuCategories = MenuCategory::with('menus', 'log')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when(auth()->user()->can('menu_category.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('order', 'ASC')
-        ->get();
-
+        $data_breadcrumbs = [
+            [
+                'name' => 'Categorias de menu',
+            ],
+        ];
+        
         $data_filter = [
             [
                 'type' => 'text',
@@ -37,16 +34,30 @@ class MenuCategoryController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Categorias de menu',
-            ],
+        $gates = [
+            'create' => Gate::allows('menu_category.create'),
+            'edit' => Gate::allows('menu_category.edit'),
+            'destroy' => Gate::allows('menu_category.destroy'),
+            'restore' => Gate::allows('menu_category.restore'),
+            'order' => Gate::allows('menu_category.order'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $MenuCategories = MenuCategory::with('menus', 'log')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('order', 'ASC')
+        ->get();
+
         return view('admin.menu_category.index', [
-            'MenuCategories' =>  $MenuCategories,
-            'data_filter' => $data_filter,
             'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
+            'MenuCategories' =>  $MenuCategories,
         ]);
     }
 
@@ -126,8 +137,8 @@ class MenuCategoryController extends Controller
         ];
 
         return view('admin.menu_category.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'MenuCategory' => $MenuCategory,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

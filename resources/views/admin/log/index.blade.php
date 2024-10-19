@@ -62,9 +62,9 @@
                                             <td>{{ $Log->updated_at->format('d/m/Y H:i:s') }}</td>
 
                                             <td class="text-center">
-                                                @can('log.show')
+                                                @if ($gates['show'])
                                                     <x-button-icon icon="ti ti-eye" color="info" style="light" componentType="a" href="{{ route('admin.log.show', $Log->id) }}" />
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

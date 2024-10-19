@@ -24,11 +24,11 @@
                             <h4 class="m-0">Listagem de funções</h4>
 
                             <div>
-                                @can('role.create')
+                                @if ($gates['create'])
                                     <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.role.create') }}" title="Cadastrar função">
                                         Cadastrar função
                                     </x-button>
-                                @endcan
+                                @endif
                             </div>
                         </div><!-- card-header -->
 
@@ -61,22 +61,22 @@
 
                                             <td class="text-center">
                                                 @if (empty($Role->deleted_at))
-                                                    @can('role.edit')
+                                                    @if ($gates['edit'])
                                                         <x-button-icon icon="ti ti-edit" color="info" style="light" componentType="a" href="{{ route('admin.role.edit', $Role->id) }}" />
-                                                    @endcan
+                                                    @endif
 
-                                                    @can('role.destroy')
+                                                    @if ($gates['destroy'])
                                                         <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.role.destroy', $Role->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @else
-                                                    @can('role.restore')
+                                                    @if ($gates['restore'])
                                                         <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.role.restore', $Role->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @endif
 
-                                                @can('log.show')
+                                                @if ($gates['log_show'])
                                                     <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Role->log->id) }}" />
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

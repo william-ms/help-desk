@@ -8,13 +8,14 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\Company;
 use App\Models\Departament;
 use App\Models\Menu;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use App\Traits\PhosphorDuotoneTrait;
 use App\Traits\UserTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -28,33 +29,11 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $Users = User::with('log', 'departaments', 'companies', 'roles')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when($request->company, function($query) use ($request) {
-            $query->whereHas('companies', function ($q) use ($request) {
-                $q->where('companies.id', $request->company);
-            });
-        })
-        ->when($request->departament, function($query) use ($request) {
-            $query->whereHas('departaments', function ($q) use ($request) {
-                $q->where('departaments.id', $request->departament);
-            });
-        })
-        ->when($request->role, function($query) use ($request) {
-            $query->whereHas('roles', function ($q) use ($request) {
-                $q->where('roles.id', $request->role);
-            });
-        })
-        ->when($request->status, function($query) use ($request) {
-            $query->where('status', $request->status);
-        })
-        ->when(auth()->user()->can('user.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('name')
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Usuários',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -89,17 +68,48 @@ class UserController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Usuários',
-            ],
+        $gates = [
+            'create' => Gate::allows('user.create'),
+            'edit' => Gate::allows('user.edit'),
+            'destroy' => Gate::allows('user.destroy'),
+            'restore' => Gate::allows('user.restore'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Users = User::with('log', 'departaments', 'companies', 'roles')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->company, function($query) use ($request) {
+            $query->whereHas('companies', function ($q) use ($request) {
+                $q->where('companies.id', $request->company);
+            });
+        })
+        ->when($request->departament, function($query) use ($request) {
+            $query->whereHas('departaments', function ($q) use ($request) {
+                $q->where('departaments.id', $request->departament);
+            });
+        })
+        ->when($request->role, function($query) use ($request) {
+            $query->whereHas('roles', function ($q) use ($request) {
+                $q->where('roles.id', $request->role);
+            });
+        })
+        ->when($request->status, function($query) use ($request) {
+            $query->where('status', $request->status);
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('name')
+        ->get();
+
         return view('admin.user.index', [
+            'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
             'Users' => $Users,
             'UserStatus' => $this->UserStatus,
-            'data_filter' => $data_filter,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -110,6 +120,16 @@ class UserController extends Controller
      */
     public function create()
     {  
+        $data_breadcrumbs = [
+            [
+                'name' => 'Users',
+                'route' => 'admin.user.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
+        ];
+
         $PermissionsGroupByName = Permission::get()->groupBy(function($Permission) {
             return explode('.', $Permission->name)[0];
         });
@@ -126,22 +146,12 @@ class UserController extends Controller
 
         $Roles = Role::with('permissions')->orderBy('name')->get();
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Users',
-                'route' => 'admin.user.index',
-            ],
-            [
-                'name' => 'Cadastrar',
-            ],
-        ];
-
         return view('admin.user.create', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Companies' => Company::get(),
             'Departaments' => Departament::get(),
             'Roles' => $Roles,
             'PermissionsGroupByName' => $PermissionsGroupByName,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -215,6 +225,16 @@ class UserController extends Controller
      */
     public function edit(User $User)
     {
+        $data_breadcrumbs = [
+            [
+                'name' => 'Usuários',
+                'route' => 'admin.user.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
         $PermissionsGroupByName = Permission::get()->groupBy(function($Permission) {
             return explode('.', $Permission->name)[0];
         });
@@ -231,23 +251,13 @@ class UserController extends Controller
 
         $Roles = Role::with('permissions')->orderBy('name')->get();
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Usuários',
-                'route' => 'admin.user.index',
-            ],
-            [
-                'name' => 'Editar',
-            ],
-        ];
-
         return view('admin.user.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'User' => $User,
             'Companies' => Company::get(),
             'Departaments' => Departament::get(),
             'Roles' => $Roles,
             'PermissionsGroupByName' => $PermissionsGroupByName,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

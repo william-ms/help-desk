@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
+use App\Models\Permission;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Gate;
 
 class PermissionController extends Controller
 {
@@ -17,6 +18,12 @@ class PermissionController extends Controller
      */
     public function index(Request $request)
     {
+        $data_breadcrumbs = [
+            [
+                'name' => 'Permissões',
+            ],
+        ];
+
         $Permissions = Permission::get();
 
         foreach ($Permissions as $Permission) {
@@ -25,16 +32,7 @@ class PermissionController extends Controller
             $Prefixs[] = ['id' => $prefix, 'prefix' => $prefix];
             $Methods[] = ['id' => $method, 'method' => $method];
         }
-
-        $Permissions = Permission::query()
-        ->when($request->prefix, function($query) use ($request) {
-            $query->where('name', 'LIKE', "{$request->prefix}.%");
-        })
-        ->when($request->method, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%.{$request->method}");
-        })
-        ->get();
-
+        
         $data_filter = [
             [
                 'type' => 'select',
@@ -52,16 +50,27 @@ class PermissionController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Permissões',
-            ],
+        $gates = [
+            'create' => Gate::allows('permission.create'),
+            'edit' => Gate::allows('permission.edit'),
+            'destroy' => Gate::allows('permission.destroy'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Permissions = Permission::with('log')
+        ->when($request->prefix, function($query) use ($request) {
+            $query->where('name', 'LIKE', "{$request->prefix}.%");
+        })
+        ->when($request->method, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%.{$request->method}");
+        })
+        ->get();
+
         return view('admin.permission.index', [
-            'Permissions' => $Permissions,
+            'data_breadcrumbs' => $data_breadcrumbs,
             'data_filter' => $data_filter,
-            'data_breadcrumbs' => $data_breadcrumbs
+            'gates' => $gates,
+            'Permissions' => $Permissions,
         ]);
     }
 

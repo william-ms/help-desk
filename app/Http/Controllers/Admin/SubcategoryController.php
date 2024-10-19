@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class SubcategoryController extends Controller
 {
@@ -19,23 +20,11 @@ class SubcategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $Subcategories = Subcategory::with('log', 'category.company')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when($request->category_id, function($query) use ($request) {
-            $query->where('category_id', $request->category_id);
-        })
-        ->when($request->company_id, function($query) use ($request) {
-            $query->whereHas('category', function ($query) use ($request) {
-                $query->where('company_id', $request->company_id);
-            });
-        })
-        ->when(auth()->user()->can('subcategory.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('name', 'ASC')
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Subcategorias',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -58,16 +47,37 @@ class SubcategoryController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Subcategorias',
-            ],
+        $gates = [
+            'create' => Gate::allows('subcategory.create'),
+            'edit' => Gate::allows('subcategory.edit'),
+            'destroy' => Gate::allows('subcategory.destroy'),
+            'restore' => Gate::allows('subcategory.restore'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Subcategories = Subcategory::with('log', 'category.company')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->category_id, function($query) use ($request) {
+            $query->where('category_id', $request->category_id);
+        })
+        ->when($request->company_id, function($query) use ($request) {
+            $query->whereHas('category', function ($query) use ($request) {
+                $query->where('company_id', $request->company_id);
+            });
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('name', 'ASC')
+        ->get();
+
         return view('admin.subcategory.index', [
-            'Subcategories' =>  $Subcategories,
-            'data_filter' => $data_filter,
             'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
+            'Subcategories' =>  $Subcategories,
         ]);
     }
 
@@ -89,8 +99,8 @@ class SubcategoryController extends Controller
         ];
 
         return view('admin.subcategory.create', [
-            'Categories' => Category::orderBy('name')->get(),
             'data_breadcrumbs' => $data_breadcrumbs,
+            'Categories' => Category::orderBy('name')->get(),
         ]);
     }
 
@@ -145,9 +155,9 @@ class SubcategoryController extends Controller
         ];
 
         return view('admin.subcategory.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Subcategory' => $Subcategory,
             'Categories' => Category::orderBy('name')->get(),
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

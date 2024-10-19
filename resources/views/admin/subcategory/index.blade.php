@@ -24,11 +24,11 @@
                             <h4 class="m-0">Listagem de subcategorias</h4>
 
                             <div>
-                                @can('subcategory.create')
+                                @if ($gates['create'])
                                     <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.subcategory.create') }}">
                                         Cadastrar subcategoria
                                     </x-button>
-                                @endcan
+                                @endif
                             </div>
                         </div><!-- card-header -->
 
@@ -68,22 +68,22 @@
 
                                             <td class="text-center">
                                                 @if (empty($Subcategory->deleted_at))
-                                                    @can('subcategory.edit')
+                                                    @if ($gates['edit'])
                                                         <x-button-icon icon="ti ti-edit" componentType="a" color="info" style="light" href="{{ route('admin.subcategory.edit', $Subcategory->id) }}" />
-                                                    @endcan
+                                                    @endif
 
-                                                    @can('subcategory.destroy')
+                                                    @if ($gates['destroy'])
                                                         <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.subcategory.destroy', $Subcategory->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @else
-                                                    @can('subcategory.restore')
+                                                    @if ($gates['restore'])
                                                         <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.subcategory.restore', $Subcategory->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @endif
 
-                                                @can('log.show')
+                                                @if ($gates['log_show'])
                                                     <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Subcategory->log->id) }}" />
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

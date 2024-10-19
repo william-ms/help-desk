@@ -24,11 +24,11 @@
                             <h4 class="m-0">Listagem de permissões</h4>
 
                             <div>
-                                @can('permission.create')
+                                @if ($gates['create'])
                                     <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.permission.create') }}" title="Cadastrar permissão">
                                         Cadastrar permissão
                                     </x-button>
-                                @endcan
+                                @endif
                             </div>
                         </div><!-- card-header -->
 
@@ -64,22 +64,22 @@
 
                                             <td class="text-center">
                                                 @if (empty($Permission->deleted_at))
-                                                    @can('permission.edit')
+                                                    @if ($gates['edit'])
                                                         <x-button-icon icon="ti ti-edit" color="info" style="light" componentType="a" href="{{ route('admin.permission.edit', $Permission->id) }}" />
-                                                    @endcan
+                                                    @endif
 
-                                                    @can('permission.destroy')
+                                                    @if ($gates['destroy'])
                                                         <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.permission.destroy', $Permission->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @else
-                                                    @can('permission.restore')
+                                                    @if ($gates['restore'])
                                                         <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.permission.restore', $Permission->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 @endif
 
-                                                @can('log.show')
+                                                @if ($gates['log_show'])
                                                     <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Permission->log->id) }}" />
-                                                @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty

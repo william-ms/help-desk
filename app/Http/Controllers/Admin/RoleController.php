@@ -6,9 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use App\Models\Menu;
+use App\Models\Permission;
+use App\Models\Role;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Gate;
 
 class RoleController extends Controller
 {
@@ -19,11 +20,11 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $Roles = Role::query()
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -34,16 +35,24 @@ class RoleController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Funções',
-            ],
+        $gates = [
+            'create' => Gate::allows('role.create'),
+            'edit' => Gate::allows('role.edit'),
+            'destroy' => Gate::allows('role.destroy'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Roles = Role::with('log')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->get();
+
         return view('admin.role.index', [
-            'Roles' =>  $Roles,
+            'data_breadcrumbs' => $data_breadcrumbs,
             'data_filter' => $data_filter,
-            'data_breadcrumbs' => $data_breadcrumbs
+            'gates' => $gates,
+            'Roles' =>  $Roles,
         ]);
     }
 
@@ -54,6 +63,16 @@ class RoleController extends Controller
      */
     public function create()
     {
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+                'route' => 'admin.role.index',
+            ],
+            [
+                'name' => 'Cadastrar',
+            ],
+        ];
+
         $PermissionsGroupByName = Permission::get()->groupBy(function($Permission) {
             return explode('.', $Permission->name)[0];
         });
@@ -68,19 +87,9 @@ class RoleController extends Controller
             }
         }
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Funções',
-                'route' => 'admin.role.index',
-            ],
-            [
-                'name' => 'Cadastrar',
-            ],
-        ];
-
         return view('admin.role.create', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'PermissionsGroupByName' => $PermissionsGroupByName,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -129,6 +138,16 @@ class RoleController extends Controller
      */
     public function edit(Role $Role)
     {
+        $data_breadcrumbs = [
+            [
+                'name' => 'Funções',
+                'route' => 'admin.role.index',
+            ],
+            [
+                'name' => 'Editar',
+            ],
+        ];
+
         $Permissions = Permission::get();
         $Menus = Menu::get();
 
@@ -144,20 +163,10 @@ class RoleController extends Controller
             }
         }
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Funções',
-                'route' => 'admin.role.index',
-            ],
-            [
-                'name' => 'Editar',
-            ],
-        ];
-
         return view('admin.role.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Role' => $Role,
             'PermissionsGroupByName' => $PermissionsGroupByName,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

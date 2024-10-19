@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -18,18 +19,11 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $Categories = Category::with('log', 'company')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when($request->company_id, function($query) use ($request) {
-            $query->where('company_id', $request->company_id);
-        })
-        ->when(auth()->user()->can('category.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('name', 'ASC')
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Categorias',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -46,16 +40,32 @@ class CategoryController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Categorias',
-            ],
+        $gates = [
+            'create' => Gate::allows('category.create'),
+            'edit' => Gate::allows('category.edit'),
+            'destroy' => Gate::allows('category.destroy'),
+            'restore' => Gate::allows('category.restore'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Categories = Category::with('log', 'company')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->company_id, function($query) use ($request) {
+            $query->where('company_id', $request->company_id);
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('name', 'ASC')
+        ->get();
+
         return view('admin.category.index', [
-            'Categories' =>  $Categories,
-            'data_filter' => $data_filter,
             'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
+            'Categories' =>  $Categories,
         ]);
     }
 
@@ -77,8 +87,8 @@ class CategoryController extends Controller
         ];
 
         return view('admin.category.create', [
-            'Companies' => Company::orderBy('name')->get(),
             'data_breadcrumbs' => $data_breadcrumbs,
+            'Companies' => Company::orderBy('name')->get(),
         ]);
     }
 
@@ -133,9 +143,9 @@ class CategoryController extends Controller
         ];
 
         return view('admin.category.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Category' => $Category,
             'Companies' => Company::orderBy('name')->get(),
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

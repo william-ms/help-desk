@@ -7,11 +7,12 @@ use App\Http\Requests\StoreMenuRequest;
 use App\Http\Requests\UpdateMenuRequest;
 use App\Models\MenuCategory;
 use App\Models\Menu;
+use App\Models\Permission;
 use App\Traits\PhosphorDuotoneTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\PermissionRegistrar;
 
 class MenuController extends Controller
@@ -25,19 +26,12 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        $Menus = Menu::with('menu_category')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when($request->menu_category_id, function($query) use ($request) {
-            $query->where('menu_category_id', $request->menu_category_id);
-        })
-        ->when(auth()->user()->can('menu.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('menu_category_id')->orderBy('order')
-        ->get();
-
+        $data_breadcrumbs = [
+            [
+                'name' => 'Menus',
+            ],
+        ];
+        
         $data_filter = [
             [
                 'type' => 'text',
@@ -52,17 +46,34 @@ class MenuController extends Controller
                 'data' => MenuCategory::get(),
             ],
         ];
-
-        $data_breadcrumbs = [
-            [
-                'name' => 'Menus',
-            ],
+        
+        $gates = [
+            'create' => Gate::allows('menu.create'),
+            'edit' => Gate::allows('menu.edit'),
+            'destroy' => Gate::allows('menu.destroy'),
+            'restore' => Gate::allows('menu.restore'),
+            'order' => Gate::allows('menu.order'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Menus = Menu::with('menu_category', 'log', 'permissions')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->menu_category_id, function($query) use ($request) {
+            $query->where('menu_category_id', $request->menu_category_id);
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('menu_category_id')->orderBy('order')
+        ->get();
+        
         return view('admin.menu.index', [
-            'Menus' => $Menus,
             'data_filter' => $data_filter,
-            'data_breadcrumbs' => $data_breadcrumbs
+            'data_breadcrumbs' => $data_breadcrumbs,
+            'gates' => $gates,
+            'Menus' => $Menus,
         ]);
     }
 
@@ -73,17 +84,6 @@ class MenuController extends Controller
      */
     public function create()
     {
-        $MenuCategories = MenuCategory::get();
-
-        $preset_permissions = [
-            ['name' => 'index', 'label' => 'Listar', 'color' => 'info'],
-            ['name' => 'show', 'label' => 'Ver', 'color' => 'info'],
-            ['name' => 'create', 'label' => 'Criar', 'color' => 'warning'],
-            ['name' => 'edit', 'label' => 'Editar', 'color' => 'danger'],
-            ['name' => 'destroy', 'label' => 'Deletar', 'color' => 'danger'],
-            ['name' => 'restore', 'label' => 'Restaurar', 'color' => 'warning'],
-        ];
-
         $data_breadcrumbs = [
             [
                 'name' => 'Menus',
@@ -94,11 +94,22 @@ class MenuController extends Controller
             ],
         ];
 
+        $preset_permissions = [
+            ['name' => 'index', 'label' => 'Listar', 'color' => 'info'],
+            ['name' => 'show', 'label' => 'Ver', 'color' => 'info'],
+            ['name' => 'create', 'label' => 'Criar', 'color' => 'warning'],
+            ['name' => 'edit', 'label' => 'Editar', 'color' => 'danger'],
+            ['name' => 'destroy', 'label' => 'Deletar', 'color' => 'danger'],
+            ['name' => 'restore', 'label' => 'Restaurar', 'color' => 'warning'],
+        ];
+        
+        $MenuCategories = MenuCategory::get();
+
         return view('admin.menu.create', [
+            'data_breadcrumbs' => $data_breadcrumbs,
+            'preset_permissions' => $preset_permissions,
             'MenuCategories' => $MenuCategories,
             'Icons' => $this->PhosphorDuotoneIcons,
-            'preset_permissions' => $preset_permissions,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 
@@ -156,8 +167,6 @@ class MenuController extends Controller
      */
     public function edit(Menu $Menu)
     {
-        $MenuCategories = MenuCategory::get();
-
         $data_breadcrumbs = [
             [
                 'name' => 'Menus',
@@ -167,12 +176,14 @@ class MenuController extends Controller
                 'name' => 'Editar',
             ],
         ];
+        
+        $MenuCategories = MenuCategory::get();
 
         return view('admin.menu.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Menu' => $Menu,
             'MenuCategories' => $MenuCategories,
             'Icons' => $this->PhosphorDuotoneIcons,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

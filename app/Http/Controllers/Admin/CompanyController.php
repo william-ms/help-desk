@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CompanyController extends Controller
 {
@@ -17,15 +18,11 @@ class CompanyController extends Controller
      */
     public function index(Request $request)
     {
-        $Companies = Company::with('log')
-        ->when($request->name, function($query) use ($request) {
-            $query->where('name', 'LIKE', "%{$request->name}%");
-        })
-        ->when(auth()->user()->can('company.restore'), function($query) {
-            $query->withTrashed();
-        })
-        ->orderBy('name', 'ASC')
-        ->get();
+        $data_breadcrumbs = [
+            [
+                'name' => 'Empresas',
+            ],
+        ];
 
         $data_filter = [
             [
@@ -36,16 +33,29 @@ class CompanyController extends Controller
             ],
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Empresas',
-            ],
+        $gates = [
+            'create' => Gate::allows('company.create'),
+            'edit' => Gate::allows('company.edit'),
+            'destroy' => Gate::allows('company.destroy'),
+            'restore' => Gate::allows('company.restore'),
+            'log_show' => Gate::allows('log.show'),
         ];
 
+        $Companies = Company::with('log')
+        ->when($request->name, function($query) use ($request) {
+            $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($gates['restore'], function($query) {
+            $query->withTrashed();
+        })
+        ->orderBy('name', 'ASC')
+        ->get();
+
         return view('admin.company.index', [
-            'Companies' =>  $Companies,
-            'data_filter' => $data_filter,
             'data_breadcrumbs' => $data_breadcrumbs,
+            'data_filter' => $data_filter,
+            'gates' => $gates,
+            'Companies' =>  $Companies,
         ]);
     }
 
@@ -122,8 +132,8 @@ class CompanyController extends Controller
         ];
 
         return view('admin.company.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Company' => $Company,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 

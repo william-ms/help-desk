@@ -25,18 +25,18 @@
 
                             <div>
                                 @if (empty(request()->all()))
-                                    @can('menu.order')
+                                    @if ($gates['order'])
                                         <x-button form="order" icon="ti ti-arrows-down-up" title="Atualizar ordem dos menus">
                                             Atualizar ordem
                                         </x-button>
-                                    @endcan
+                                    @endif
                                 @endif
 
-                                @can('menu.create')
+                                @if ($gates['create'])
                                     <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu.create') }}">
                                         Cadastrar menu
                                     </x-button>
-                                @endcan
+                                @endif
                             </div>
                         </div><!-- card-header -->
 
@@ -84,22 +84,22 @@
 
                                                 <td class="text-center">
                                                     @if (empty($Menu->deleted_at))
-                                                        @can('menu.edit')
+                                                        @if ($gates['edit'])
                                                             <x-button-icon icon="ti ti-edit" componentType="a" color="info" style="light" href="{{ route('admin.menu.edit', $Menu->id) }}" />
-                                                        @endcan
+                                                        @endif
 
-                                                        @can('menu.destroy')
+                                                        @if ($gates['destroy'])
                                                             <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.menu.destroy', $Menu->id) }}" data-permissions="{{ json_encode($Menu->permissions->pluck('name')->toArray()) }}" />
-                                                        @endcan
+                                                        @endif
                                                     @else
-                                                        @can('menu.restore')
+                                                        @if ($gates['restore'])
                                                             <x-button-icon type="button" icon="ti ti-upload" color="secondary" style="light" class="restore" data-link="{{ route('admin.menu.restore', $Menu->id) }}" />
-                                                        @endcan
+                                                        @endif
                                                     @endif
 
-                                                    @can('log.show')
+                                                    @if ($gates['log_show'])
                                                         <x-button-icon icon="ti ti-notes" color="warning" style="light" componentType="a" href="{{ route('admin.log.show', $Menu->log->id) }}" />
-                                                    @endcan
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @empty

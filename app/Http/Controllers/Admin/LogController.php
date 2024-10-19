@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class LogController extends Controller
 {
@@ -15,25 +16,12 @@ class LogController extends Controller
      */
     public function index(Request $request)
     {
-        $Logs = Log::with(['items'])
-        ->when($request->model_type, function($query) use ($request) {
-            $query->where('model_type', $request->model_type);
-        })
-        ->when($request->model_id, function($query) use ($request) {
-            $query->where('model_id', $request->model_id);
-        })
-        ->when($request->model_name, function($query) use ($request) {
-            $query->where('model_name', 'LIKE', "%{$request->model_name}%");
-        })
-        ->when($request->begin_date, function($query) use ($request) {
-            $query->where('updated_at', '>', $request->begin_date . ' ' . ($request->begin_time ?? ''));
-        })
-        ->when($request->end_date, function($query) use ($request) {
-            $query->where('updated_at', '<', $request->end_date . ' ' . ($request->end_time ?? ''));
-        })
-        ->latest()
-        ->get();
-
+        $data_breadcrumbs = [
+            [
+                'name' => 'Logs',
+            ],
+        ];
+        
         $data_filter = [
             [
                 'type' => 'select',
@@ -85,16 +73,34 @@ class LogController extends Controller
             ]
         ];
 
-        $data_breadcrumbs = [
-            [
-                'name' => 'Logs',
-            ],
+        $gates = [
+            'show' => Gate::allows('log.show'),
         ];
 
+        $Logs = Log::with(['items'])
+        ->when($request->model_type, function($query) use ($request) {
+            $query->where('model_type', $request->model_type);
+        })
+        ->when($request->model_id, function($query) use ($request) {
+            $query->where('model_id', $request->model_id);
+        })
+        ->when($request->model_name, function($query) use ($request) {
+            $query->where('model_name', 'LIKE', "%{$request->model_name}%");
+        })
+        ->when($request->begin_date, function($query) use ($request) {
+            $query->where('updated_at', '>', $request->begin_date . ' ' . ($request->begin_time ?? ''));
+        })
+        ->when($request->end_date, function($query) use ($request) {
+            $query->where('updated_at', '<', $request->end_date . ' ' . ($request->end_time ?? ''));
+        })
+        ->latest()
+        ->get();
+
         return view('admin.log.index', [
-            'Logs' => $Logs,
+            'data_breadcrumbs' => $data_breadcrumbs,
             'data_filter' => $data_filter,
-            'data_breadcrumbs' => $data_breadcrumbs
+            'gates' => $gates,
+            'Logs' => $Logs,
         ]);
     }
 
@@ -106,8 +112,6 @@ class LogController extends Controller
      */
     public function show(Log $Log)
     {
-        $Log->load('items');
-
         $data_breadcrumbs = [
             [
                 'name' => 'Logs',
@@ -118,9 +122,11 @@ class LogController extends Controller
             ],
         ];
 
+        $Log->load('items');
+
         return view('admin.log.show', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Log' => $Log,
-            'data_breadcrumbs' => $data_breadcrumbs
         ]);
     }
 }

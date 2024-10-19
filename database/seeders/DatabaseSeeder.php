@@ -6,10 +6,10 @@ use App\Models\Company;
 use App\Models\Departament;
 use App\Models\Menu;
 use App\Models\MenuCategory;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,75 +25,79 @@ class DatabaseSeeder extends Seeder
         MenuCategory::factory()->permissions();
         MenuCategory::factory()->admin();
 
-        Menu::factory()->dashboard();
-        Menu::factory()->menu_categories();
-        Menu::factory()->menus();
-        Menu::factory()->permissions();
-        Menu::factory()->roles();
-        Menu::factory()->users();
-        Menu::factory()->companies();
-        Menu::factory()->departaments();
-        Menu::factory()->categories();
-        Menu::factory()->subcategories();
-        Menu::factory()->logs();
+        $dashboard = Menu::factory()->dashboard();
+        $menu_category = Menu::factory()->menu_categories();
+        $menu = Menu::factory()->menus();
+        $permission = Menu::factory()->permissions();
+        $role = Menu::factory()->roles();
+        $user = Menu::factory()->users();
+        $company = Menu::factory()->companies();
+        $departament = Menu::factory()->departaments();
+        $category = Menu::factory()->categories();
+        $subcategory = Menu::factory()->subcategories();
+        $log = Menu::factory()->logs();
 
-        Permission::create(['name' => 'menu.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu.restore', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu.order', 'guard_name' => 'web']);
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.index', 'guard_name' => 'web'])->id;
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.create', 'guard_name' => 'web'])->id;
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.edit', 'guard_name' => 'web'])->id;
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.restore', 'guard_name' => 'web'])->id;
+        $Permissions['menu'][] = Permission::create(['name' => 'menu.order', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'menu_category.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu_category.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu_category.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu_category.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu_category.restore', 'guard_name' => 'web']);
-        Permission::create(['name' => 'menu_category.order', 'guard_name' => 'web']);
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.index', 'guard_name' => 'web'])->id;
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.create', 'guard_name' => 'web'])->id;
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.edit', 'guard_name' => 'web'])->id;
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.restore', 'guard_name' => 'web'])->id;
+        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.order', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'permission.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'permission.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'permission.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'permission.destroy', 'guard_name' => 'web']);
+        $Permissions['permission'][] = Permission::create(['name' => 'permission.index', 'guard_name' => 'web'])->id;
+        $Permissions['permission'][] = Permission::create(['name' => 'permission.create', 'guard_name' => 'web'])->id;
+        $Permissions['permission'][] = Permission::create(['name' => 'permission.edit', 'guard_name' => 'web'])->id;
+        $Permissions['permission'][] = Permission::create(['name' => 'permission.destroy', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'role.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'role.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'role.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'role.destroy', 'guard_name' => 'web']);
+        $Permissions['role'][] = Permission::create(['name' => 'role.index', 'guard_name' => 'web'])->id;
+        $Permissions['role'][] = Permission::create(['name' => 'role.create', 'guard_name' => 'web'])->id;
+        $Permissions['role'][] = Permission::create(['name' => 'role.edit', 'guard_name' => 'web'])->id;
+        $Permissions['role'][] = Permission::create(['name' => 'role.destroy', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'user.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'user.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'user.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'user.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'user.restore', 'guard_name' => 'web']);
-        Permission::create(['name' => 'user.permissions', 'guard_name' => 'web']);
+        $Permissions['user'][] = Permission::create(['name' => 'user.index', 'guard_name' => 'web'])->id;
+        $Permissions['user'][] = Permission::create(['name' => 'user.create', 'guard_name' => 'web'])->id;
+        $Permissions['user'][] = Permission::create(['name' => 'user.edit', 'guard_name' => 'web'])->id;
+        $Permissions['user'][] = Permission::create(['name' => 'user.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['user'][] = Permission::create(['name' => 'user.restore', 'guard_name' => 'web'])->id;
+        $Permissions['user'][] = Permission::create(['name' => 'user.permissions', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'company.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'company.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'company.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'company.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'company.restore', 'guard_name' => 'web']);
+        $Permissions['company'][] = Permission::create(['name' => 'company.index', 'guard_name' => 'web'])->id;
+        $Permissions['company'][] = Permission::create(['name' => 'company.create', 'guard_name' => 'web'])->id;
+        $Permissions['company'][] = Permission::create(['name' => 'company.edit', 'guard_name' => 'web'])->id;
+        $Permissions['company'][] = Permission::create(['name' => 'company.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['company'][] = Permission::create(['name' => 'company.restore', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'departament.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'departament.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'departament.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'departament.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'departament.restore', 'guard_name' => 'web']);
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.index', 'guard_name' => 'web'])->id;
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.create', 'guard_name' => 'web'])->id;
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.edit', 'guard_name' => 'web'])->id;
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.restore', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'category.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'category.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'category.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'category.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'category.restore', 'guard_name' => 'web']);
+        $Permissions['category'][] = Permission::create(['name' => 'category.index', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.create', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.edit', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.restore', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'subcategory.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'subcategory.create', 'guard_name' => 'web']);
-        Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web']);
-        Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web']);
-        Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web']);
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.index', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.create', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web'])->id;
 
-        Permission::create(['name' => 'log.index', 'guard_name' => 'web']);
-        Permission::create(['name' => 'log.show', 'guard_name' => 'web']);
+        $Permissions['log'][] = Permission::create(['name' => 'log.index', 'guard_name' => 'web'])->id;
+        $Permissions['log'][] = Permission::create(['name' => 'log.show', 'guard_name' => 'web'])->id;
+
+        foreach($Permissions as $Menu => $Group) {
+            $$Menu->permissions()->sync($Group);
+        }
 
         $RoleAdmin = Role::create(['name' => 'Administrador', 'guard_name' => 'web']); 
         $RoleUser = Role::create(['name' => 'Usuário', 'guard_name' => 'web']); 

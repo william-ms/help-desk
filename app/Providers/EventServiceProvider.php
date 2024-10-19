@@ -29,8 +29,8 @@ class EventServiceProvider extends ServiceProvider
     {
         \App\Models\MenuCategory::observe(LogObserver::class);
         \App\Models\Menu::observe(LogObserver::class);
-        \Spatie\Permission\Models\Permission::observe(LogObserver::class);
-        \Spatie\Permission\Models\Role::observe(LogObserver::class);
+        \App\Models\Permission::observe(LogObserver::class);
+        \App\Models\Role::observe(LogObserver::class);
         \App\Models\User::observe(LogObserver::class);
         \App\Models\Company::observe(LogObserver::class);
         \App\Models\Departament::observe(LogObserver::class);
