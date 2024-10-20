@@ -105,8 +105,11 @@ class DatabaseSeeder extends Seeder
         $Company_1 = Company::create(['name' => 'MedMais - Centro']);
         $Company_2 = Company::create(['name' => 'MedMais - Benfica']);
 
-        $Departament_1 = Departament::create(['name' => 'TI']);
-        $Departament_2 = Departament::create(['name' => 'Recepção']);
+        $Departament_1 = Departament::create(['name' => 'TI', 'company_id' => $Company_1->id]);
+        $Departament_2 = Departament::create(['name' => 'Recepção', 'company_id' => $Company_1->id]);
+        $Departament_3 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_1->id]);
+        $Departament_4 = Departament::create(['name' => 'Ti', 'company_id' => $Company_2->id]);
+        $Departament_5 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_2->id]);
 
         $Admin = User::factory()->admin();
         $Admin->companies()->sync([$Company_1->id, $Company_2->id]);

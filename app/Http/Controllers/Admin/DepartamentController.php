@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDepartamentRequest;
 use App\Http\Requests\UpdateDepartamentRequest;
+use App\Models\Company;
 use App\Models\Departament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -31,6 +32,12 @@ class DepartamentController extends Controller
                 'input_name' => 'name',
                 'placeholder' => 'Informe o nome do departamento'
             ],
+            [
+                'type' => 'select',
+                'label' => 'Empresa',
+                'input_name' => 'company_id',
+                'data' => Company::orderBy('name')->get(),
+            ],
         ];
      
         $gates = [
@@ -41,9 +48,12 @@ class DepartamentController extends Controller
             'log_show' => Gate::allows('log.show'),
         ];
 
-        $Departaments = Departament::with('log')
+        $Departaments = Departament::with('log', 'company')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
+        })
+        ->when($request->company_id, function($query) use ($request) {
+            $query->where('company_id', $request->company_id);
         })
         ->when($gates['restore'], function($query) {
             $query->withTrashed();
@@ -78,6 +88,7 @@ class DepartamentController extends Controller
 
         return view('admin.departament.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
+            'Companies' => Company::orderBy('name')->get(),
         ]);
     }
 
@@ -91,10 +102,10 @@ class DepartamentController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Departament::where('name', $data['name'])->withTrashed()->get();
+        $Equals = Departament::where('name', $data['name'])->where('company_id', $data['company_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restuarar esse departamento!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para essa empresa um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restuarar esse departamento!"])->withInput();
         }
 
         Departament::create($data);
@@ -134,6 +145,7 @@ class DepartamentController extends Controller
         return view('admin.departament.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
             'Departament' => $Departament,
+            'Companies' => Company::orderBy('name')->get(),
         ]);
     }
 
@@ -148,10 +160,10 @@ class DepartamentController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Departament::where('id', '!=', $Departament->id)->where('name', $data['name'])->withTrashed()->get();
+        $Equals = Departament::where('id', '!=', $Departament->id)->where('company_id', $data['company_id'])->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse departamento!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para essa empresa um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse departamento!"])->withInput();
         }
 
         $Departament->update($data);
