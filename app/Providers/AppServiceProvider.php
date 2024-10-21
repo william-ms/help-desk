@@ -32,12 +32,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer(['admin.base'], function($view) {
-            if (auth()->user()->hasRole(1)) {
+
+            $User = auth()->user();
+//
+            if ($User->hasRole(1)) {
                 $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) {
                     $query->orderBy('order');
                 }])->whereHas('menus')->orderBy('order')->get();
             } else {
-                $permissions = auth()->user()->permissions->filter(function ($item) {
+                $menus = $User->permissions->merge($User->roles()->first()->permissions)->filter(function ($item) {
                     if (str_contains($item->name, '.index')) {
                         $item->name = str_replace('.index', '', $item->name);
                         return true;
@@ -46,10 +49,10 @@ class AppServiceProvider extends ServiceProvider
                     return false;
                 })->pluck('name');
             
-                $permissions->push('dashboard');
+                $menus->push('dashboard');
 
-                $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) use ($permissions) {
-                    $query->whereIn('route', $permissions)->orderBy('order');
+                $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) use ($menus) {
+                    $query->whereIn('route', $menus)->orderBy('order');
                 }])->orderBy('order')->get();
             }
 
@@ -57,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
             if(!session()->has('UserSettings')) {
                 $UserSettings = [];
 
-                foreach (auth()->user()->settings as $Setting) {
+                foreach ($User->settings as $Setting) {
                     $UserSettings[$Setting->key] = $Setting->value;
                 }
 
