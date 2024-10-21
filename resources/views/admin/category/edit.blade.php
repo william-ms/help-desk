@@ -44,16 +44,34 @@
                                 @csrf
                                 @method('PUT')
 
-                                {{-- [select] - Empresa --}}
-                                <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
-                                    <div class="col-10">
-                                        <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
-                                            <option value="">Selecione uma empresa</option>
+                                @if ($Companies->count() > 1)
+                                    {{-- [select] - Empresa --}}
+                                    <div class="row my-3 align-items-center">
+                                        <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
+                                        <div class="col-10">
+                                            <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
+                                                <option value="">Selecione uma empresa</option>
 
-                                            @foreach ($Companies as $Company)
-                                                <option value="{{ $Company->id }}" {{ !empty(old('company_id')) ? (old('company_id') == $Company->id ? 'selected' : '') : ($Category->company_id == $Company->id ? 'selected' : '') }}>
-                                                    {{ $Company->name }}
+                                                @foreach ($Companies as $Company)
+                                                    <option value="{{ $Company->id }}" {{ !empty(old('company_id')) ? (old('company_id') == $Company->id ? 'selected' : '') : ($Category->departament->company_id == $Company->id ? 'selected' : '') }}>
+                                                        {{ $Company->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- [select] - Departamento --}}
+                                <div class="row my-3 align-items-center">
+                                    <label class="col-2 col-form-label required" for="departament_id">Departamento :</label>
+                                    <div class="col-10">
+                                        <select class="form-control" id="departament_id" name="departament_id" data-live-search="true" required>
+                                            <option value="">Selecione um departamento</option>
+
+                                            @foreach ($Departaments as $Departament)
+                                                <option value="{{ $Departament->id }}" class="company-{{ $Departament->company_id }}" {{ !empty(old('departament_id')) ? (old('departament_id') == $Departament->id ? 'selected' : '') : ($Category->departament_id == $Departament->id ? 'selected' : '') }}>
+                                                    {{ $Departament->name }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -134,7 +152,28 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
+            //::::::::::::::::::::::::::::::::::::::::::::: SELECT PICKER :::::::::::::::::::::::::::::::::::::::::::://
             $('select').selectpicker();
+
+            @if ($Companies->count() > 1)
+                //::::::::::::::::::::::::::::::::::::::: ALTERAR DEPARTAMENTOS :::::::::::::::::::::::::::::::::::::://
+                function show_departaments(company_id) {
+                    $('#departament_id option:not(":first-child")').prop('hidden', true);
+                    $('.company-' + company_id).prop('hidden', false);
+
+                    $('#departament_id').selectpicker('refresh');
+                }
+
+                //:::::::::: AO CARREGAR A PÁGINA :::::::::://
+                show_departaments($('#company_id').val());
+
+                //:::::::::: AO ALTERAR A EMPRESA :::::::::://
+                $('#company_id').on('change', function() {
+
+                    $('#departament_id option:first-child').prop('selected', true);
+                    show_departaments($(this).val());
+                });
+            @endif
         });
     </script>
 @endpush

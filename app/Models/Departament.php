@@ -28,6 +28,10 @@ class Departament extends Model
         'deleted_at',
     ];
 
+    public function users() {
+        return $this->belongsToMany(User::class, 'user_departament');
+    }
+
     public function company()
     {
         return $this->belongsTo(Company::class);

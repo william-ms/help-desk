@@ -48,8 +48,9 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
-                                        <th style="width: 40%">Categoria</th>
-                                        <th style="width: 40%">Empresa</th>
+                                        <th style="width: 30%">Categoria</th>
+                                        <th style="width: 25%">Departamento</th>
+                                        <th style="width: 25%">Empresa</th>
                                         <th class="text-center"style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -61,7 +62,9 @@
 
                                             <td>{{ $Category->name }}</td>
 
-                                            <td>{{ $Category->company->name }}</td>
+                                            <td>{{ $Category->departament->name }}</td>
+
+                                            <td>{{ $Category->departament->company->name }}</td>
 
                                             <td class="text-center">
                                                 @if (empty($Category->deleted_at))
@@ -115,12 +118,22 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.bootstrap5.css" />
+
+    <style>
+        table.dataTable tr.dtrg-group.dtrg-level-0 th {
+            text-align: center;
+            text-transform: uppercase;
+        }
+    </style>
 @endpush
 
 @push('scripts')
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/rowGroup.bootstrap5.js"></script>
 
     <!-- Sweet Alerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -166,9 +179,19 @@
 
             @if (!$Categories->isEmpty())
                 var table = $('#table').DataTable({
+                    order: [
+                        [2, 'asc']
+                    ],
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },
+                    rowGroup: {
+                        dataSrc: 2
+                    },
+                    columnDefs: [{
+                        target: 2,
+                        visible: false,
+                    }]
                 });
             @endif
         });

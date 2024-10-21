@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Models\Company;
+use App\Models\Departament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,6 +26,16 @@ class CategoryController extends Controller
             ],
         ];
 
+        $gates = [
+            'create' => Gate::allows('category.create'),
+            'edit' => Gate::allows('category.edit'),
+            'destroy' => Gate::allows('category.destroy'),
+            'restore' => Gate::allows('category.restore'),
+            'companies' => Gate::allows('category.companies'),
+            'departaments' => Gate::allows('category.departaments'),
+            'log_show' => Gate::allows('log.show'),
+        ];
+
         $data_filter = [
             [
                 'type' => 'text',
@@ -34,29 +45,53 @@ class CategoryController extends Controller
             ],
             [
                 'type' => 'select',
+                'label' => 'Departamento',
+                'input_name' => 'departament',
+                'data' => Departament::select('name')->distinct()->when(!$gates['departaments'], function($query) {
+                    $query->whereHas('users', function ($query) {
+                        $query->where('users.id', auth()->id());
+                    });
+                })->orderBy('name')->get(),
+                'field_key' => 'name'
+            ],
+            [
+                'type' => 'select',
                 'label' => 'Empresa',
                 'input_name' => 'company_id',
-                'data' => Company::orderBy('name')->get(),
+                'data' => Company::when(!$gates['companies'], function($query) {
+                    $query->whereHas('users', function ($query) {
+                        $query->where('users.id', auth()->id());
+                    });
+                })->orderBy('name')->get()
             ],
         ];
 
-        $gates = [
-            'create' => Gate::allows('category.create'),
-            'edit' => Gate::allows('category.edit'),
-            'destroy' => Gate::allows('category.destroy'),
-            'restore' => Gate::allows('category.restore'),
-            'log_show' => Gate::allows('log.show'),
-        ];
-
-        $Categories = Category::with('log', 'company')
+        $Categories = Category::with(['log', 'departament.company'])
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
+        ->when($request->departament, function($query) use ($request) {
+            $query->whereHas('departament', function($query) use ($request){
+                $query->where('name', $request->departament);
+            });
+        })
         ->when($request->company_id, function($query) use ($request) {
-            $query->where('company_id', $request->company_id);
+            $query->whereHas('departament', function ($query) use ($request) {
+                $query->where('company_id', $request->company_id);
+            });
         })
         ->when($gates['restore'], function($query) {
             $query->withTrashed();
+        })
+        ->when(!$gates['companies'], function($query) {
+            $query->whereHas('departament.company.users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })
+        ->when(!$gates['departaments'], function($query) {
+            $query->whereHas('departament.users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
         })
         ->orderBy('name', 'ASC')
         ->get();
@@ -86,9 +121,22 @@ class CategoryController extends Controller
             ],
         ];
 
+        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
+            $query->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
+        $Departaments = Departament::when($Companies->count() == 1, function($query) use ($Companies) {
+            $query->where('company_id', $Companies->first()->id)->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
         return view('admin.category.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
-            'Companies' => Company::orderBy('name')->get(),
+            'Companies' => $Companies,
+            'Departaments' => $Departaments,
         ]);
     }
 
@@ -102,10 +150,10 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('name', $data['name'])->where('company_id', $data['company_id'])->withTrashed()->get();
+        $Equals = Category::where('name', $data['name'])->where('departament_id', $data['departament_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para essa empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
         Category::create($data);
@@ -142,10 +190,23 @@ class CategoryController extends Controller
             ],
         ];
 
+        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
+            $query->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
+        $Departaments = Departament::when($Companies->count() == 1, function($query) use ($Companies) {
+            $query->where('company_id', $Companies->first()->id)->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
         return view('admin.category.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
             'Category' => $Category,
-            'Companies' => Company::orderBy('name')->get(),
+            'Companies' => $Companies,
+            'Departaments' => $Departaments,
         ]);
     }
 
@@ -160,10 +221,10 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('id', '!=', $Category->id)->where('company_id', $data['company_id'])->where('name', $data['name'])->withTrashed()->get();
+        $Equals = Category::where('id', '!=', $Category->id)->where('departament_id', $data['departament_id'])->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para essa empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
         $Category->update($data);

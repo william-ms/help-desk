@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Company;
 use App\Models\Departament;
 use App\Models\Menu;
@@ -20,23 +21,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        MenuCategory::factory()->navigation();
-        MenuCategory::factory()->menus();
-        MenuCategory::factory()->permissions();
-        MenuCategory::factory()->admin();
-
-        $dashboard = Menu::factory()->dashboard();
-        $menu_category = Menu::factory()->menu_categories();
-        $menu = Menu::factory()->menus();
-        $permission = Menu::factory()->permissions();
-        $role = Menu::factory()->roles();
-        $user = Menu::factory()->users();
-        $company = Menu::factory()->companies();
-        $departament = Menu::factory()->departaments();
-        $category = Menu::factory()->categories();
-        $subcategory = Menu::factory()->subcategories();
-        $log = Menu::factory()->logs();
-
         $Permissions['menu'][] = Permission::create(['name' => 'menu.index', 'guard_name' => 'web'])->id;
         $Permissions['menu'][] = Permission::create(['name' => 'menu.create', 'guard_name' => 'web'])->id;
         $Permissions['menu'][] = Permission::create(['name' => 'menu.edit', 'guard_name' => 'web'])->id;
@@ -85,22 +69,38 @@ class DatabaseSeeder extends Seeder
         $Permissions['category'][] = Permission::create(['name' => 'category.edit', 'guard_name' => 'web'])->id;
         $Permissions['category'][] = Permission::create(['name' => 'category.destroy', 'guard_name' => 'web'])->id;
         $Permissions['category'][] = Permission::create(['name' => 'category.restore', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.companies', 'guard_name' => 'web'])->id;
+        $Permissions['category'][] = Permission::create(['name' => 'category.departaments', 'guard_name' => 'web'])->id;
 
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.index', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.create', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web'])->id;
-
+        
         $Permissions['log'][] = Permission::create(['name' => 'log.index', 'guard_name' => 'web'])->id;
         $Permissions['log'][] = Permission::create(['name' => 'log.show', 'guard_name' => 'web'])->id;
 
-        foreach($Permissions as $Menu => $Group) {
-            $$Menu->permissions()->sync($Group);
-        }
+        MenuCategory::factory()->navigation();
+        MenuCategory::factory()->menus();
+        MenuCategory::factory()->permissions();
+        MenuCategory::factory()->admin();
 
-        $RoleAdmin = Role::create(['name' => 'Administrador', 'guard_name' => 'web']); 
-        $RoleUser = Role::create(['name' => 'Usuário', 'guard_name' => 'web']); 
+        Menu::factory()->dashboard([]);
+        Menu::factory()->menu_categories($Permissions['menu_category']);
+        Menu::factory()->menus($Permissions['menu']);
+        Menu::factory()->permissions($Permissions['permission']);
+        Menu::factory()->roles($Permissions['role']);
+        Menu::factory()->users($Permissions['user']);
+        Menu::factory()->companies($Permissions['company']);
+        Menu::factory()->departaments($Permissions['departament']);
+        Menu::factory()->categories($Permissions['category']);
+        Menu::factory()->subcategories($Permissions['subcategory']);
+        Menu::factory()->logs($Permissions['log']);
+
+        $RoleAdmin = Role::factory()->admin();
+        $RoleUser = Role::factory()->user();
+        $RoleTechnical = Role::factory()->technical($Permissions);
 
         $Company_1 = Company::create(['name' => 'MedMais - Centro']);
         $Company_2 = Company::create(['name' => 'MedMais - Benfica']);
@@ -108,25 +108,32 @@ class DatabaseSeeder extends Seeder
         $Departament_1 = Departament::create(['name' => 'TI', 'company_id' => $Company_1->id]);
         $Departament_2 = Departament::create(['name' => 'Recepção', 'company_id' => $Company_1->id]);
         $Departament_3 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_1->id]);
-        $Departament_4 = Departament::create(['name' => 'Ti', 'company_id' => $Company_2->id]);
+        $Departament_4 = Departament::create(['name' => 'TI', 'company_id' => $Company_2->id]);
         $Departament_5 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_2->id]);
 
-        $Admin = User::factory()->admin();
-        $Admin->companies()->sync([$Company_1->id, $Company_2->id]);
-        $Admin->departaments()->sync([$Departament_1->id, $Departament_2->id]);
-        $Admin->assignRole($RoleAdmin->id);
-        $log_admin_data['companies'] = ['values' => [$Company_1->name, $Company_2->name],'title' => "Atribuiu o usuário as <b>empresas</b>"];
-        $log_admin_data['departaments'] = ['values' => [$Departament_1->name, $Departament_2->name],'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
-        $log_admin_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$RoleAdmin->name}</b>"];
-        register_log($Admin, 'update', 200, $log_admin_data);
+        $Category_1 = Category::create(['departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_2 = Category::create(['departament_id' => $Departament_1->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_3 = Category::create(['departament_id' => $Departament_2->id, 'name' => 'TEF', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_4 = Category::create(['departament_id' => $Departament_3->id, 'name' => 'Medicina do trabalho', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_5 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_6 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
 
-        $User = User::factory()->user();
-        $User->companies()->sync([$Company_1->id]);
-        $User->departaments()->sync([$Departament_1->id]);
-        $User->assignRole($RoleUser->id);
-        $log_user_data['companies'] = ['values' => [$Company_1->name],'title' => "Atribuiu o usuário as <b>empresas</b>"];
-        $log_user_data['departaments'] = ['values' => [$Departament_1->name],'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
-        $log_user_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$RoleUser->name}</b>"];
-        register_log($User, 'update', 200, $log_user_data);
+        User::factory()->admin(
+            collect([$Company_1, $Company_2]),
+            collect([$Departament_1, $Departament_2]),
+            $RoleAdmin
+        );
+
+        User::factory()->admin(
+            collect([$Company_1, $Company_2]),
+            collect([$Departament_1, $Departament_2]),
+            $RoleTechnical
+        );
+        
+        User::factory()->admin(
+            collect([$Company_1]),
+            collect([$Departament_1]),
+            $RoleUser
+        );
     }
 }

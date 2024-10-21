@@ -26,6 +26,10 @@ class Company extends Model
         'deleted_at',
     ];
 
+    public function users() {
+        return $this->belongsToMany(User::class, 'user_company');
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);
