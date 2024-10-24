@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
+use App\Models\Menu;
 use App\Models\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -94,6 +95,7 @@ class PermissionController extends Controller
 
         return view('admin.permission.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
+            'Menus' => Menu::orderBy('name')->get(),
         ]);
     }
 
@@ -106,15 +108,27 @@ class PermissionController extends Controller
     public function store(StorePermissionRequest $request)
     {
         $data = $request->validated();
-        $data['name'] = $data['route_prefix'] . '.' . $data['route_method'];
-        $data['guard_name'] = 'web';
-        unset($data['route_prefix'], $data['route_method']);
+
+        if(!empty($data['menu_id'])) {
+            $Menu = Menu::find($data['menu_id']);
+            $data['name'] = $Menu->route . '.' . $data['route_method'];
+        } else {
+            $data['name'] = $data['route_prefix'] . '.' . $data['route_method'];
+        }
 
         if (Permission::where('name', $data['name'])->first()) {
             return back()->withErrors(['name' => 'Já existe uma permissão cadastrada com esse prefixo e método!']);
         }
 
-        Permission::create($data);
+        $Permission = Permission::create([
+            'name' => $data['name'],
+            'guard_name' => 'web',
+        ]);
+
+        if(!empty($data['menu_id'])) {
+            $Menu->permissions()->attach($Permission->id);
+            register_log($Menu, 'update', 201, ['attached' => ['value' => "Associou ao menu a permissão <b>{$Permission->name}</b>"]]);
+        }
 
         return back()->with('success', 'Permissão cadastrada com sucesso!');
     }
@@ -153,8 +167,9 @@ class PermissionController extends Controller
 
 
         return view('admin.permission.edit', [
+            'data_breadcrumbs' => $data_breadcrumbs,
             'Permission' => $Permission,
-            'data_breadcrumbs' => $data_breadcrumbs
+            'Menus' => Menu::orderBy('name')->get(),
         ]);
     }
 
@@ -168,11 +183,31 @@ class PermissionController extends Controller
     public function update(UpdatePermissionRequest $request, Permission $Permission)
     {
         $data = $request->validated();
-        $data['name'] = $data['route_prefix'] . '.' . $data['route_method'];
-        unset($data['route_prefix'], $data['route_method']);
+
+        if(!empty($data['menu_id'])) {
+            $Menu = Menu::find($data['menu_id']);
+            $data['name'] = $Menu->route . '.' . $data['route_method'];
+        } else {
+            $Menu = null;
+            $data['name'] = $data['route_prefix'] . '.' . $data['route_method'];
+        }
 
         if (Permission::where('name', $data['name'])->where('id', '!=', $Permission->id)->first()) {
             return back()->withErrors(['name' => 'Já existe uma permissão cadastrada com esse prefixo e método!']);
+        }
+
+        $ActualMenu = $Permission->menu;
+
+        if($ActualMenu?->id != $Menu?->id) {
+            if(!empty($ActualMenu)) {
+                $ActualMenu->permissions()->detach($Permission->id);
+                register_log($ActualMenu, 'update', 201, ['detached' => ['value' => 'Desassociou do menu a permissão <b>'. $ActualMenu->route . '.' . $data['route_method'] . '</b>']]);
+            }
+
+            if(!empty($Menu)) {
+                $Menu->permissions()->attach($Permission->id);
+                register_log($Menu, 'update', 201, ['attached' => ['value' => 'Associou ao menu a permissão <b>'. $Menu->route . '.' . $data['route_method'] . '</b>']]);
+            }
         }
 
         $Permission->update($data);
@@ -188,7 +223,11 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $Permission)
     {
-        $Permission->load('users', 'roles');
+        $Permission->load('users', 'roles', 'menu');
+
+        $Menu = $Permission->menu;
+        $Menu->permissions()->detach($Permission->id);
+        register_log($Menu, 'update', 201, ['detached' => ['value' => "Desassociou do menu a permissão <b>{$Permission->name}</b>"]]);
 
         // Se a permissão pertence a alguma função, ela é removida da função
         if (count($Permission->roles) > 0) {

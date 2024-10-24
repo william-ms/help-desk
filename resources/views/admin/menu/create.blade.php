@@ -45,7 +45,7 @@
                                         <div class="row my-3">
                                             <label class="col-2 col-form-label required" for="menu_category_id">Categoria :</label>
                                             <div class="col-10 d-flex align-items-center">
-                                                <select class="form-control" id="menu_category_id" name="menu_category_id" required>
+                                                <select class="form-control" id="menu_category_id" name="menu_category_id" data-live-search="true" required>
                                                     <option value="">Selecione uma categoria</option>
 
                                                     @foreach ($MenuCategories as $MenuCategory)

@@ -23,10 +23,9 @@ class StorePermissionRequest extends FormRequest
      */
     public function rules()
     {
-        $request = $this->request->all();
-
         return [
-            'route_prefix' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
+            'menu_id' => ['nullable', 'integer'],
+            'route_prefix' => ['nullable', 'string', 'regex:/^[a-zA-Z_]+$/'],
             'route_method' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
         ];
     }

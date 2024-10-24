@@ -59,7 +59,7 @@
                                         <tr>
                                             <td>{{ $Permission->id }}</td>
 
-                                            <td>{{ explode('.', $Permission->name)[0] }}</td>
+                                            <td>{{ $Permission->menu->name ?? explode('.', $Permission->name)[0] }}</td>
                                             <td>{{ explode('.', $Permission->name)[1] }}</td>
 
                                             <td class="text-center">

@@ -46,12 +46,26 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <!-- [input] - Prefixo da rota -->
+                                        {{-- [input] - Menu --}}
                                         <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="route_prefix">Prefixo da rota:</label>
+                                            <label class="col-2 col-form-label" for="menu_id">Menu :</label>
+                                            <div class="col-10 d-flex align-items-center">
+                                                <select class="form-control" id="menu_id" name="menu_id" data-live-search="true">
+                                                    <option value="">Selecione um menu</option>
+
+                                                    @foreach ($Menus as $Menu)
+                                                        <option value="{{ $Menu->id }}" data-route="{{ $Menu->route }}" {{ !empty(old('menu_id')) && old('menu_id') == $Menu->id ? 'selected' : ($Menu->route == explode('.', $Permission->name)[0] ? 'selected' : '') }}>{{ $Menu->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {{-- [input] - Prefixo da rota --}}
+                                        <div class="row my-3 d-none">
+                                            <label class="col-2 col-form-label required" for="route-prefix">Prefixo da rota:</label>
 
                                             <div class="col-10  d-flex align-items-center">
-                                                <input type="text" class="form-control" id="route_prefix" name="route_prefix" value="{{ $Permission->prefix }}" placeholder="Informe o prefixo da rota" required />
+                                                <input type="text" class="form-control" id="route-prefix" name="route_prefix" value="{{ $Permission->prefix }}" placeholder="Informe o prefixo da rota" required />
                                             </div>
 
                                             <div class="col-2"></div>
@@ -61,11 +75,11 @@
                                             </div>
                                         </div>
 
-                                        <!-- [input] - Método da rota -->
+                                        {{-- [input] - Método da rota --}}
                                         <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="route_method">Método da rota:</label>
+                                            <label class="col-2 col-form-label required" for="route-method">Método da rota:</label>
                                             <div class="col-10 d-flex align-items-center">
-                                                <input type="text" class="form-control" id="route_method" name="route_method" value="{{ $Permission->method }}" placeholder="Informe o método da rota" required />
+                                                <input type="text" class="form-control" id="route-method" name="route_method" value="{{ $Permission->method }}" placeholder="Informe o método da rota" required />
                                             </div>
 
                                             <div class="col-2"></div>
@@ -97,3 +111,57 @@
         </div><!-- pc-content -->
     </section><!-- pc-container -->
 @endsection
+
+@push('css')
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/bootstrap-select.css') }}">
+
+    <style>
+        .form-control button {
+            background-color: #ffffff !important;
+            border: 1px solid #DBE0E5;
+        }
+
+        .form-control button[aria-expanded="true"] {
+            border-color: var(--bs-primary);
+            box-shadow: 0 0 0 2px rgba(var(--bs-primary-rgb), 0.2);
+            outline: 0;
+        }
+
+        .form-control button .filter-option {
+            color: #5B6B79;
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script src="{{ asset('assets/js/plugins/bootstrap-select.js') }}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('select').selectpicker();
+
+            //:::::::::::::::::::::::::::::::::::::::: ALTERAR PREFIXO DA ROTA ::::::::::::::::::::::::::::::::::::::://
+            let route = '';
+            let input_route_prefix = $('#route-prefix');
+            let wrapper_route_prefix = input_route_prefix.parent().parent();
+
+            function change_route_prefix(route) {
+                if (route) {
+                    input_route_prefix.val(route);
+                    wrapper_route_prefix.addClass('d-none');
+                } else {
+                    input_route_prefix.val('');
+                    wrapper_route_prefix.removeClass('d-none');
+                }
+            }
+
+            //:::::::::: AO CARREGAR A PÁGINA :::::::::://
+            change_route_prefix($('#menu_id').find(':selected').data('route'));
+
+            //:::::::::::: AO ALTERAR O MENU ::::::::::://
+            $('#menu_id').on('change', function() {
+                change_route_prefix($(this).find(':selected').data('route'));
+            });
+        });
+    </script>
+@endpush

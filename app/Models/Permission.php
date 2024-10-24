@@ -16,9 +16,9 @@ class Permission extends SpatiePermission
         'guard_name' => 'nome do guarda',
     ];
 
-    public function menus()
+    public function menu()
     {
-        return $this->belongsToMany(Menu::class);
+        return $this->hasOneThrough(Menu::class, MenuPermission::class, 'permission_id', 'id', 'id', 'menu_id');
     }
 
     public function log()

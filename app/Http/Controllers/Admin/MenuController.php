@@ -222,10 +222,11 @@ class MenuController extends Controller
     public function destroy(Menu $Menu)
     {
         $Menu->delete();
-        Permission::whereIn('name', $Menu->permissions->pluck('name'))->delete();
-        $Menu->permissions()->sync([]);
 
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
+        // Permission::whereIn('name', $Menu->permissions->pluck('name'))->delete();
+        // $Menu->permissions()->sync([]);
+
+        // app(PermissionRegistrar::class)->forgetCachedPermissions();
         
         return back()->with('success', 'Menu deletado com sucesso!');
     }

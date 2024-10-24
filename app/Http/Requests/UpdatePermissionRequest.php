@@ -24,7 +24,8 @@ class UpdatePermissionRequest extends FormRequest
     public function rules()
     {
         return [
-            'route_prefix' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
+            'menu_id' => ['nullable', 'integer'],
+            'route_prefix' => ['nullable', 'string', 'regex:/^[a-zA-Z_]+$/'],
             'route_method' => ['required', 'string', 'regex:/^[a-zA-Z_]+$/'],
         ];
     }
