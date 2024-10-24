@@ -25,6 +25,21 @@ class DepartamentController extends Controller
             ],
         ];
 
+        $gates = [
+            'create' => Gate::allows('departament.create'),
+            'edit' => Gate::allows('departament.edit'),
+            'destroy' => Gate::allows('departament.destroy'),
+            'restore' => Gate::allows('departament.restore'),
+            'companies' => Gate::allows('departament.companies'),
+            'log_show' => Gate::allows('log.show'),
+        ];
+
+        $Companies = Company::when(!$gates['companies'], function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
         $data_filter = [
             [
                 'type' => 'text',
@@ -36,16 +51,8 @@ class DepartamentController extends Controller
                 'type' => 'select',
                 'label' => 'Empresa',
                 'input_name' => 'company_id',
-                'data' => Company::orderBy('name')->get(),
+                'data' => $Companies,
             ],
-        ];
-     
-        $gates = [
-            'create' => Gate::allows('departament.create'),
-            'edit' => Gate::allows('departament.edit'),
-            'destroy' => Gate::allows('departament.destroy'),
-            'restore' => Gate::allows('departament.restore'),
-            'log_show' => Gate::allows('log.show'),
         ];
 
         $Departaments = Departament::with('log', 'company')
@@ -57,6 +64,11 @@ class DepartamentController extends Controller
         })
         ->when($gates['restore'], function($query) {
             $query->withTrashed();
+        })
+        ->when(!$gates['companies'], function($query) {
+            $query->whereHas('company.users', function($query) {
+                $query->where('id', auth()->id());
+            });
         })
         ->orderBy('name', 'ASC')
         ->get();
@@ -86,9 +98,15 @@ class DepartamentController extends Controller
             ],
         ];
 
+        $Companies = Company::when(!auth()->user()->can('departament.companies'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
         return view('admin.departament.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
-            'Companies' => Company::orderBy('name')->get(),
+            'Companies' => $Companies,
         ]);
     }
 
@@ -101,6 +119,12 @@ class DepartamentController extends Controller
     public function store(StoreDepartamentRequest $request)
     {
         $data = $request->validated();
+
+        if(!auth()->user()->can('departament.companies')) {
+            if(!auth()->user()->companies->contains('id', $data['company_id'])) {
+                return back()->withErrors(['name' => "Ocorreu um erro ao cadastrar o departamento. Tente novamente, se o erro persistir entre em contato com um administrador!"])->withInput();
+            }
+        }
 
         $Equals = Departament::where('name', $data['name'])->where('company_id', $data['company_id'])->withTrashed()->get();
 
@@ -142,10 +166,16 @@ class DepartamentController extends Controller
             ],
         ];
 
+        $Companies = Company::when(!auth()->user()->can('departament.companies'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })->orderBy('name')->get();
+
         return view('admin.departament.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
             'Departament' => $Departament,
-            'Companies' => Company::orderBy('name')->get(),
+            'Companies' => $Companies,
         ]);
     }
 
@@ -159,6 +189,12 @@ class DepartamentController extends Controller
     public function update(UpdateDepartamentRequest $request, Departament $Departament)
     {
         $data = $request->validated();
+
+        if(!auth()->user()->can('departament.companies')) {
+            if(!auth()->user()->companies->contains('id', $data['company_id'])) {
+                return back()->withErrors(['name' => "Ocorreu um erro ao cadastrar o departamento. Tente novamente, se o erro persistir entre em contato com um administrador!"])->withInput();
+            }
+        }
 
         $Equals = Departament::where('id', '!=', $Departament->id)->where('company_id', $data['company_id'])->where('name', $data['name'])->withTrashed()->get();
 

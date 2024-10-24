@@ -63,6 +63,7 @@ class DatabaseSeeder extends Seeder
         $Permissions['departament'][] = Permission::create(['name' => 'departament.edit', 'guard_name' => 'web'])->id;
         $Permissions['departament'][] = Permission::create(['name' => 'departament.destroy', 'guard_name' => 'web'])->id;
         $Permissions['departament'][] = Permission::create(['name' => 'departament.restore', 'guard_name' => 'web'])->id;
+        $Permissions['departament'][] = Permission::create(['name' => 'departament.companies', 'guard_name' => 'web'])->id;
 
         $Permissions['category'][] = Permission::create(['name' => 'category.index', 'guard_name' => 'web'])->id;
         $Permissions['category'][] = Permission::create(['name' => 'category.create', 'guard_name' => 'web'])->id;
@@ -77,6 +78,8 @@ class DatabaseSeeder extends Seeder
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web'])->id;
         $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.companies', 'guard_name' => 'web'])->id;
+        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.departaments', 'guard_name' => 'web'])->id;
         
         $Permissions['log'][] = Permission::create(['name' => 'log.index', 'guard_name' => 'web'])->id;
         $Permissions['log'][] = Permission::create(['name' => 'log.show', 'guard_name' => 'web'])->id;
