@@ -144,7 +144,7 @@
             text-transform: uppercase;
         }
 
-        .form-control:not(.dropdown) {
+        .pc-content table .form-control:not(.dropdown) {
             padding: 4px 9px !important;
         }
     </style>

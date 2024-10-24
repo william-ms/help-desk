@@ -123,10 +123,6 @@
             text-align: center;
             text-transform: uppercase;
         }
-
-        .form-control:not(.dropdown) {
-            padding: 4px 9px !important;
-        }
     </style>
 @endpush
 

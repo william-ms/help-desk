@@ -131,7 +131,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
 
     <style>
-        .form-control:not(.dropdown) {
+        .pc-content table .form-control:not(.dropdown) {
             padding: 4px 9px !important;
         }
     </style>
