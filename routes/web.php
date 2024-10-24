@@ -5,7 +5,7 @@ use App\Http\Controllers\Apis\TinyMCEController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('/', [DashboardController::class, 'index'])->name('home');
 
     Route::post('tinymce/add/image/', [TinyMCEController::class, 'add_images'])->name('tinymce.add.images');
 });
