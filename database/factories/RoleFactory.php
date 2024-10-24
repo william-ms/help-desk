@@ -43,6 +43,16 @@ class RoleFactory extends Factory
             $Permissions['departament'][2],
             $Permissions['departament'][3],
             $Permissions['departament'][4],
+            $Permissions['category'][0],
+            $Permissions['category'][1],
+            $Permissions['category'][2],
+            $Permissions['category'][3],
+            $Permissions['category'][4],
+            $Permissions['subcategory'][0],
+            $Permissions['subcategory'][1],
+            $Permissions['subcategory'][2],
+            $Permissions['subcategory'][3],
+            $Permissions['subcategory'][4],
         ]);
 
         return $Role;

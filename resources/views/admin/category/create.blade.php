@@ -157,11 +157,18 @@
                     $('#departament_id option:not(":first-child")').prop('hidden', true);
                     $('.company-' + company_id).prop('hidden', false);
 
+                    if (company_id) {
+                        $('#departament_id').attr('disabled', false);
+                        $('#departament_id option:first-child').text('Selecione um departamento');
+                    } else {
+                        $('#departament_id').attr('disabled', true);
+                        $('#departament_id option:first-child').text('Selecione uma empresa para ver os departamentos');
+                    }
+
                     $('#departament_id').selectpicker('refresh');
                 }
 
                 //:::::::::: AO CARREGAR A PÁGINA :::::::::://
-
                 show_departaments($('#company_id').val());
 
                 //:::::::::: AO ALTERAR A EMPRESA :::::::::://

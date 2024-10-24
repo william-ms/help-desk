@@ -36,6 +36,8 @@ class CategoryController extends Controller
             'log_show' => Gate::allows('log.show'),
         ];
 
+        [$Companies, $Departaments] = $this->get_collections();
+
         $data_filter = [
             [
                 'type' => 'text',
@@ -47,22 +49,14 @@ class CategoryController extends Controller
                 'type' => 'select',
                 'label' => 'Departamento',
                 'input_name' => 'departament',
-                'data' => Departament::select('name')->distinct()->when(!$gates['departaments'], function($query) {
-                    $query->whereHas('users', function ($query) {
-                        $query->where('users.id', auth()->id());
-                    });
-                })->orderBy('name')->get(),
+                'data' => $Departaments->unique('name'),
                 'field_key' => 'name'
             ],
             [
                 'type' => 'select',
                 'label' => 'Empresa',
                 'input_name' => 'company_id',
-                'data' => Company::when(!$gates['companies'], function($query) {
-                    $query->whereHas('users', function ($query) {
-                        $query->where('users.id', auth()->id());
-                    });
-                })->orderBy('name')->get()
+                'data' => $Companies->unique('name'),
             ],
         ];
 
@@ -88,7 +82,12 @@ class CategoryController extends Controller
                 $query->where('users.id', auth()->id());
             });
         })
-        ->when(!$gates['departaments'], function($query) {
+        ->when($gates['companies'] && !$gates['departaments'], function($query) {
+            $query->whereHas('departament', function($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
+            });
+        })
+        ->when(!$gates['departaments'] && !$gates['companies'], function($query) {
             $query->whereHas('departament.users', function ($query) {
                 $query->where('users.id', auth()->id());
             });
@@ -121,17 +120,7 @@ class CategoryController extends Controller
             ],
         ];
 
-        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
-            $query->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            });
-        })->orderBy('name')->get();
-
-        $Departaments = Departament::when($Companies->count() == 1, function($query) use ($Companies) {
-            $query->where('company_id', $Companies->first()->id)->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            });
-        })->orderBy('name')->get();
+        [$Companies, $Departaments] = $this->get_collections();
 
         return view('admin.category.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -190,17 +179,7 @@ class CategoryController extends Controller
             ],
         ];
 
-        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
-            $query->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            });
-        })->orderBy('name')->get();
-
-        $Departaments = Departament::when($Companies->count() == 1, function($query) use ($Companies) {
-            $query->where('company_id', $Companies->first()->id)->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            });
-        })->orderBy('name')->get();
+        [$Companies, $Departaments] = $this->get_collections();
 
         return view('admin.category.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -260,5 +239,47 @@ class CategoryController extends Controller
         }
 
         return back()->with('success', 'Categoria restaurada com sucesso!');
+    }
+
+    public function get_collections() {
+
+        $gates= [
+            'companies' => auth()->user()->can('category.companies'),
+            'departaments' => auth()->user()->can('category.departaments'),
+        ];
+
+        $Companies = Company::query();
+
+        if(!$gates['companies'] && !$gates['departaments']) {
+            $Companies->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            })->whereHas('departaments.users', function ($query) {
+                $query->where('users.id', auth()->id());
+            })->with(['departaments' => function($query) {
+                $query->whereHas('users', function ($query) {
+                    $query->where('users.id', auth()->id());
+                });
+            }]);
+
+        } else if($gates['companies'] && !$gates['departaments']) {
+            $Companies->whereHas('departaments', function ($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
+            })->with(['departaments' => function($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
+            }]);
+
+        } else if(!$gates['companies'] && $gates['departaments']) {
+            $Companies->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        } 
+
+        $Companies = $Companies->get();
+
+        $Departaments = $Companies->flatMap(function ($Company) {
+            return $Company->departaments;
+        });
+
+        return [$Companies, $Departaments];
     }
 }
