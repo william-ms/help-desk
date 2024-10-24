@@ -37,6 +37,11 @@ class Departament extends Model
         return $this->belongsTo(Company::class);
     }
 
+    public function categories() 
+    {
+        return $this->hasMany(Category::class);
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);

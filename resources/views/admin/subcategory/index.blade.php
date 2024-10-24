@@ -48,9 +48,10 @@
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
-                                        <th style="width: 30%">Subcategoria</th>
-                                        <th style="width: 25%">Categoria</th>
-                                        <th style="width: 25%">Empresa</th>
+                                        <th style="width: 20%">Subcategoria</th>
+                                        <th style="width: 20%">Categoria</th>
+                                        <th style="width: 20%">Departamento</th>
+                                        <th style="width: 20%">Empresa</th>
                                         <th class="text-center"style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -64,7 +65,9 @@
 
                                             <td>{{ $Subcategory->category->name }}</td>
 
-                                            <td>{{ $Subcategory->category->company->name }}</td>
+                                            <td>{{ $Subcategory->departament->name }}</td>
+
+                                            <td>{{ $Subcategory->company->name }}</td>
 
                                             <td class="text-center">
                                                 @if (empty($Subcategory->deleted_at))

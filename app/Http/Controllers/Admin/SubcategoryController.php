@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreSubcategoryRequest;
 use App\Http\Requests\UpdateSubcategoryRequest;
-use App\Models\Category;
 use App\Models\Company;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
@@ -26,6 +25,8 @@ class SubcategoryController extends Controller
             ],
         ];
 
+        [$Companies, $Departaments, $Categories] = $this->get_collections();
+
         $data_filter = [
             [
                 'type' => 'text',
@@ -36,14 +37,22 @@ class SubcategoryController extends Controller
             [
                 'type' => 'select',
                 'label' => 'Categoria',
-                'input_name' => 'category_id',
-                'data' => Category::orderBy('name')->get(),
+                'input_name' => 'category',
+                'data' => $Categories->unique('name'),
+                'field_key' => 'name',
+            ],
+            [
+                'type' => 'select',
+                'label' => 'Departamento',
+                'input_name' => 'departament',
+                'data' => $Departaments->unique('name'),
+                'field_key' => 'name',
             ],
             [
                 'type' => 'select',
                 'label' => 'Empresa',
-                'input_name' => 'company_id',
-                'data' => Company::orderBy('name')->get(),
+                'input_name' => 'company',
+                'data' => $Companies,
             ],
         ];
 
@@ -52,19 +61,43 @@ class SubcategoryController extends Controller
             'edit' => Gate::allows('subcategory.edit'),
             'destroy' => Gate::allows('subcategory.destroy'),
             'restore' => Gate::allows('subcategory.restore'),
+            'companies' => Gate::allows('subcategory.companies'),
+            'departaments' => Gate::allows('subcategory.departaments'),
             'log_show' => Gate::allows('log.show'),
         ];
 
-        $Subcategories = Subcategory::with('log', 'category.company')
+        $Subcategories = Subcategory::with('log', 'category.departament.company')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
-        ->when($request->category_id, function($query) use ($request) {
-            $query->where('category_id', $request->category_id);
+        ->when($request->category, function($query) use ($request) {
+            $query->whereHas('category', function($query) use ($request) {
+                $query->where('name', $request->category);
+            });
         })
-        ->when($request->company_id, function($query) use ($request) {
-            $query->whereHas('category', function ($query) use ($request) {
-                $query->where('company_id', $request->company_id);
+        ->when($request->departament, function($query) use ($request) {
+            $query->whereHas('category.departament', function ($query) use ($request) {
+                $query->where('name', $request->departament);
+            });
+        })
+        ->when($request->company, function($query) use ($request) {
+            $query->whereHas('category.departament.company', function ($query) use ($request) {
+                $query->where('id', $request->company);
+            });
+        })
+        ->when(!$gates['companies'], function($query) {
+            $query->whereHas('category.departament.company.users', function ($query) {
+                $query->where('users.id', auth()->id());
+            });
+        })
+        ->when($gates['companies'] && !$gates['departaments'], function($query) {
+            $query->whereHas('category.departament', function($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
+            });
+        })
+        ->when(!$gates['departaments'] && !$gates['companies'], function($query) {
+            $query->whereHas('category.departament.users', function ($query) {
+                $query->where('users.id', auth()->id());
             });
         })
         ->when($gates['restore'], function($query) {
@@ -98,9 +131,13 @@ class SubcategoryController extends Controller
             ],
         ];
 
+        [$Companies, $Departaments, $Categories] = $this->get_collections();
+        
         return view('admin.subcategory.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
-            'Categories' => Category::orderBy('name')->get(),
+            'Companies' => $Companies,
+            'Departaments' => $Departaments,
+            'Categories' => $Categories,
         ]);
     }
 
@@ -154,10 +191,14 @@ class SubcategoryController extends Controller
             ],
         ];
 
+        [$Companies, $Departaments, $Categories] = $this->get_collections();
+
         return view('admin.subcategory.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
             'Subcategory' => $Subcategory,
-            'Categories' => Category::orderBy('name')->get(),
+            'Companies' => $Companies,
+            'Departaments' => $Departaments,
+            'Categories' => $Categories,
         ]);
     }
 
@@ -180,7 +221,7 @@ class SubcategoryController extends Controller
 
         $Subcategory->update($data);
 
-        return back()->with('success', 'Categoria atualizada com sucesso!');
+        return back()->with('success', 'Subcategoria atualizada com sucesso!');
     }
 
     /**
@@ -193,7 +234,7 @@ class SubcategoryController extends Controller
     {
         $Subcategory->delete();
 
-        return back()->with('success', 'Categoria deletada com sucesso!');
+        return back()->with('success', 'Subcategoria deletada com sucesso!');
     }
 
     /**
@@ -210,6 +251,59 @@ class SubcategoryController extends Controller
             $Subcategory->restore();
         }
 
-        return back()->with('success', 'Categoria restaurada com sucesso!');
+        return back()->with('success', 'Subcategoria restaurada com sucesso!');
+    }
+
+    public function get_collections() {
+
+        $gates= [
+            'companies' => auth()->user()->can('subcategory.companies'),
+            'departaments' => auth()->user()->can('subcategory.departaments'),
+        ];
+
+        $Companies = Company::query();
+
+        if(!$gates['companies'] && !$gates['departaments']) {
+            $Companies->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            })->whereHas('departaments.users', function ($query) {
+                $query->where('users.id', auth()->id());
+            })->with(['departaments' => function($query) {
+                $query->whereHas('users', function ($query) {
+                    $query->where('users.id', auth()->id());
+                })->whereHas('categories')->with('categories');
+            }]);
+
+        } else if($gates['companies'] && !$gates['departaments']) {
+            $Companies->whereHas('departaments', function ($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
+            })->with(['departaments' => function($query) {
+                $query->whereIn('name', auth()->user()->departaments->pluck('name'))->with('categories');
+            }]);
+
+        } else if(!$gates['companies'] && $gates['departaments']) {
+            $Companies->whereHas('users', function ($query) {
+                $query->where('users.id', auth()->id());
+            })->with(['departaments' => function($query) {
+                $query->whereHas('categories')->with('categories');
+            }]);
+
+        } else {
+            $Companies->with(['departaments' => function($query) {
+                $query->whereHas('categories')->with('categories');
+            }]);
+        }
+
+        $Companies = $Companies->get();
+
+        $Departaments = $Companies->flatMap(function ($Company) {
+            return $Company->departaments;
+        });
+        
+        $Categories = $Departaments->flatMap(function ($Departament) {
+            return $Departament->categories;
+        });
+
+        return [$Companies, $Departaments, $Categories];
     }
 }

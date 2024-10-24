@@ -124,13 +124,13 @@ class DatabaseSeeder extends Seeder
             $RoleAdmin
         );
 
-        User::factory()->admin(
+        User::factory()->technical(
             collect([$Company_1, $Company_2]),
             collect([$Departament_1, $Departament_2]),
             $RoleTechnical
         );
         
-        User::factory()->admin(
+        User::factory()->user(
             collect([$Company_1]),
             collect([$Departament_1]),
             $RoleUser

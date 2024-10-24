@@ -35,6 +35,16 @@ class Subcategory extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function getDepartamentAttribute()
+    {
+        return $this->category->departament;
+    }
+
+    public function getCompanyAttribute()
+    {
+        return $this->category->departament->company;
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);
