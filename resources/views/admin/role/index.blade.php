@@ -65,8 +65,10 @@
                                                         <x-button-icon icon="ti ti-edit" color="info" style="light" componentType="a" href="{{ route('admin.role.edit', $Role->id) }}" />
                                                     @endif
 
-                                                    @if ($gates['destroy'])
-                                                        <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.role.destroy', $Role->id) }}" />
+                                                    @if ($Role->id != 1)
+                                                        @if ($gates['destroy'])
+                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.role.destroy', $Role->id) }}" />
+                                                        @endif
                                                     @endif
                                                 @else
                                                     @if ($gates['restore'])

@@ -208,6 +208,10 @@ class RoleController extends Controller
      */
     public function destroy(Role $Role)
     {
+        if($Role->id == 1) {
+            return back()->withErrors(['name' => 'Essa função não pode ser deletada']);
+        }
+
         $Role->load('users', 'permissions');
         $data = $Role->only('id', 'name');
         $data['permissions'] = $Role->permissions->pluck('name');
