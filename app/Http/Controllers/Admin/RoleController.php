@@ -42,7 +42,7 @@ class RoleController extends Controller
             'log_show' => Gate::allows('log.show'),
         ];
 
-        $Roles = Role::with('log')
+        $Roles = Role::with('log', 'users:name')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
@@ -209,23 +209,13 @@ class RoleController extends Controller
     public function destroy(Role $Role)
     {
         if($Role->id == 1) {
-            return back()->withErrors(['name' => 'Essa função não pode ser deletada']);
+            return back()->withErrors(['name' => 'Essa função não pode ser deletada.']);
         }
 
-        $Role->load('users', 'permissions');
-        $data = $Role->only('id', 'name');
-        $data['permissions'] = $Role->permissions->pluck('name');
-        $data['users'] = $Role->users->pluck('name');
+        $Role->load('users');
 
-        // Se existe algum usuário associado a essa função:
-        if ($Role->users->count() > 0) {
-            // Define uma nova função para o usuário
-            $newRole = Role::findByName('Usuário');
-
-            // Associa o usuário à nova função
-            foreach ($Role->users as $User) {
-                $User->syncRoles($newRole);
-            }
+        if(!$Role->users->isEmpty()) {
+            return back()->withErrors(['name' => 'Essa função não pode ser deletada pois ainda existem usuários vinculados a ela.']);
         }
 
         $Role->delete();

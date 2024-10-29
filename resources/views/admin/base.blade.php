@@ -43,6 +43,12 @@
         .pc-navbar .pc-caption:has(+ .pc-caption) {
             display: none;
         }
+
+        /*:::::::::::::::::::::::::::::::::::::::::::::::: SWEET ALERT :::::::::::::::::::::::::::::::::::::::::::::::*/
+        .swal2-modal ul {
+            max-height: 30vh !important;
+            overflow-y: scroll !important;
+        }
     </style>
 
     @stack('css')

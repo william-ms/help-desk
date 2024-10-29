@@ -67,7 +67,7 @@
 
                                                     @if ($Role->id != 1)
                                                         @if ($gates['destroy'])
-                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.role.destroy', $Role->id) }}" />
+                                                            <x-button-icon type="button" icon="ti ti-trash" color="danger" style="light" class="destroy" data-link="{{ route('admin.role.destroy', $Role->id) }}" data-users="{{ json_encode($Role->users->pluck('name')->toArray()) }}" />
                                                         @endif
                                                     @endif
                                                 @else
@@ -125,22 +125,47 @@
 
     <script>
         $(document).ready(function() {
-            $(".destroy").on("click", function() {
+            let users = [];
+            let html = '';
+            let list_users = '';
 
-                Swal.fire({
-                    title: 'Oops!!',
-                    text: 'Deseja realmente deletar essa função?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    confirmButtonText: '<i class="ti ti-trash"></i> Deletar',
-                    cancelButtonColor: '#f06548',
-                    cancelButtonText: '<i class="ti ti-x"></i> Cancelar',
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $(".delete").attr('action', $(this).attr('data-link')).submit();
-                    }
-                })
+            $(".destroy").on("click", function() {
+                users = $(this).data('users');
+                html = '';
+
+                if (users.length > 0) {
+                    list_users = '<ul class="list-group">';
+                    users.forEach(function(user, key) {
+                        list_users += `<li class="list-group-item f-14 p-2">${user}</li>`
+                    });
+                    list_users += '</ul>';
+
+                    Swal.fire({
+                        title: 'Oops!!',
+                        html: `
+                            <p class="f-16">Antes de deletar essa função, desvincule os seguintes usuários que estão vinculados a essa função:</p>
+                            ${list_users}
+                        `,
+                        icon: 'error',
+                        confirmButtonText: '<i class="ti ti-checks"></i> Ok',
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Oops!!',
+                        text: 'Deseja realmente deletar essa função?',
+                        html: html,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#28a745',
+                        confirmButtonText: '<i class="ti ti-trash"></i> Deletar',
+                        cancelButtonColor: '#f06548',
+                        cancelButtonText: '<i class="ti ti-x"></i> Cancelar',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $(".delete").attr('action', $(this).attr('data-link')).submit();
+                        }
+                    })
+                }
             });
 
             @if (!$Roles->isEmpty())
