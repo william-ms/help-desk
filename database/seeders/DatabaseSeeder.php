@@ -9,6 +9,7 @@ use App\Models\Menu;
 use App\Models\MenuCategory;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Subcategory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -21,68 +22,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.index', 'guard_name' => 'web'])->id;
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.create', 'guard_name' => 'web'])->id;
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.edit', 'guard_name' => 'web'])->id;
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.restore', 'guard_name' => 'web'])->id;
-        $Permissions['menu'][] = Permission::create(['name' => 'menu.order', 'guard_name' => 'web'])->id;
+        $Permissions = [];
+        $PermissionsGroupByRoute = [
+            'menu'              => ['index', 'create', 'edit', 'destroy', 'restore', 'order'],
+            'menu_category'     => ['index', 'create', 'edit', 'destroy', 'restore', 'order'],
+            'permission'        => ['index', 'create', 'edit', 'destroy'],
+            'role'              => ['index', 'create', 'edit', 'destroy'],
+            'user'              => ['index', 'create', 'edit', 'destroy', 'restore', 'permissions'],
+            'company'           => ['index', 'create', 'edit', 'destroy', 'restore'],
+            'departament'       => ['index', 'create', 'edit', 'destroy', 'restore', 'companies'],
+            'category'          => ['index', 'create', 'edit', 'destroy', 'restore', 'companies', 'departaments'],
+            'subcategory'       => ['index', 'create', 'edit', 'destroy', 'restore', 'companies', 'departaments'],
+            'ticket'            => ['index', 'create', 'edit', 'show'],
+            'log'               => ['index', 'show'],
+        ];
 
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.index', 'guard_name' => 'web'])->id;
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.create', 'guard_name' => 'web'])->id;
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.edit', 'guard_name' => 'web'])->id;
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.restore', 'guard_name' => 'web'])->id;
-        $Permissions['menu_category'][] = Permission::create(['name' => 'menu_category.order', 'guard_name' => 'web'])->id;
-
-        $Permissions['permission'][] = Permission::create(['name' => 'permission.index', 'guard_name' => 'web'])->id;
-        $Permissions['permission'][] = Permission::create(['name' => 'permission.create', 'guard_name' => 'web'])->id;
-        $Permissions['permission'][] = Permission::create(['name' => 'permission.edit', 'guard_name' => 'web'])->id;
-        $Permissions['permission'][] = Permission::create(['name' => 'permission.destroy', 'guard_name' => 'web'])->id;
-
-        $Permissions['role'][] = Permission::create(['name' => 'role.index', 'guard_name' => 'web'])->id;
-        $Permissions['role'][] = Permission::create(['name' => 'role.create', 'guard_name' => 'web'])->id;
-        $Permissions['role'][] = Permission::create(['name' => 'role.edit', 'guard_name' => 'web'])->id;
-        $Permissions['role'][] = Permission::create(['name' => 'role.destroy', 'guard_name' => 'web'])->id;
-
-        $Permissions['user'][] = Permission::create(['name' => 'user.index', 'guard_name' => 'web'])->id;
-        $Permissions['user'][] = Permission::create(['name' => 'user.create', 'guard_name' => 'web'])->id;
-        $Permissions['user'][] = Permission::create(['name' => 'user.edit', 'guard_name' => 'web'])->id;
-        $Permissions['user'][] = Permission::create(['name' => 'user.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['user'][] = Permission::create(['name' => 'user.restore', 'guard_name' => 'web'])->id;
-        $Permissions['user'][] = Permission::create(['name' => 'user.permissions', 'guard_name' => 'web'])->id;
-
-        $Permissions['company'][] = Permission::create(['name' => 'company.index', 'guard_name' => 'web'])->id;
-        $Permissions['company'][] = Permission::create(['name' => 'company.create', 'guard_name' => 'web'])->id;
-        $Permissions['company'][] = Permission::create(['name' => 'company.edit', 'guard_name' => 'web'])->id;
-        $Permissions['company'][] = Permission::create(['name' => 'company.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['company'][] = Permission::create(['name' => 'company.restore', 'guard_name' => 'web'])->id;
-
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.index', 'guard_name' => 'web'])->id;
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.create', 'guard_name' => 'web'])->id;
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.edit', 'guard_name' => 'web'])->id;
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.restore', 'guard_name' => 'web'])->id;
-        $Permissions['departament'][] = Permission::create(['name' => 'departament.companies', 'guard_name' => 'web'])->id;
-
-        $Permissions['category'][] = Permission::create(['name' => 'category.index', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.create', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.edit', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.restore', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.companies', 'guard_name' => 'web'])->id;
-        $Permissions['category'][] = Permission::create(['name' => 'category.departaments', 'guard_name' => 'web'])->id;
-
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.index', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.create', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.edit', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.destroy', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.restore', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.companies', 'guard_name' => 'web'])->id;
-        $Permissions['subcategory'][] = Permission::create(['name' => 'subcategory.departaments', 'guard_name' => 'web'])->id;
-        
-        $Permissions['log'][] = Permission::create(['name' => 'log.index', 'guard_name' => 'web'])->id;
-        $Permissions['log'][] = Permission::create(['name' => 'log.show', 'guard_name' => 'web'])->id;
+        foreach($PermissionsGroupByRoute as $Route => $permissions) {
+            foreach($permissions as $Permission) {
+                $Permissions[$Route][] = Permission::create(['name' => "{$Route}.{$Permission}", 'guard_name' => 'web'])->id;
+            }
+        }
 
         MenuCategory::factory()->navigation();
         MenuCategory::factory()->menus();
@@ -90,6 +49,7 @@ class DatabaseSeeder extends Seeder
         MenuCategory::factory()->admin();
 
         Menu::factory()->dashboard([]);
+        Menu::factory()->tickets($Permissions['ticket']);
         Menu::factory()->menu_categories($Permissions['menu_category']);
         Menu::factory()->menus($Permissions['menu']);
         Menu::factory()->permissions($Permissions['permission']);
@@ -102,7 +62,7 @@ class DatabaseSeeder extends Seeder
         Menu::factory()->logs($Permissions['log']);
 
         $RoleAdmin = Role::factory()->admin();
-        $RoleUser = Role::factory()->user();
+        $RoleUser = Role::factory()->user($Permissions);
         $RoleTechnical = Role::factory()->technical($Permissions);
 
         $Company_1 = Company::create(['name' => 'MedMais - Centro']);
@@ -120,6 +80,13 @@ class DatabaseSeeder extends Seeder
         $Category_4 = Category::create(['departament_id' => $Departament_3->id, 'name' => 'Medicina do trabalho', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
         $Category_5 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
         $Category_6 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+
+        $Subcategory_1 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_2 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não imprime', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_3 = Subcategory::create(['category_id' => $Category_5->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_4 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_5 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Sem internet', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_6 = Subcategory::create(['category_id' => $Category_6->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
 
         User::factory()->admin(
             collect([$Company_1, $Company_2]),

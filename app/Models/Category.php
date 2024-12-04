@@ -37,6 +37,11 @@ class Category extends Model
         return $this->belongsTo(Departament::class);
     }
 
+    public function subcategories()
+    {
+        return $this->hasMany(Subcategory::class);
+    }
+
     public function log()
     {
         return $this->hasOne(Log::class, 'model_id', 'id')->where('model_type', $this->type);

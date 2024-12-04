@@ -157,6 +157,8 @@ class SubcategoryController extends Controller
             return back()->withErrors(['name' => "Já existe para essa categoria uma subcategoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa subcategoria!"])->withInput();
         }
 
+        $data['automatic_response'] = $this->format_response($data['automatic_response']);
+
         Subcategory::create($data);
 
         return back()->with('success', 'Categoria cadastrada com sucesso!');
@@ -218,6 +220,8 @@ class SubcategoryController extends Controller
         if(!$Equals->isEmpty()) {
             return back()->withErrors(['name' => "Já existe para essa categoria uma subcategoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa subcategoria!"])->withInput();
         }
+
+        $data['automatic_response'] = $this->format_response($data['automatic_response']);
 
         $Subcategory->update($data);
 
@@ -305,5 +309,14 @@ class SubcategoryController extends Controller
         });
 
         return [$Companies, $Departaments, $Categories];
+    }
+
+    private function format_response(string $response) {
+
+        if (preg_match('/(<img[^>]+>)/i', $response)) {
+            $response = preg_replace('/<img/i', '<img class="response-image"', $response);
+        }
+
+        return $response;
     }
 }

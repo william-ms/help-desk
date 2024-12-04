@@ -29,7 +29,20 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
+        return $Menu;
+    }
 
+    public function tickets($Permissions)
+    {
+        $Menu = $this->create([
+            'menu_category_id' => 1,
+            'name' => 'Tickets',
+            'icon' => 'ph-duotone ph-ticket',
+            'route' => 'ticket',
+            'order' => 2
+        ]);
+
+        $Menu->permissions()->sync($Permissions);
         return $Menu;
     }
 
@@ -44,7 +57,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -59,7 +71,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -74,7 +85,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -89,7 +99,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -104,7 +113,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -119,7 +127,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -134,7 +141,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -149,7 +155,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -164,7 +169,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 
@@ -179,7 +183,6 @@ class MenuFactory extends Factory
         ]);
 
         $Menu->permissions()->sync($Permissions);
-
         return $Menu;
     }
 }

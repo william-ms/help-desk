@@ -145,6 +145,8 @@ class CategoryController extends Controller
             return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
+        $data['automatic_response'] = $this->format_response($data['automatic_response']);
+
         Category::create($data);
 
         return back()->with('success', 'Categoria cadastrada com sucesso!');
@@ -205,6 +207,8 @@ class CategoryController extends Controller
         if(!$Equals->isEmpty()) {
             return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
+
+        $data['automatic_response'] = $this->format_response($data['automatic_response']);
 
         $Category->update($data);
 
@@ -281,5 +285,14 @@ class CategoryController extends Controller
         });
 
         return [$Companies, $Departaments];
+    }
+
+    private function format_response(string $response) {
+
+        if (preg_match('/(<img[^>]+>)/i', $response)) {
+            $response = preg_replace('/<img/i', '<img class="response-image"', $response);
+        }
+
+        return $response;
     }
 }

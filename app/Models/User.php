@@ -55,6 +55,26 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function getProfileImageAttribute()
+    {
+        // if(!empty($this->photo)) {
+        //     $image = asset('storage/' . $this->photo);
+        // } else if (!empty($this->avatar)) {
+        //     $image = asset('assets/images/user/' . $this->avatar . '.jpg');
+        // } else {
+        //     $image = asset('assets/images/user/avatar-1.jpg');
+        // }
+
+
+        if($this->id == auth()->id()) {
+            $image = asset('assets/images/user/avatar-1.jpg');
+        } else {
+            $image = asset('assets/images/user/avatar-4.jpg');
+        }
+
+        return $image;
+    }
+
     public function settings()
     {
         return $this->hasMany(Setting::class);

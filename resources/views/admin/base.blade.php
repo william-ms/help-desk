@@ -49,6 +49,11 @@
             max-height: 30vh !important;
             overflow-y: scroll !important;
         }
+
+        /*:::::::::::::::::::::::::::::::::::::::::::::::::: TICKETS :::::::::::::::::::::::::::::::::::::::::::::::::*/
+        .response-image {
+            cursor: pointer;
+        }
     </style>
 
     @stack('css')

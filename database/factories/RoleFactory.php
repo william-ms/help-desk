@@ -22,17 +22,28 @@ class RoleFactory extends Factory
         return $this->create(['name' => 'Administrador']);
     }
 
-    public function user() {
-        return $this->create(['name' => 'Usuário']);
+    public function user($Permissions) {
+        $Role = $this->create(['name' => 'Usuário']);
+
+        $Role->syncPermissions([
+            $Permissions['ticket'][0],
+            $Permissions['ticket'][1],
+            $Permissions['ticket'][2],
+            $Permissions['ticket'][3],
+        ]);
+
+        return $Role;
     }
 
     public function technical($Permissions)
     {
-        $Role = $this->create([
-            'name' => "Técnico",
-        ]);
+        $Role = $this->create(['name' => "Técnico"]);
 
         $Role->syncPermissions([
+            $Permissions['ticket'][0],
+            $Permissions['ticket'][1],
+            $Permissions['ticket'][2],
+            $Permissions['ticket'][3],
             $Permissions['company'][0],
             $Permissions['company'][1],
             $Permissions['company'][2],

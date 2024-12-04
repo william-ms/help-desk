@@ -7,7 +7,6 @@
         tinymce.init({
             selector: '{{ $textarea }}',
             height: "{{ $height }}",
-            placeholder: 'Informe a resposta automática para a resolução do problema',
             menubar: false,
             images_upload_url: "{{ route('tinymce.add.images') }}",
             images_upload_credentials: true,

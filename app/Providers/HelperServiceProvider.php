@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 
 require_once app_path('Helpers/log.php');
+require_once app_path('Helpers/macros.php');
 
 class HelperServiceProvider extends ServiceProvider
 {

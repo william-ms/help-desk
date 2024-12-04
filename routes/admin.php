@@ -10,6 +10,8 @@ use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\SubcategoryController;
+use App\Http\Controllers\Admin\TicketController;
+use App\Http\Controllers\Admin\TicketResponseController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -107,7 +109,20 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::get('/{subcategory}/restore', [SubcategoryController::class, 'restore'])->name('restore')->can('subcategory.restore');
     });
 
-    Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');;
+    Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function() {
+        Route::get('/', [TicketController::class, 'index'])->name('index')->can('ticket.index');
+        Route::get('/create', [TicketController::class, 'create'])->name('create')->can('ticket.create');
+        Route::post('/', [TicketController::class, 'store'])->name('store')->can('ticket.create');
+        Route::put('/{ticket}', [TicketController::class, 'update'])->name('update')->can('ticket.edit');
+        Route::get('/{ticket}', [TicketController::class, 'show'])->name('show')->can('ticket.show')->middleware(['checkTicketAccess']);
+    });
+
+    Route::group(['prefix' => 'ticket_response', 'as' => 'ticket_response.'], function() {
+        Route::post('/{ticket}', [TicketResponseController::class, 'store'])->name('store')->can('ticket_response.create');
+        Route::put('/{ticket_response}', [TicketResponseController::class, 'update'])->name('update')->can('ticket_response.edit');
+    });
+
+    Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');
     Route::get('/log/{log}', [LogController::class, 'show'])->name('log.show')->can('log.show');
 
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
