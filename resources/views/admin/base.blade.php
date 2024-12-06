@@ -56,6 +56,7 @@
         }
     </style>
 
+    @vite('resources/css/app.css')
     @stack('css')
 </head>
 
@@ -702,6 +703,7 @@
         });
     </script>
 
+    @vite('resources/js/app.js')
     @stack('scripts')
 </body>
 
