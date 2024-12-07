@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col">
                     <div class="">
-                        <h4 class="d-inline-block">Você</h4>
+                        <h4 class="d-inline-block">{{ $TicketResponse->user_id == auth()->id() ? 'Você' : $TicketResponse->user->name }} </h4>
                         <span class="badge bg-light-secondary">replied</span>
                         <p class="text-muted">
                             {{ calculate_elapsed_time($TicketResponse->created_at) . ($TicketResponse->created_at->dayOfWeek > 0 && $TicketResponse->created_at->dayOfWeek < 6 ? ', na ' : ', no ') . $TicketResponse->created_at->dayName . ' às ' . $TicketResponse->created_at->format('H:m') }}
