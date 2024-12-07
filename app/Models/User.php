@@ -18,6 +18,8 @@ class User extends Authenticatable
         'name' => 'nome',
         'email' => 'email',
         'password' => 'senha',
+        'photo' => 'foto',
+        'avatar' => 'avatar'
     ];
 
     /**
@@ -30,7 +32,9 @@ class User extends Authenticatable
         'name',
         'email',
         'first_login',
-        'password'
+        'password',
+        'photo',
+        'avatar',
     ];
 
     /**
@@ -57,21 +61,14 @@ class User extends Authenticatable
 
     public function getProfileImageAttribute()
     {
-        // if(!empty($this->photo)) {
-        //     $image = asset('storage/' . $this->photo);
-        // } else if (!empty($this->avatar)) {
-        //     $image = asset('assets/images/user/' . $this->avatar . '.jpg');
-        // } else {
-        //     $image = asset('assets/images/user/avatar-1.jpg');
-        // }
-
-
-        if($this->id == auth()->id()) {
-            $image = asset('assets/images/user/avatar-1.jpg');
+        if(!empty($this->photo)) {
+            $image = asset('storage/' . $this->photo);
+        } else if (!empty($this->avatar)) {
+            $image = asset('assets/images/user/' . $this->avatar . '.jpg');
         } else {
-            $image = asset('assets/images/user/avatar-4.jpg');
+            $image = asset('assets/images/user/avatar-1.jpg');
         }
-
+        
         return $image;
     }
 

@@ -104,7 +104,7 @@
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="{{ !empty(auth()->user()->photo) ? asset('storage/photo/' . auth()->user()->photo) : (!empty(auth()->user()->avatar) ? asset('assets/images/user/' . auth()->user()->avatar) : asset('assets/images/user/avatar-1.jpg')) }}" alt="user-image" class="user-avtar wid-45 rounded-circle" style="aspect-ratio: 1/1" />
+                            <img src="{{ auth()->user()->profile_image }}" alt="user-image" class="user-avtar wid-45 rounded-circle" style="aspect-ratio: 1/1" />
                         </div>
 
                         <div class="flex-grow-1 ms-3 me-2">
@@ -123,7 +123,7 @@
                                 <ul>
                                     {{-- MEU PERFIL --}}
                                     <li>
-                                        <a href="{{ route('admin.profile.index') }}" class="pc-user-links">
+                                        <a href="{{ route('admin.profile.index', ['tab' => 'info']) }}" class="pc-user-links">
                                             <i class="ph-duotone ph-user-circle"></i>
                                             <span>Meu perfil</span>
                                         </a>
@@ -402,7 +402,7 @@
 
                         {{-- [perfil] - FOTO OU AVATAR --}}
                         <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" data-bs-auto-close="outside" aria-expanded="false">
-                            <img src="{{ !empty(auth()->user()->photo) ? asset('storage/photo/' . auth()->user()->photo) : (!empty(auth()->user()->avatar) ? asset('assets/images/user/' . auth()->user()->avatar) : asset('assets/images/user/avatar-1.jpg')) }}" alt="user-image" class="user-avtar" style="aspect-ratio: 1/1" />
+                            <img src="{{ auth()->user()->profile_image }}" alt="user-image" class="user-avtar" style="aspect-ratio: 1/1" />
                         </a>
 
                         <div class="dropdown-menu dropdown-user-profile dropdown-menu-end pc-h-dropdown">
@@ -415,7 +415,7 @@
                                             <div class="d-flex align-items-center">
                                                 {{-- [perfil] FOTO OU AVATAR --}}
                                                 <div class="flex-shrink-0">
-                                                    <img src="{{ !empty(auth()->user()->photo) ? asset('storage/photo/' . auth()->user()->photo) : (!empty(auth()->user()->avatar) ? asset('assets/images/user/' . auth()->user()->avatar) : asset('assets/images/user/avatar-1.jpg')) }}" alt="user-image" class="wid-50 rounded-circle" style="aspect-ratio: 1/1" />
+                                                    <img src="{{ auth()->user()->profile_image }}" alt="user-image" class="wid-50 rounded-circle" style="aspect-ratio: 1/1" />
                                                 </div>
 
                                                 {{-- [perfil] NOME E EMAIL --}}
@@ -432,7 +432,7 @@
 
                                         <li class="list-group-item">
                                             {{-- [perfil] MEU PERFIL --}}
-                                            <a href="{{ route('admin.profile.index') }}" class="dropdown-item">
+                                            <a href="{{ route('admin.profile.index', ['tab' => 'info']) }}" class="dropdown-item">
                                                 <span class="d-flex align-items-center">
                                                     <i class="ph-duotone ph-user-circle"></i>
                                                     <span>Meu perfil</span>
@@ -440,7 +440,7 @@
                                             </a>
 
                                             {{-- [perfil] ALTERAR SENHA --}}
-                                            <a href="{{ route('admin.profile.index', ['password' => 'password']) }}" class="dropdown-item">
+                                            <a href="{{ route('admin.profile.index', ['tab' => 'edit-password']) }}" class="dropdown-item">
                                                 <span class="d-flex align-items-center">
                                                     <i class="ph-duotone ph-key"></i>
                                                     <span>Alterar senha</span>

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SubcategoryController;
 use App\Http\Controllers\Admin\TicketController;
 use App\Http\Controllers\Admin\TicketResponseController;
@@ -125,5 +126,6 @@ Route::name('admin.')->middleware('auth')->group(function() {
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');
     Route::get('/log/{log}', [LogController::class, 'show'])->name('log.show')->can('log.show');
 
-    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profile/{tab}', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile/{tab}', [ProfileController::class, 'update'])->name('profile.update');
 });
