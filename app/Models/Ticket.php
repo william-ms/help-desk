@@ -48,7 +48,7 @@ class Ticket extends Model
     }
 
     public function last_user_response() {
-        return $this->hasOne(TicketResponse::class)->where('type', 1)->whereNotNull('user_id')->latest();
+        return $this->hasOne(TicketResponse::class)->where('type', 1)->whereNotNull('user_id')->latest()->limit(1);
     }
 
     public function company() 

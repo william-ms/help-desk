@@ -391,6 +391,7 @@
             //::::::::::::::::::::::::::::::::::::::::::: RESPONDER TICKET ::::::::::::::::::::::::::::::::::::::::::://
             $('#btn-reply').on('click', function() {
                 tinyMCE.triggerSave();
+                btn_close_reply.click();
                 response = $('#response').val();
 
                 $.ajaxSetup({
@@ -407,7 +408,6 @@
                 posting.done(function(data) {
                     $('.last-response').removeClass('last-response');
                     div_ticket_responses.append(data.new_response);
-                    btn_close_reply.click();
 
                     tinymce.get('response').setContent('');
 
@@ -586,6 +586,31 @@
                 $('#show-response-image').modal('show');
             })
 
+            //::::::::::::::::::::::::::::::::: EVENTO PARA OBSERVAR NOVAS MENSAGENS ::::::::::::::::::::::::::::::::://
+            window.Echo.channel("ticket-response").listen("NewTicketResponse", (e) => {
+                if (e.TicketResponse.user_id != {{ auth()->id() }}) {
+                    axios
+                        .post("{{ route('ajax.ticket_response.check_new_response', ['ticket_response' => ':response']) }}".replace(':response', e.TicketResponse.id), {
+                            data: {
+                                TicketResponse: e.TicketResponse,
+                            },
+                        })
+                        .then(function(response) {
+                            $('.last-response').removeClass('last-response');
+                            div_ticket_responses.append(response.data.new_response);
+                            btn_close_reply.click();
+
+                            tinymce.get('response').setContent('');
+
+                            $('html, body').animate({
+                                scrollTop: $('.last-response').offset().top
+                            }, 'slow');
+                        })
+                        .catch(function(error) {
+                            console.log(error);
+                        });
+                }
+            });
         });
     </script>
 @endpush

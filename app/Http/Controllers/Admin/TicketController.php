@@ -39,7 +39,7 @@ class TicketController extends Controller
 
         $RoleUser = auth()->user()->roles->first()->id;
 
-        $Tickets = Ticket::with(['requester', 'assignee', 'departament', 'last_user_response' => function($query) {
+        $Tickets = Ticket::with(['requester', 'assignee', 'departament', 'company', 'last_user_response' => function($query) {
             $query->with('user');
         }]);
 

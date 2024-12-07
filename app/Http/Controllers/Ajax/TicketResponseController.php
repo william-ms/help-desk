@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Ajax;
 
+use App\Events\NewTicketResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketResponseRequest;
 use App\Models\TicketResponse;
@@ -24,6 +25,20 @@ class TicketResponseController extends Controller
 
         $TicketResponse = TicketResponse::create($data);
 
+        broadcast(new NewTicketResponse($TicketResponse));
+
+        $new_response = view('ajax.ticket_response.new_response', [
+            'TicketResponse' => $TicketResponse, 
+        ])->render();
+
+        return response()->json([
+            'message' => 'Ticket respondido com sucesso!',
+            'new_response' => $new_response,
+        ]);
+    }
+
+    public function check_new_response(Request $request, TicketResponse $TicketResponse)
+    {        
         $new_response = view('ajax.ticket_response.new_response', [
             'TicketResponse' => $TicketResponse, 
         ])->render();
