@@ -28,8 +28,14 @@
     {{-- [Template CSS Files] --}}
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" id="main-style-link">
     <link rel="stylesheet" href="{{ asset('assets/css/style-preset.css') }}">
+    <link rel="stylesheet" href="{{ asset('build/assets/app-C6G_3qQV.css') }}">
 
     <style>
+        [data-pc-theme="dark"] #logo-dark,
+        [data-pc-theme="light"] #logo-light {
+            display: none;
+        }
+
         .required::after {
             content: ' *';
             font-weight: bold;
@@ -56,7 +62,7 @@
         }
     </style>
 
-    @vite('resources/css/app.css')
+    {{-- @vite('resources/css/app.css') --}}
     @stack('css')
 </head>
 
@@ -72,9 +78,19 @@
     <nav class="pc-sidebar">
         <div class="navbar-wrapper">
             <div class="m-header">
-                <a href="{{ route('admin.dashboard.index') }}" class="b-brand text-primary">
-                    <img src="{{ asset('assets/images/logo-dark.png') }}" alt="logo image" class="w-100 p-3" />
-                </a>
+                {{-- LOGO LIGTH --}}
+                <div id="logo-light" class="p-3">
+                    <a href="{{ route('admin.dashboard.index') }}" class="b-brand text-primary">
+                        <img src="{{ asset('assets/images/logo-light.png') }}" alt="logo image" class="w-100 p-3" />
+                    </a>
+                </div>
+
+                {{-- LOGO DARK --}}
+                <div id="logo-dark" class="p-3">
+                    <a href="{{ route('admin.dashboard.index') }}" class="b-brand text-primary">
+                        <img src="{{ asset('assets/images/logo-dark.png') }}" alt="logo image" class="w-100 p-3" />
+                    </a>
+                </div>
             </div>
 
             {{-- MENU DA SIDEBAR --}}
@@ -491,7 +507,7 @@
                     &copy
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> MedMais Consulta. <i class="ph-duotone ph-heart text-danger"></i>
+                    </script> bgMoon. <i class="ph-duotone ph-heart text-danger"></i>
                 </div>
             </div>
         </div>
@@ -641,6 +657,8 @@
     <script src="{{ asset('assets/js/pcoded.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/feather.min.js') }}"></script>
 
+    <script src="{{ asset('build/assets/app-C91msWZu.js') }}"></script>
+
     <script>
         layout_change("{{ $UserSettings['theme'] ?? 'light' }}");
         layout_sidebar_change("{{ $UserSettings['theme-sidebar'] ?? 'light' }}");
@@ -703,7 +721,6 @@
         });
     </script>
 
-    @vite('resources/js/app.js')
     @stack('scripts')
 </body>
 

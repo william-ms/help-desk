@@ -31,8 +31,8 @@ class UserFactory extends Factory
     public function admin($Companies, $Departaments, $Role)
     {
         $User = $this->create([
-            'name' => "Administrador MedMais",
-            'email' => "admin@medmaistickets.com.br",
+            'name' => "Administrador",
+            'email' => "admin@helpdesk.com.br",
             'first_login' => 1,
             'email_verified_at' => now(),
         ]);
@@ -51,8 +51,8 @@ class UserFactory extends Factory
     public function technical($Companies, $Departaments, $Role)
     {
         $User = $this->create([
-            'name' => "Técnico MedMais",
-            'email' => "technical@medmaistickets.com.br",
+            'name' => "Técnico",
+            'email' => "technical@helpdesk.com.br",
             'email_verified_at' => now(),
         ]);
 
@@ -70,8 +70,8 @@ class UserFactory extends Factory
     public function user($Companies, $Departaments, $Role)
     {
         $User = $this->create([
-            'name' => "Usuário MedMais",
-            'email' => "user@medmaistickets.com.br",
+            'name' => "Usuário",
+            'email' => "user@helpdesk.com.br",
             'email_verified_at' => now(),
         ]);
         

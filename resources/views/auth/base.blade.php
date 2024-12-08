@@ -56,7 +56,7 @@
                         &copy
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> MedMais Consulta. <i class="ph-duotone ph-heart text-danger"></i>
+                        </script> bgMoon. <i class="ph-duotone ph-heart text-danger"></i>
                     </div>
                 </div><!-- row -->
             </div><!-- auth-sidefooter -->
