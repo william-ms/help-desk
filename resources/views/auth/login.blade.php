@@ -13,6 +13,15 @@
     {{-- [flash-message] Erros de validação --}}
     <x-alerts.errors class="mb-4" :errors="$errors" />
 
+    {{-- [buttons] - Usuários de teste --}}
+    @env('local')
+    <div class="d-flex my-2">
+        <x-login-link class="btn btn-danger me-1 py-1" email="admin@medmaistickets.com.br" label="Administrador" />
+        <x-login-link class="btn btn-info me-1 py-1" email="technical@medmaistickets.com.br" label="Técnico" />
+        <x-login-link class="btn btn-secondary me-1 py-1" email="user@medmaistickets.com.br" label="Usuário" />
+    </div>
+    @endenv
+
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
