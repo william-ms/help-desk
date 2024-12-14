@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DepartamentController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\MenuCategoryController;
 use App\Http\Controllers\Admin\MenuController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SubcategoryController;
@@ -118,9 +119,9 @@ Route::name('admin.')->middleware('auth')->group(function() {
         Route::get('/{ticket}', [TicketController::class, 'show'])->name('show')->can('ticket.show')->middleware(['checkTicketAccess']);
     });
 
-    Route::group(['prefix' => 'ticket_response', 'as' => 'ticket_response.'], function() {
-        Route::post('/{ticket}', [TicketResponseController::class, 'store'])->name('store')->can('ticket_response.create');
-        Route::put('/{ticket_response}', [TicketResponseController::class, 'update'])->name('update')->can('ticket_response.edit');
+    Route::group(['prefix' => 'notification', 'as' => 'notification.'], function() {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/{notification}/redirect', [NotificationController::class, 'redirect'])->name('redirect');
     });
 
     Route::get('/log', [LogController::class, 'index'])->name('log.index')->can('log.index');

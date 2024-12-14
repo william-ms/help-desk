@@ -177,7 +177,6 @@
         <div class="header-wrapper">
             <div class="me-auto pc-mob-drp">
                 <ul class="list-unstyled">
-
                     <li class="pc-h-item pc-sidebar-collapse">
                         <a href="#" class="pc-head-link ms-0" id="sidebar-hide">
                             <i class="ti ti-menu-2"></i>
@@ -207,7 +206,7 @@
 
                     <li class="pc-h-item d-none d-md-inline-flex">
                         <form class="form-search">
-                            <i class="ph-duotone ph-magnifying-glass icon-search"></i>
+                            {{-- <i class="ph-duotone ph-magnifying-glass icon-search"></i> --}}
                             <input type="search" class="form-control" placeholder="Search..." />
 
                             {{-- <button class="btn btn-search" style="padding: 0"><kbd>ctrl+k</kbd></button> --}}
@@ -252,165 +251,53 @@
                     </li>
 
                     {{-- NOTIFICAÇÕES  --}}
-                    <li class="dropdown pc-h-item">
+                    <li id="notifications" class="dropdown pc-h-item">
                         <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
                             <i class="ph-duotone ph-bell"></i>
-                            <span class="badge bg-success pc-h-badge">3</span>
+                            <span class="badge bg-primary pc-h-badge">{{ $B_Notifications->count() }}</span>
                         </a>
 
-                        {{-- <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
-                            <div class="dropdown-header d-flex align-items-center justify-content-between">
-                                <h5 class="m-0">Notifications</h5>
+                        <div class="dropdown-menu dropdown-notification dropdown-menu-end pc-h-dropdown">
+                            <div class="dropdown-header d-flex align-items-center justify-content-between p-2">
+                                <h5 class="m-0 mx-2">Notificações</h5>
+
                                 <ul class="list-inline ms-auto mb-0">
                                     <li class="list-inline-item">
-                                        <a href="../application/mail.html" class="avtar avtar-s btn-link-hover-primary">
-                                            <i class="ti ti-link f-18"></i>
-                                        </a>
+                                        <x-button componentType="a" icon="ti ti-mail" href="{{ route('admin.notification.index') }}">
+                                            Ver todas
+                                        </x-button>
                                     </li>
                                 </ul>
                             </div>
-                            <div class="dropdown-body text-wrap header-notification-scroll position-relative" style="max-height: calc(100vh - 235px)">
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">
-                                        <p class="text-span">Today</p>
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar avtar avtar-s" />
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
+
+                            <div class="dropdown-body text-wrap header-notification-scroll position-relative overflow-auto" style="max-height: calc(100vh - 235px)">
+                                <ul class="list-group list-group-flush w-100">
+                                    @forelse ($B_Notifications as $B_Notification)
+                                        <li class="list-group-item p-0">
+                                            <a class="dropdown-item d-block px-4 py-3" style="white-space: initial" href="{{ route('admin.notification.redirect', $B_Notification->id) }}">
+                                                <p class="text-span">{{ calculate_elapsed_time($B_Notification->created_at) . ($B_Notification->created_at->dayOfWeek > 0 && $B_Notification->created_at->dayOfWeek < 6 ? ', na ' : ', no ') . $B_Notification->created_at->dayName . ' às ' . $B_Notification->created_at->format('H:m') }}</p>
+
                                                 <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Keefe Bond added new tags to 💪 Design system</h6>
-                                                    </div>
                                                     <div class="flex-shrink-0">
-                                                        <span class="text-sm">2 min ago</span>
+                                                        <img src="{{ $B_Notification->notifier->profile_image }}" alt="user-image" class="user-avtar avtar avtar-s" />
+                                                    </div>
+
+                                                    <div class="flex-grow-1 ms-3">
+                                                        {!! $B_Notification->message !!}
                                                     </div>
                                                 </div>
-                                                <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</span></p>
-                                                <span class="badge bg-light-primary border border-primary me-1 mt-1">web design</span>
-                                                <span class="badge bg-light-warning border border-warning me-1 mt-1">Dashobard</span>
-                                                <span class="badge bg-light-success border border-success me-1 mt-1">Design System</span>
+                                            </a>
+                                        </li>
+                                    @empty
+                                        <li class="list-group-item">
+                                            <div class="text-center">
+                                                <p class="text-muted py-0 my-0">Nenhuma notificação no momento</p>
                                             </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <div class="avtar avtar-s bg-light-primary">
-                                                    <i class="ph-duotone ph-chats-teardrop f-18"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Message</h6>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <span class="text-sm">1 hour ago</span>
-                                                    </div>
-                                                </div>
-                                                <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</span></p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <p class="text-span">Yesterday</p>
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <div class="avtar avtar-s bg-light-danger">
-                                                    <i class="ph-duotone ph-user f-18"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Challenge invitation</h6>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <span class="text-sm">12 hour ago</span>
-                                                    </div>
-                                                </div>
-                                                <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate"><strong> Jonny aber </strong> invites to join the challenge</span></p>
-                                                <button class="btn btn-sm rounded-pill btn-outline-secondary me-2">Decline</button>
-                                                <button class="btn btn-sm rounded-pill btn-primary">Accept</button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <div class="avtar avtar-s bg-light-info">
-                                                    <i class="ph-duotone ph-notebook f-18"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Forms</h6>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <span class="text-sm">2 hour ago</span>
-                                                    </div>
-                                                </div>
-                                                <p class="position-relative mt-1 mb-2">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard
-                                                    dummy text ever since the 1500s.</p>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <img src="../assets/images/user/avatar-2.jpg" alt="user-image" class="user-avtar avtar avtar-s" />
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Keefe Bond added new tags to 💪 Design system</h6>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <span class="text-sm">2 min ago</span>
-                                                    </div>
-                                                </div>
-                                                <p class="position-relative mt-1 mb-2"><br /><span class="text-truncate">Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</span></p>
-                                                <button class="btn btn-sm rounded-pill btn-outline-secondary me-2">Decline</button>
-                                                <button class="btn btn-sm rounded-pill btn-primary">Accept</button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <div class="d-flex">
-                                            <div class="flex-shrink-0">
-                                                <div class="avtar avtar-s bg-light-success">
-                                                    <i class="ph-duotone ph-shield-checkered f-18"></i>
-                                                </div>
-                                            </div>
-                                            <div class="flex-grow-1 ms-3">
-                                                <div class="d-flex">
-                                                    <div class="flex-grow-1 me-3 position-relative">
-                                                        <h6 class="mb-0 text-truncate">Security</h6>
-                                                    </div>
-                                                    <div class="flex-shrink-0">
-                                                        <span class="text-sm">5 hour ago</span>
-                                                    </div>
-                                                </div>
-                                                <p class="position-relative mt-1 mb-2">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard
-                                                    dummy text ever since the 1500s.</p>
-                                            </div>
-                                        </div>
-                                    </li>
+                                        </li>
+                                    @endforelse
                                 </ul>
                             </div>
-                            <div class="dropdown-footer">
-                                <div class="row g-3">
-                                    <div class="col-6">
-                                        <div class="d-grid"><button class="btn btn-primary">Archive all</button></div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="d-grid"><button class="btn btn-outline-secondary">Mark all as read</button></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
+                        </div>
                     </li>
 
                     {{-- PERFIL --}}
@@ -668,8 +555,11 @@
         // layout_rtl_change('false');
 
         $(document).ready(function() {
-            //:::::::::::::::::::::::::::::::::::::::::::::::::::::::://
-            // Evento definido para salvar as configurações do layout //
+            const ul_notifications = $('.header-notification-scroll ul');
+            const badge_qtd_notifications = $('#notifications a .pc-h-badge');
+            let qtd_notifications = parseInt(badge_qtd_notifications.text());
+
+            //:::::::::::::::::::::::::::::::::: ALTERAR AS CONFIGURAÇÕES DE LAYOUT :::::::::::::::::::::::::::::::::://
             $('.theme-btn').on('click', function() {
                 var type = $(this).data('type');
                 var value = $(this).data('theme');
@@ -692,8 +582,7 @@
                 });
             })
 
-            //::::::::::::::::::::::::::::::::::::::::::::::::::::::::://
-            // Evento definido para resetar as configurações do layout //
+            //:::::::::::::::::::::::::::::::::: RESETAR AS CONFIGURAÇÕES DE LAYOUT :::::::::::::::::::::::::::::::::://
             $('#theme-reset').on('click', function() {
                 layout_change('light');
                 layout_sidebar_change('light');
@@ -717,6 +606,29 @@
                         'Erro ao atualizar as configurações, tente novamente mais tarde!',
                         'danger');
                 });
+            });
+
+            //::::::::::::::::::::::::::::::::: EVENTO PARA OBSERVAR NOVAS MENSAGENS ::::::::::::::::::::::::::::::::://
+            window.Echo.channel("notification").listen("NewNotification", (e) => {
+                if (e.Notification.notified_id === {{ auth()->id() }} && "{{ url()->current() }}" != "{{ url()->route('admin.ticket.show', ['ticket' => ':ticket']) }}".replace(':ticket', e.Notification.model_id)) {
+                    axios
+                        .post("{{ route('ajax.notification.check_new_notification', ['notification' => ':notification']) }}".replace(':notification', e.Notification.id), {
+                            data: {
+                                Notification: e.Notification,
+                            },
+                        })
+                        .then(function(response) {
+                            if (qtd_notifications == 0) {
+                                ul_notifications.empty();
+                            }
+
+                            badge_qtd_notifications.text(qtd_notifications + 1);
+                            ul_notifications.prepend(response.data.notification);
+                        })
+                        .catch(function(error) {
+                            console.log(error);
+                        });
+                }
             });
         });
     </script>

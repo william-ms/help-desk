@@ -43,11 +43,13 @@ class Ticket extends Model
         'updated_at',
     ];
 
-    public function responses() {
+    public function responses()
+    {
         return $this->hasMany(TicketResponse::class);
     }
 
-    public function last_user_response() {
+    public function last_user_response()
+    {
         return $this->hasOne(TicketResponse::class)->where('type', 1)->whereNotNull('user_id')->latest()->limit(1);
     }
 
@@ -79,6 +81,11 @@ class Ticket extends Model
     public function assignee()
     {
         return $this->belongsTo(User::class, 'assignee_id', 'id');
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'model');
     }
 
     public function log()

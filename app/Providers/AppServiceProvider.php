@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\MenuCategory;
+use App\Models\Notification;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -37,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
         view()->composer(['admin.base'], function($view) {
 
             $User = auth()->user();
-//
+
             if ($User->hasRole(1)) {
                 $CategoriesAndMenusForSidebar = MenuCategory::with(['menus' => function ($query) {
                     $query->orderBy('order');
@@ -70,9 +71,13 @@ class AppServiceProvider extends ServiceProvider
                 session()->put('UserSettings', $UserSettings);
             }
 
+            //::::::::::::::::::::::::::::::::::::::::::::: NOTIFICAÇÕES ::::::::::::::::::::::::::::::::::::::::::::://
+            $B_Notifications = Notification::where('notified_id', auth()->id())->where('status', 1)->latest()->limit(15)->get();
+
             $view->with([
                 'CategoriesAndMenusForSidebar' => $CategoriesAndMenusForSidebar,
                 'UserSettings' => session()->get('UserSettings'),
+                'B_Notifications' => $B_Notifications,
             ]);
         });
     }

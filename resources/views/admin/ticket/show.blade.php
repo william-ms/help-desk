@@ -29,12 +29,19 @@
 
                                 <div>
                                     @if (auth()->id() == $Ticket->requester_id)
-                                        {{-- [button] - Responder --}}
-                                        <x-button icon="ti ti-file-plus" color="light-success" data-bs-toggle="modal" data-bs-target="#reply">Responder</x-button>
+                                        @if ($Ticket->status !== 4)
+                                            {{-- [button] - Responder --}}
+                                            <x-button icon="ti ti-file-plus" color="light-success" data-bs-toggle="modal" data-bs-target="#reply">Responder</x-button>
+                                        @endif
 
                                         @if (empty($Ticket->assignee))
                                             {{-- [button] - Cancelar --}}
                                             <x-button id="btn-cancel" icon="ti ti-file-x" color="light-danger">Cancelar</x-button>
+                                        @endif
+
+                                        @if ($Ticket->status === 3)
+                                            {{-- [button] - Finalizar --}}
+                                            <x-button id="btn-finish" icon="ti ti-file-check" color="light-danger">Finalizar</x-button>
                                         @endif
                                     @else
                                         @if (empty($Ticket->assignee_id))
@@ -309,7 +316,7 @@
         }
 
         .retract {
-            height: 300px;
+            max-height: 300px;
         }
 
         .error-toast .swal2-title {
@@ -333,10 +340,11 @@
             const div_ticket_responses = $('#ticket-responses');
             const btn_close_reply = $('#btn-close-reply');
             const btn_accept = $('#btn-accept');
-            const btn_resolve = $('#btn-resolve');
             const btn_transfer = $('#btn-transfer');
             const btn_cancel_transfer = $('#btn-cancel-transfer');
             const btn_accept_transfer = $('#btn-accept-transfer');
+            const btn_resolve = $('#btn-resolve');
+            const btn_finish = $('#btn-finish');
             const btn_cancel = $('#btn-cancel');
 
             let i_status = null;
@@ -419,7 +427,7 @@
                 posting.fail(function(data) {
                     console.log(data, data.responseJSON.errors.ticket_id[0]);
                 });
-            })
+            });
 
             //:::::::::::::::::::::::::::::::::::::::::::: ACEITAR TICKET :::::::::::::::::::::::::::::::::::::::::::://
             btn_accept.on('click', function() {
@@ -482,7 +490,7 @@
                             form_update.append(i_type).append(i_transfer_assignee_id).submit();
                         }
                     })
-                })
+                });
             @endif
 
             //::::::::::::::::::::::::::::::::::: CANCELAR TRANSFERÊNCIA DO TICKET ::::::::::::::::::::::::::::::::::://
@@ -531,12 +539,31 @@
                     text: 'Deseja marcar esse ticket como resolvido?',
                     showCancelButton: true,
                     confirmButtonColor: '#28a745',
-                    confirmButtonText: '<i class="ti ti-upload"></i> Sim',
+                    confirmButtonText: '<i class="ti ti-checks"></i> Sim',
                     cancelButtonColor: '#f06548',
                     cancelButtonText: '<i class="ti ti-x"></i> Não',
                 }).then((result) => {
                     if (result.isConfirmed) {
                         let i_status = $('<input type="text" name="type" value="resolve">');
+                        form_update.append(i_status).submit();
+                    }
+                })
+            });
+
+            //::::::::::::::::::::::::::::::::::::::::::: FINALIZAR TICKET ::::::::::::::::::::::::::::::::::::::::::://
+            btn_finish.on('click', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Atenção!!',
+                    text: 'Deseja marcar esse ticket como finalizado?',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    confirmButtonText: '<i class="ti ti-checks"></i> Sim',
+                    cancelButtonColor: '#f06548',
+                    cancelButtonText: '<i class="ti ti-x"></i> Não',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let i_status = $('<input type="text" name="type" value="finish">');
                         form_update.append(i_status).submit();
                     }
                 })
@@ -562,10 +589,12 @@
             });
 
             //::::::::::::::::::::::::: EXIBIR/OCULTAR BOTÃO DE EXPANDIR RESPOSTA AUTOMÁTICA ::::::::::::::::::::::::://
-            if ($('.automatic-response').height() > 300) {
-                $('.automatic-response').addClass('retract');
-                $('.automatic-response').next().removeClass('d-none');
-            }
+            $('.automatic-response').each(function(key, item) {
+                if ($(item).height() > 300) {
+                    $(item).addClass('retract');
+                    $(item).next().removeClass('d-none');
+                }
+            });
 
             //::::::::::::::::::::::::::::::::: EXPANDIR/CONTRAIR RESPOSTA AUTOMÁTICA :::::::::::::::::::::::::::::::://
             $('.btn-automatic-response').on('click', function() {
@@ -584,11 +613,11 @@
             $(document).on("click", '.response-image', function() {
                 $('#show-response-image img').attr('src', $(this).attr('src'));
                 $('#show-response-image').modal('show');
-            })
+            });
 
             //::::::::::::::::::::::::::::::::: EVENTO PARA OBSERVAR NOVAS MENSAGENS ::::::::::::::::::::::::::::::::://
             window.Echo.channel("ticket-response").listen("NewTicketResponse", (e) => {
-                if (e.TicketResponse.user_id != {{ auth()->id() }}) {
+                if (e.TicketResponse.user_id != {{ auth()->id() }} && e.TicketResponse.ticket_id === ticket_id) {
                     axios
                         .post("{{ route('ajax.ticket_response.check_new_response', ['ticket_response' => ':response']) }}".replace(':response', e.TicketResponse.id), {
                             data: {

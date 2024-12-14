@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\NewNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
 use App\Models\Company;
+use App\Models\Notification;
 use App\Models\Ticket;
 use App\Models\TicketResponse;
 use App\Models\User;
@@ -125,47 +127,31 @@ class TicketController extends Controller
 
         $Ticket = Ticket::create($data);
 
-        // Cadastrando ação de cadastrar
-        $data = [
-            'type' => 2,    //Ação
-            'ticket_id' => $Ticket->id,
-            'user_id' => auth()->id(),
-            'response' => "Cadastrou o ticket #" . substr($Ticket->uuid, -4) . ", na data " . date('d/m/Y') . " às " . date('H:i:s'),
-        ];
-
-        TicketResponse::create($data);
-
         // Cadastrando resposta automática da categoria
         if (!empty($Ticket->category->automatic_response)) {
-            $data = [
+            TicketResponse::create([
                 'type' => 1,    //Mensagem
                 'ticket_id' => $Ticket->id,
                 'response' => $Ticket->category->automatic_response,
-            ];
-
-            TicketResponse::create($data);
+            ]);
         }
 
         // Cadastrando resposta automática da subcategoria
         if (!empty($Ticket->subcategory->automatic_response)) {
-            $data = [
+            TicketResponse::create([
                 'type' => 1,    //Mensagem
                 'ticket_id' => $Ticket->id,
                 'response' => $Ticket->subcategory->automatic_response,
-            ];
-
-            TicketResponse::create($data);
+            ]);
         }
 
         // Cadastrando resposta do usuário
-        $data = [
+        TicketResponse::create([
             'type' => 1,    //Mensagem
             'ticket_id' => $Ticket->id,
             'user_id' => auth()->id(),
             'response' => $request->description,
-        ];
-
-        TicketResponse::create($data);
+        ]);
 
         return redirect()->route('admin.ticket.show', $Ticket->id)->with('success', 'Ticket cadastrado com sucesso!');
     }
@@ -202,7 +188,7 @@ class TicketController extends Controller
             })->get();
         }
 
-        $Responses = $Ticket->responses()->with('user')->where('type', 1)->get();
+        $Responses = $Ticket->responses()->with('user')->get();
 
         return view('admin.ticket.show', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -219,22 +205,85 @@ class TicketController extends Controller
         if ($data['type'] === 'accept') {
             $Ticket->update(['assignee_id' => auth()->id()]);
             $alert = 'Ticket aceito com sucesso!';
+
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->requester_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> aceitou o ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
+
         } else if ($data['type'] === 'transfer') {
             $Ticket->update(['status' => 2, 'transfer_assignee_id' => $data['transfer_assignee_id']]);
             $alert = 'Solicitação de transferência realizada com sucesso!';
+
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->transfer_assignee_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> solicitou a transferência do ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
         }else if ($data['type'] === 'cancel_transfer') {
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->transfer_assignee_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> cancelou a transferência do ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
+
             $Ticket->update(['status' => 1, 'transfer_assignee_id' => null]);
             $alert = 'Transferência do ticket cancelada com sucesso!';
         } else if ($data['type'] === 'accept_transfer') {
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->assignee_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> aceitou a transferência do ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
+
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->requester_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> aceitou o ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
+
             $Ticket->update(['status' => 1, 'assignee_id' => auth()->id(), 'transfer_assignee_id' => null]);
             $alert = 'Transferência do ticket aceita com sucesso!';
         } else if($data['type'] === 'resolve') {
             $Ticket->update(['status' => 3]);
             $alert = 'Ticket resolvido com sucesso!';
+
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->requester_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> resolveu o ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
+        } else if($data['type'] === 'finish') {
+            $Ticket->update(['status' => 4]);
+            $alert = 'Ticket finalizado com sucesso!';
+
+            $Notification = Notification::create([
+                'notified_id' => $Ticket->assignee_id,
+                'notifier_id' => auth()->id(),
+                'model_type' => 'App\Models\Ticket',
+                'model_id' => $Ticket->id,
+                'message' => '<p><b>'. auth()->user()->name .'</b> finalizou o ticket #'. substr($Ticket->uuid, -6) .'</p>',
+            ]);
         } else if ($data['type'] === 'cancel') {
             $Ticket->update(['status' => 7]);
             $alert = 'Ticket cancelado com sucesso!';
         }
+
+        // Enviando notificação
+        broadcast(new NewNotification($Notification));
 
         return redirect()->route('admin.ticket.show', $Ticket->id)->with('success', $alert);
     }
