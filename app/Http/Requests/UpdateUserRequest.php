@@ -30,8 +30,8 @@ class UpdateUserRequest extends FormRequest
             'password' => ['nullable', 'string'],
             'companies' => ['required', 'array'],
             'departaments' => ['required', 'array'],
-            'status' => ['required', 'integer'],
-            'role' => ['required', 'integer'],
+            'status' => ['nullable', 'integer'],
+            'role' => ['nullable', 'integer'],
         ];
     }
 

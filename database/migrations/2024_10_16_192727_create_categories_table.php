@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Company;
 use App\Models\Departament;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,6 +17,7 @@ class CreateCategoriesTable extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Company::class);
             $table->foreignIdFor(Departament::class);
             $table->string('name');
             $table->longText('automatic_response')->nullable();

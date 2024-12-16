@@ -55,6 +55,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                @else
+                                    <input type="number" value="{{ $Companies->first()->id }}" name="company_id" id="company_id" hidden />
                                 @endif
 
                                 @if ($Departaments->count() > 1)
@@ -66,13 +68,15 @@
                                                 <option value="">Selecione um departamento</option>
 
                                                 @foreach ($Departaments as $Departament)
-                                                    <option value="{{ $Departament->id }}" class="company-{{ $Departament->company_id }}" {{ !empty(old('departament_id')) && old('departament_id') == $Departament->id ? 'selected' : '' }}>
+                                                    <option value="{{ $Departament->id }}" {{ !empty(old('departament_id')) && old('departament_id') == $Departament->id ? 'selected' : '' }}>
                                                         {{ $Departament->name }}
                                                     </option>
                                                 @endforeach
                                             </select>
                                         </div>
                                     </div>
+                                @else
+                                    <input type="number" value="{{ $Departaments->first()->id }}" name="departament_id" id="departament_id" hidden />
                                 @endif
 
                                 {{-- [select] - Categoria --}}
@@ -80,10 +84,10 @@
                                     <label class="col-2 col-form-label required" for="category_id">Categoria :</label>
                                     <div class="col-10">
                                         <select class="form-control" id="category_id" name="category_id" data-live-search="true" required>
-                                            <option value="">Selecione uma categoria</option>
+                                            <option value="10000">Selecione uma categoria</option>
 
                                             @foreach ($Categories as $Category)
-                                                <option value="{{ $Category->id }}" class="departament-{{ $Category->departament_id }}" {{ !empty(old('category_id')) && old('category_id') == $Category->id ? 'selected' : '' }}>
+                                                <option value="{{ $Category->id }}" class="{{ 'tag-' . $Category->company_id . '-' . $Category->departament_id }}" {{ !empty(old('category_id')) && old('category_id') == $Category->id ? 'selected' : '' }}>
                                                     {{ $Category->name }}
                                                 </option>
                                             @endforeach
@@ -95,13 +99,13 @@
                                 <div class="row my-3 align-items-center">
                                     <label class="col-2 col-form-label required" for="name">Subcategoria :</label>
                                     <div class="col-10">
-                                        <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Informe o nome da subcategoria" required />
+                                        <input type="text" class="form-control" id="name" name="name" value="Teste" placeholder="Informe o nome da subcategoria" required />
                                     </div>
                                 </div>
 
                                 {{-- [input] -  Resposta automática --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="automatic_response">Resposta automática :</label>
+                                    <label class="col-2 col-form-label" for="automatic_response">Resposta automática :</label>
                                     <div class="col-10">
                                         <textarea class="form-control" id="automatic_response" rows="10" name="automatic_response">{{ old('automatic_response') }}</textarea>
                                     </div>
@@ -158,63 +162,39 @@
         $(document).ready(function() {
             $('select').selectpicker();
 
-            @if ($Companies->count() > 1)
-                //::::::::::::::::::::::::::::::::::::::: ALTERAR DEPARTAMENTOS :::::::::::::::::::::::::::::::::::::://
-                function show_departaments(company_id) {
-                    $('#departament_id option:not(":first-child")').prop('hidden', true);
-                    $('.company-' + company_id).prop('hidden', false);
+            i_company = $('#company_id');
+            i_departament = $('#departament_id');
+            i_category = $('#category_id');
 
-                    show_categories($('#departament_id').val());
+            //:::::::::::::::::::::::::::::::::::::::: ALTERAR CATEGORIAS :::::::::::::::::::::::::::::::::::::::://
+            function change_categories(company_id, departament_id) {
+                $('#category_id option:not(":first-child")').prop('hidden', true);
+                $('.tag-' + company_id + '-' + departament_id).prop('hidden', false);
 
-                    if (company_id) {
-                        $('#departament_id').attr('disabled', false);
-                        $('#departament_id option:first-child').text('Selecione um departamento');
-                    } else {
-                        $('#departament_id').attr('disabled', true);
-                        $('#departament_id option:first-child').text('Selecione uma empresa para ver os departamentos');
-                    }
-
-                    $('#departament_id').selectpicker('refresh');
+                if (!company_id || !departament_id) {
+                    i_category.val('')
+                        .attr('disabled', true)
+                        .find('option:first-child').text('Selecione uma empresa e um departamento para ver as categorias');
+                } else {
+                    i_category.attr('disabled', false)
+                        .find('option:first-child').text('Selecione uma categoria');
                 }
 
-                //:::::::::: AO CARREGAR A PÁGINA :::::::::://
+                $('#category_id').selectpicker('refresh');
+            }
 
-                show_departaments($('#company_id').val());
+            //:::::::::: AO CARREGAR A PÁGINA :::::::::://
+            change_categories(i_company.val(), i_departament.val());
 
-                //:::::::::: AO ALTERAR A EMPRESA :::::::::://
-                $('#company_id').on('change', function() {
-                    $('#departament_id option:first-child').prop('selected', true);
-                    show_departaments($(this).val());
-                });
-            @endif
+            //:::::::::: AO ALTERAR A EMPRESA :::::::::://
+            i_company.on('change', function() {
+                change_categories($(this).val(), i_departament.val());
+            });
 
-            @if ($Departaments->count() > 1)
-                //:::::::::::::::::::::::::::::::::::::::: ALTERAR CATEGORIAS :::::::::::::::::::::::::::::::::::::::://
-                function show_categories(departament_id) {
-                    $('#category_id option:not(":first-child")').prop('hidden', true);
-                    $('.departament-' + departament_id).prop('hidden', false);
-
-                    if (departament_id) {
-                        $('#category_id').attr('disabled', false);
-                        $('#category_id option:first-child').text('Selecione uma categoria');
-                    } else {
-                        $('#category_id').attr('disabled', true);
-                        $('#category_id option:first-child').prop('selected', true);
-                        $('#category_id option:first-child').text('Selecione um departamento para ver as categorias');
-                    }
-
-                    $('#category_id').selectpicker('refresh');
-                }
-
-                //:::::::::: AO CARREGAR A PÁGINA :::::::::://
-                show_categories($('#departament_id').val());
-
-                //:::::::::: AO ALTERAR A EMPRESA :::::::::://
-                $('#departament_id').on('change', function() {
-                    $('#category_id option:first-child').prop('selected', true);
-                    show_categories($(this).val());
-                });
-            @endif
+            //:::::::::: AO ALTERAR O DEPARTAMENTO :::::::::://
+            i_departament.on('change', function() {
+                change_categories(i_company.val(), $(this).val());
+            });
         });
     </script>
 @endpush

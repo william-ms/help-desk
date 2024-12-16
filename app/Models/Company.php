@@ -30,8 +30,9 @@ class Company extends Model
         return $this->belongsToMany(User::class, 'user_company');
     }
 
-    public function departaments() {
-        return $this->hasMany(Departament::class);
+    public function categories() 
+    {
+        return $this->hasMany(Category::class);
     }
 
     public function log()

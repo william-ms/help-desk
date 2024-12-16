@@ -26,18 +26,6 @@ class CategoryController extends Controller
             ],
         ];
 
-        $gates = [
-            'create' => Gate::allows('category.create'),
-            'edit' => Gate::allows('category.edit'),
-            'destroy' => Gate::allows('category.destroy'),
-            'restore' => Gate::allows('category.restore'),
-            'companies' => Gate::allows('category.companies'),
-            'departaments' => Gate::allows('category.departaments'),
-            'log_show' => Gate::allows('log.show'),
-        ];
-
-        [$Companies, $Departaments] = $this->get_collections();
-
         $data_filter = [
             [
                 'type' => 'text',
@@ -49,46 +37,46 @@ class CategoryController extends Controller
                 'type' => 'select',
                 'label' => 'Departamento',
                 'input_name' => 'departament',
-                'data' => $Departaments->unique('name'),
-                'field_key' => 'name'
+                'data' => Departament::whereHas('categories')->get(),
             ],
             [
                 'type' => 'select',
                 'label' => 'Empresa',
-                'input_name' => 'company_id',
-                'data' => $Companies->unique('name'),
+                'input_name' => 'company',
+                'data' => Company::whereHas('categories')->get(),
             ],
         ];
 
-        $Categories = Category::with(['log', 'departament.company'])
+        $gates = [
+            'create' => Gate::allows('category.create'),
+            'edit' => Gate::allows('category.edit'),
+            'destroy' => Gate::allows('category.destroy'),
+            'restore' => Gate::allows('category.restore'),
+            'companies' => Gate::allows('category.companies'),
+            'departaments' => Gate::allows('category.departaments'),
+            'log_show' => Gate::allows('log.show'),
+        ];
+
+        $Categories = Category::with(['log', 'departament', 'company'])
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
         ->when($request->departament, function($query) use ($request) {
-            $query->whereHas('departament', function($query) use ($request){
-                $query->where('name', $request->departament);
-            });
+            $query->where('departament_id', $request->departament);
         })
-        ->when($request->company_id, function($query) use ($request) {
-            $query->whereHas('departament', function ($query) use ($request) {
-                $query->where('company_id', $request->company_id);
-            });
+        ->when($request->company, function($query) use ($request) {
+            $query->where('company_id', $request->company);
         })
         ->when($gates['restore'], function($query) {
             $query->withTrashed();
         })
         ->when(!$gates['companies'], function($query) {
-            $query->whereHas('departament.company.users', function ($query) {
+            $query->whereHas('company.users', function($query) {
                 $query->where('users.id', auth()->id());
             });
         })
-        ->when($gates['companies'] && !$gates['departaments'], function($query) {
-            $query->whereHas('departament', function($query) {
-                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
-            });
-        })
-        ->when(!$gates['departaments'] && !$gates['companies'], function($query) {
-            $query->whereHas('departament.users', function ($query) {
+        ->when(!$gates['departaments'], function($query) {
+            $query->whereHas('departament.users', function($query) {
                 $query->where('users.id', auth()->id());
             });
         })
@@ -120,7 +108,19 @@ class CategoryController extends Controller
             ],
         ];
 
-        [$Companies, $Departaments] = $this->get_collections();
+        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
+        
+        $Departaments = Departament::when(!auth()->user()->can('category.departaments'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
 
         return view('admin.category.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -139,13 +139,15 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('name', $data['name'])->where('departament_id', $data['departament_id'])->withTrashed()->get();
+        $Equals = Category::where('name', $data['name'])->where('company_id', $data['company_id'])->where('departament_id', $data['departament_id'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para esse departamento e empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
-        $data['automatic_response'] = $this->format_response($data['automatic_response']);
+        if(!empty($data['automatic_response'])) {
+            $data['automatic_response'] = $this->format_response($data['automatic_response']);
+        }
 
         Category::create($data);
 
@@ -171,6 +173,28 @@ class CategoryController extends Controller
      */
     public function edit(Category $Category)
     {
+        $Companies = Company::when(!auth()->user()->can('category.companies'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
+
+        $Departaments = Departament::when(!auth()->user()->can('category.departaments'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
+
+        if(!auth()->user()->can('category.companies') && !$Companies->contains('id', $Category->company_id)) {
+            return abort(403);
+        }
+
+        if(!auth()->user()->can('category.departaments') && !$Departaments->contains('id', $Category->departament_id)) {
+            return abort(403);
+        }
+
         $data_breadcrumbs = [
             [
                 'name' => 'Categorias',
@@ -180,8 +204,6 @@ class CategoryController extends Controller
                 'name' => 'Editar',
             ],
         ];
-
-        [$Companies, $Departaments] = $this->get_collections();
 
         return view('admin.category.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -202,13 +224,15 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        $Equals = Category::where('id', '!=', $Category->id)->where('departament_id', $data['departament_id'])->where('name', $data['name'])->withTrashed()->get();
+        $Equals = Category::where('id', '!=', $Category->id)->where('company_id', $data['company_id'])->where('departament_id', $data['departament_id'])->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para esse departamento uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
+            return back()->withErrors(['name' => "Já existe para esse departamento e empresa uma categoria cadastrada com esse nome, porém ela está com status 'deletado'. Entre em contato com um administrador para restaurar essa categoria!"])->withInput();
         }
 
-        $data['automatic_response'] = $this->format_response($data['automatic_response']);
+        if(!empty($data['automatic_response'])) {
+            $data['automatic_response'] = $this->format_response($data['automatic_response']);
+        }
 
         $Category->update($data);
 
@@ -245,50 +269,8 @@ class CategoryController extends Controller
         return back()->with('success', 'Categoria restaurada com sucesso!');
     }
 
-    public function get_collections() {
-
-        $gates= [
-            'companies' => auth()->user()->can('category.companies'),
-            'departaments' => auth()->user()->can('category.departaments'),
-        ];
-
-        $Companies = Company::query();
-
-        if(!$gates['companies'] && !$gates['departaments']) {
-            $Companies->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            })->whereHas('departaments.users', function ($query) {
-                $query->where('users.id', auth()->id());
-            })->with(['departaments' => function($query) {
-                $query->whereHas('users', function ($query) {
-                    $query->where('users.id', auth()->id());
-                });
-            }]);
-
-        } else if($gates['companies'] && !$gates['departaments']) {
-            $Companies->whereHas('departaments', function ($query) {
-                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
-            })->with(['departaments' => function($query) {
-                $query->whereIn('name', auth()->user()->departaments->pluck('name'));
-            }]);
-
-        } else if(!$gates['companies'] && $gates['departaments']) {
-            $Companies->whereHas('users', function ($query) {
-                $query->where('users.id', auth()->id());
-            });
-        } 
-
-        $Companies = $Companies->get();
-
-        $Departaments = $Companies->flatMap(function ($Company) {
-            return $Company->departaments;
-        });
-
-        return [$Companies, $Departaments];
-    }
-
-    private function format_response(string $response) {
-
+    private function format_response(string $response)
+    {
         if (preg_match('/(<img[^>]+>)/i', $response)) {
             $response = preg_replace('/<img/i', '<img class="response-image"', $response);
         }

@@ -64,7 +64,7 @@
 
                                             <td>{{ $Category->departament->name }}</td>
 
-                                            <td>{{ $Category->departament->company->name }}</td>
+                                            <td>{{ $Category->company->name }}</td>
 
                                             <td class="text-center">
                                                 @if (empty($Category->deleted_at))

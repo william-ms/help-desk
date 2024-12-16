@@ -49,7 +49,6 @@
                                     <tr>
                                         <th style="width: 10%">#</th>
                                         <th style="width: 80%">Departamento</th>
-                                        <th style="width: 40%">Empresa</th>
                                         <th class="text-center"style="width: 10%">Ações</th>
                                     </tr>
                                 </thead>
@@ -60,8 +59,6 @@
                                             <td>{{ $Departament->id }}</td>
 
                                             <td>{{ $Departament->name }}</td>
-
-                                            <td>{{ $Departament->company->name }}</td>
 
                                             <td class="text-center">
                                                 @if (empty($Departament->deleted_at))
@@ -177,19 +174,9 @@
 
             @if (!$Departaments->isEmpty())
                 var table = $('#table').DataTable({
-                    order: [
-                        [2, 'asc']
-                    ],
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },
-                    rowGroup: {
-                        dataSrc: 2
-                    },
-                    columnDefs: [{
-                        target: 2,
-                        visible: false,
-                    }]
                 });
             @endif
         });

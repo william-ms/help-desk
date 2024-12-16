@@ -129,10 +129,10 @@
 
                                                     <div class="row m-0 permissions-wrapper">
                                                         @foreach ($PermissionsGroupByName as $PermissionGroup => $Permissions)
-                                                            <div class="permission-wrapper d-flex align-content-stretch">
+                                                            <div class="permission-wrapper col-md-6 col-xl-4 col-xxl-3 d-flex align-content-stretch">
                                                                 <div class="p-4 mx-2 my-3 flex-fill border border-info rounded">
 
-                                                                    <div class="form-check p-0 pb-3 mb-3 d-flex align-content-center justify-content-between border-bottom">
+                                                                    <div class="form-check p-0 pb-3 mb-3 d-flex align-items-center justify-content-between border-bottom">
                                                                         <h4 class="m-0">{{ $PermissionGroup }}</h4>
                                                                         <input class="form-check-input input-info all-check {{ explode('.', $Permissions[0]->name)[0] }}" data-group="{{ explode('.', $Permissions[0]->name)[0] }}" type="checkbox" value="" />
                                                                     </div>
@@ -197,10 +197,6 @@
 
         .form-control button .filter-option {
             color: #5B6B79;
-        }
-
-        .permission-wrapper {
-            width: calc(100% / 5);
         }
     </style>
 @endpush

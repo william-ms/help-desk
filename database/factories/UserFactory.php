@@ -35,13 +35,14 @@ class UserFactory extends Factory
             'email' => "admin@helpdesk.com.br",
             'first_login' => 1,
             'email_verified_at' => now(),
+            'avatar' => 'avatar-5',
         ]);
 
         $User->companies()->sync($Companies->pluck('id'));
         $User->departaments()->sync($Departaments->pluck('id'));
         $User->assignRole($Role->id);
-        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'),'title' => "Atribuiu o usuário as <b>empresas</b>"];
-        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'),'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
+        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'), 'title' => "Atribuiu o usuário as <b>empresas</b>"];
+        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'), 'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
         $log_admin_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$Role->name}</b>"];
         register_log($User, 'update', 200, $log_admin_data);
 
@@ -54,13 +55,14 @@ class UserFactory extends Factory
             'name' => "Técnico",
             'email' => "technical@helpdesk.com.br",
             'email_verified_at' => now(),
+            'avatar' => 'avatar-8',
         ]);
 
         $User->companies()->sync($Companies->pluck('id'));
         $User->departaments()->sync($Departaments->pluck('id'));
         $User->assignRole($Role->id);
-        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'),'title' => "Atribuiu o usuário as <b>empresas</b>"];
-        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'),'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
+        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'), 'title' => "Atribuiu o usuário as <b>empresas</b>"];
+        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'), 'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
         $log_admin_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$Role->name}</b>"];
         register_log($User, 'update', 200, $log_admin_data);
 
@@ -73,13 +75,14 @@ class UserFactory extends Factory
             'name' => "Usuário",
             'email' => "user@helpdesk.com.br",
             'email_verified_at' => now(),
+            'avatar' => 'avatar-9',
         ]);
-        
+
         $User->companies()->sync($Companies->pluck('id'));
         $User->departaments()->sync($Departaments->pluck('id'));
         $User->assignRole($Role->id);
-        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'),'title' => "Atribuiu o usuário as <b>empresas</b>"];
-        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'),'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
+        $log_admin_data['companies'] = ['values' => $Companies->pluck('name'), 'title' => "Atribuiu o usuário as <b>empresas</b>"];
+        $log_admin_data['departaments'] = ['values' => $Departaments->pluck('name'), 'title' => "Atribuiu o usuário aos <b>departamentos</b>"];
         $log_admin_data['role'] = ['value' => "Atribuiu o usuário à função de <b>{$Role->name}</b>"];
         register_log($User, 'update', 200, $log_admin_data);
 

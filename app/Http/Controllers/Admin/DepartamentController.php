@@ -25,50 +25,29 @@ class DepartamentController extends Controller
             ],
         ];
 
-        $gates = [
-            'create' => Gate::allows('departament.create'),
-            'edit' => Gate::allows('departament.edit'),
-            'destroy' => Gate::allows('departament.destroy'),
-            'restore' => Gate::allows('departament.restore'),
-            'companies' => Gate::allows('departament.companies'),
-            'log_show' => Gate::allows('log.show'),
-        ];
-
-        $Companies = Company::when(!$gates['companies'], function($query) {
-            $query->whereHas('users', function($query) {
-                $query->where('id', auth()->id());
-            });
-        })->orderBy('name')->get();
-
         $data_filter = [
             [
                 'type' => 'text',
                 'label' => 'Departamento',
                 'input_name' => 'name',
                 'placeholder' => 'Informe o nome do departamento'
-            ],
-            [
-                'type' => 'select',
-                'label' => 'Empresa',
-                'input_name' => 'company_id',
-                'data' => $Companies,
-            ],
+            ]
         ];
 
-        $Departaments = Departament::with('log', 'company')
+        $gates = [
+            'create' => Gate::allows('departament.create'),
+            'edit' => Gate::allows('departament.edit'),
+            'destroy' => Gate::allows('departament.destroy'),
+            'restore' => Gate::allows('departament.restore'),
+            'log_show' => Gate::allows('log.show'),
+        ];
+
+        $Departaments = Departament::with('log')
         ->when($request->name, function($query) use ($request) {
             $query->where('name', 'LIKE', "%{$request->name}%");
         })
-        ->when($request->company_id, function($query) use ($request) {
-            $query->where('company_id', $request->company_id);
-        })
         ->when($gates['restore'], function($query) {
             $query->withTrashed();
-        })
-        ->when(!$gates['companies'], function($query) {
-            $query->whereHas('company.users', function($query) {
-                $query->where('id', auth()->id());
-            });
         })
         ->orderBy('name', 'ASC')
         ->get();
@@ -98,15 +77,8 @@ class DepartamentController extends Controller
             ],
         ];
 
-        $Companies = Company::when(!auth()->user()->can('departament.companies'), function($query) {
-            $query->whereHas('users', function($query) {
-                $query->where('id', auth()->id());
-            });
-        })->orderBy('name')->get();
-
         return view('admin.departament.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
-            'Companies' => $Companies,
         ]);
     }
 
@@ -120,16 +92,10 @@ class DepartamentController extends Controller
     {
         $data = $request->validated();
 
-        if(!auth()->user()->can('departament.companies')) {
-            if(!auth()->user()->companies->contains('id', $data['company_id'])) {
-                return back()->withErrors(['name' => "Ocorreu um erro ao cadastrar o departamento. Tente novamente, se o erro persistir entre em contato com um administrador!"])->withInput();
-            }
-        }
-
-        $Equals = Departament::where('name', $data['name'])->where('company_id', $data['company_id'])->withTrashed()->get();
+        $Equals = Departament::where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para essa empresa um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restuarar esse departamento!"])->withInput();
+            return back()->withErrors(['name' => "Já existe um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse departamento!"])->withInput();
         }
 
         Departament::create($data);
@@ -166,16 +132,9 @@ class DepartamentController extends Controller
             ],
         ];
 
-        $Companies = Company::when(!auth()->user()->can('departament.companies'), function($query) {
-            $query->whereHas('users', function($query) {
-                $query->where('id', auth()->id());
-            });
-        })->orderBy('name')->get();
-
         return view('admin.departament.edit', [
             'data_breadcrumbs' => $data_breadcrumbs,
             'Departament' => $Departament,
-            'Companies' => $Companies,
         ]);
     }
 
@@ -190,16 +149,10 @@ class DepartamentController extends Controller
     {
         $data = $request->validated();
 
-        if(!auth()->user()->can('departament.companies')) {
-            if(!auth()->user()->companies->contains('id', $data['company_id'])) {
-                return back()->withErrors(['name' => "Ocorreu um erro ao cadastrar o departamento. Tente novamente, se o erro persistir entre em contato com um administrador!"])->withInput();
-            }
-        }
-
-        $Equals = Departament::where('id', '!=', $Departament->id)->where('company_id', $data['company_id'])->where('name', $data['name'])->withTrashed()->get();
+        $Equals = Departament::where('id', '!=', $Departament->id)->where('name', $data['name'])->withTrashed()->get();
 
         if(!$Equals->isEmpty()) {
-            return back()->withErrors(['name' => "Já existe para essa empresa um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse departamento!"])->withInput();
+            return back()->withErrors(['name' => "Já existe um departamento cadastrado com esse nome, porém ele está com status 'deletado'. Entre em contato com um administrador para restaurar esse departamento!"])->withInput();
         }
 
         $Departament->update($data);

@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
             'role'              => ['index', 'create', 'edit', 'destroy'],
             'user'              => ['index', 'create', 'edit', 'destroy', 'restore', 'permissions'],
             'company'           => ['index', 'create', 'edit', 'destroy', 'restore'],
-            'departament'       => ['index', 'create', 'edit', 'destroy', 'restore', 'companies'],
+            'departament'       => ['index', 'create', 'edit', 'destroy', 'restore'],
             'category'          => ['index', 'create', 'edit', 'destroy', 'restore', 'companies', 'departaments'],
             'subcategory'       => ['index', 'create', 'edit', 'destroy', 'restore', 'companies', 'departaments'],
             'ticket'            => ['index', 'create', 'edit', 'show'],
@@ -65,21 +65,17 @@ class DatabaseSeeder extends Seeder
         $RoleUser = Role::factory()->user($Permissions);
         $RoleTechnical = Role::factory()->technical($Permissions);
 
-        $Company_1 = Company::create(['name' => 'Empresa 1']);
-        $Company_2 = Company::create(['name' => 'Empresa 2']);
+        $Company_1 = Company::create(['name' => 'bgMoon - Central']);
+        $Company_2 = Company::create(['name' => 'bgMoon - Polo']);
 
-        $Departament_1 = Departament::create(['name' => 'TI', 'company_id' => $Company_1->id]);
-        $Departament_2 = Departament::create(['name' => 'Recepção', 'company_id' => $Company_1->id]);
-        $Departament_3 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_1->id]);
-        $Departament_4 = Departament::create(['name' => 'TI', 'company_id' => $Company_2->id]);
-        $Departament_5 = Departament::create(['name' => 'AcessaMed', 'company_id' => $Company_2->id]);
+        $Departament_1 = Departament::create(['name' => 'TI']);
+        $Departament_2 = Departament::create(['name' => 'Recepção']);
 
-        $Category_1 = Category::create(['departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_2 = Category::create(['departament_id' => $Departament_1->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_3 = Category::create(['departament_id' => $Departament_2->id, 'name' => 'TEF', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_4 = Category::create(['departament_id' => $Departament_3->id, 'name' => 'Medicina do trabalho', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_5 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_6 = Category::create(['departament_id' => $Departament_4->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_1 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_2 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_3 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_2->id, 'name' => 'TEF', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_5 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_6 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_2->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
 
         $Subcategory_1 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
         $Subcategory_2 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não imprime', 'automatic_response' => 'Resposta automática']);

@@ -24,18 +24,15 @@ class StoreDepartamentRequest extends FormRequest
      */
     public function rules()
     {
-        $request = $this->request->all();
-
         return [
-            'company_id' => ['required', 'integer'],
-            'name' => ['required', 'string', Rule::unique('departaments')->where('company_id', $request['company_id'])->whereNull('deleted_at')]
+            'name' => ['required', 'string', Rule::unique('departaments')->whereNull('deleted_at')],
         ];
     }
 
     public function messages()
     {
         return [
-            'name.unique' => 'Já existe para essa empresa um departamento cadastrado com esse nome.'
+            'name.unique' => 'Já existe um departamento cadastrado com esse nome.'
         ];
     }
 }

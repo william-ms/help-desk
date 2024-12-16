@@ -13,6 +13,7 @@ class Category extends Model
     public string $type = "categoria";
 
     public $fields = [
+        'company_id' => 'empresa',
         'departament_id' => 'departamento',
         'name' => 'nome',
         'automatic_response' => 'resposta automática',
@@ -20,6 +21,7 @@ class Category extends Model
     ];
 
     protected $fillable = [
+        'company_id',
         'departament_id',
         'name',
         'automatic_response',
@@ -31,6 +33,11 @@ class Category extends Model
         'updated_at',
         'deleted_at',
     ];
+
+    public function company() 
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function departament() 
     {
@@ -57,12 +64,18 @@ class Category extends Model
             
             $originals = $this->getOriginal();
 
+            if(!empty($changes['company_id'])) {
+                $Company = Company::find($originals['company_id']);
+                $data['company_id'] = ['value' => "Alterou a empresa de <b>{$Company->name}</b> para <b>{$this->company->name}</b>"];
+            }
+
             if(!empty($changes['departament_id'])) {
                 $Departament = Departament::find($originals['departament_id']);
                 $data['departament_id'] = ['value' => "Alterou o departamento de <b>{$Departament->name}</b> para <b>{$this->departament->name}</b>"];
             }
         } else {
-            $data['departament_id'] = ['value' => "Departamento <b>{$this->departament->name}</b>"];  
+            $data['company_id'] = ['value' => "Categoria <b>{$this->company->name}</b>"]; 
+            $data['departament_id'] = ['value' => "Departamento <b>{$this->departament->name}</b>"]; 
         }
 
         return $data;

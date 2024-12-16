@@ -16,7 +16,6 @@ class CreateDepartamentsTable extends Migration
     {
         Schema::create('departaments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Company::class);
             $table->string('name');
             $table->timestamps();
             $table->softDeletes();

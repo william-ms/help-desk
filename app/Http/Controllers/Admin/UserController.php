@@ -16,6 +16,7 @@ use App\Traits\UserTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\PermissionRegistrar;
 
 class UserController extends Controller
 {
@@ -64,7 +65,11 @@ class UserController extends Controller
                 'type' => 'select',
                 'label' => 'Status',
                 'input_name' => 'status',
-                'data' => collect([['id' => 1, 'name' => 'Ativo'], ['id' => 2, 'name' => 'Inativo']]),
+                'data' => collect($this->UserStatus)->map(function ($item, $key) {
+                    $item['id'] = $key;
+                    return $item;
+                }),
+                'field_value' => 'status',
             ],
         ];
 
@@ -272,6 +277,9 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $log_data = [];
+        
+        $data['status'] = $data['status'] ?? $User->status;
+        $data['role'] = $data['role'] ?? $User->roles()->first()->id;
 
         if($data['role'] == 1 && !auth()->user()->hasRole(1)) {
             return back()->withErrors(['name' => "Parece que você está tentando burlar o sistema! Seu ip foi registrado em nossos dados para análise"])->withInput();
@@ -355,6 +363,8 @@ class UserController extends Controller
 
             $User->syncPermissions($permissions);
         } 
+
+        app()->make(PermissionRegistrar::class)->forgetCachedPermissions();
 
         if(!empty($log_data)) {
             register_log($User, 'update', 200, $log_data);

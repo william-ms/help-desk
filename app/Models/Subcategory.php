@@ -42,7 +42,7 @@ class Subcategory extends Model
 
     public function getCompanyAttribute()
     {
-        return $this->category->departament->company;
+        return $this->category->company;
     }
 
     public function log()
