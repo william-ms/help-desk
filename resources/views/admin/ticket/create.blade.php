@@ -55,6 +55,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                @else
+                                    <input type="number" value="{{ $Companies->first()->id }}" name="company_id" id="company_id" hidden />
                                 @endif
 
                                 @if ($Departaments->count() > 1)
@@ -73,6 +75,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                @else
+                                    <input type="number" value="{{ $Departaments->first()->id }}" name="departament_id" id="departament_id" hidden />
                                 @endif
 
                                 {{-- [select] - Categoria --}}
@@ -83,7 +87,7 @@
                                             <option value="">Selecione uma categoria</option>
 
                                             @foreach ($Categories as $Category)
-                                                <option value="{{ $Category->id }}" class="departament-{{ $Category->departament_id }}" {{ !empty(old('category_id')) && old('category_id') == $Category->id ? 'selected' : '' }}>
+                                                <option value="{{ $Category->id }}" class="{{ 'tag-' . $Category->company_id . '-' . $Category->departament_id }}" {{ !empty(old('category_id')) && old('category_id') == $Category->id ? 'selected' : '' }}>
                                                     {{ $Category->name }}
                                                 </option>
                                             @endforeach
@@ -210,95 +214,79 @@
         $(document).ready(function() {
             $('select').selectpicker();
 
-            @if ($Companies->count() > 1)
-                //:::::::::::::::::::: ADICIONAR DEPARTAMENTOS DE ACORDO COM A EMPRESA SELECIONADA ::::::::::::::::::://
-                function show_departaments(company_id) {
-                    $('#departament_id option:not(":first-child")').prop('hidden', true);
-                    $('.company-' + company_id).prop('hidden', false);
+            i_company = $('#company_id');
+            i_departament = $('#departament_id');
+            i_category = $('#category_id');
+            i_subcategory = $('#subcategory_id');
 
-                    show_categories($('#departament_id').val());
-                    show_subcategories($('#category_id').val());
+            //::::::::::::::: ADICIONAR CATEGORIAS DE ACORDO COM A EMPRESA E DEPARTAMENTO SELECIONADO :::::::::::::::://
+            function change_categories(company_id, departament_id) {
+                i_category.find('option').not(':first-child').prop('hidden', true);
+                $('.tag-' + company_id + '-' + departament_id).prop('hidden', false);
 
-                    if (company_id) {
-                        $('#departament_id').attr('disabled', false);
-                        $('#departament_id option:first-child').text('Selecione um departamento');
-                    } else {
-                        $('#departament_id').attr('disabled', true);
-                        $('#departament_id option:first-child').text('Selecione uma empresa para ver os departamentos');
-                    }
+                i_category.val('');
 
-                    $('#departament_id').selectpicker('refresh');
-                }
-
-                //:::::::::: AO CARREGAR A PÁGINA :::::::::://
-                show_departaments($('#company_id').val());
-
-                //:::::::::: AO ALTERAR A EMPRESA :::::::::://
-                $('#company_id').on('change', function() {
-                    $('#departament_id option:first-child').prop('selected', true);
-                    show_departaments($(this).val());
-                });
-            @endif
-
-            @if ($Departaments->count() > 1)
-                //::::::::::::::::::: ADICIONAR CATEGORIAS DE ACORDO COM O DEPARTAMENTO SELECIONADO :::::::::::::::::://
-                function show_categories(departament_id) {
-                    $('#category_id option:not(":first-child")').prop('hidden', true);
-                    $('.departament-' + departament_id).prop('hidden', false);
-
-                    show_subcategories($('#category_id').val());
-
-                    if (departament_id) {
-                        $('#category_id').attr('disabled', false);
-                        $('#category_id option:first-child').text('Selecione uma categoria');
-                    } else {
-                        $('#category_id').attr('disabled', true);
-                        $('#category_id option:first-child').prop('selected', true);
-                        $('#category_id option:first-child').text('Selecione um departamento para ver as categorias');
-                    }
-
-                    $('#category_id').selectpicker('refresh');
-                }
-
-                //:::::::::: AO CARREGAR A PÁGINA :::::::::://
-                show_categories($('#departament_id').val());
-
-                //:::::::::: AO ALTERAR A EMPRESA :::::::::://
-                $('#departament_id').on('change', function() {
-                    $('#category_id option:first-child').prop('selected', true);
-                    show_categories($(this).val());
-                });
-            @endif
-
-            //::::::::::::::::::::: ADICIONAR SUBCATEGORIAS DE ACORDO COM A CATEGORIA SELECIONADA :::::::::::::::::::://
-            function show_subcategories(category_id) {
-                $('#subcategory_id option:not(":first-child")').prop('hidden', true);
-                $('.category-' + category_id).prop('hidden', false);
-
-                if (category_id) {
-                    $('#subcategory_id').attr('disabled', false);
-                    $('#subcategory_id option:first-child').text('Selecione uma subcategoria');
+                if (!company_id || !departament_id) {
+                    i_category.attr('disabled', true)
+                        .find('option:first-child').text('Selecione uma empresa e um departamento para ver as categorias');
                 } else {
-                    $('#subcategory_id').attr('disabled', true);
-                    $('#subcategory_id option:first-child').prop('selected', true);
-                    $('#subcategory_id option:first-child').text('Selecione uma categoria para ver as subcategorias');
+                    i_category.attr('disabled', false)
+                        .find('option:first-child').text('Selecione uma categoria');
                 }
 
-                $('#subcategory_id').selectpicker('refresh');
+                i_category.selectpicker('refresh');
             }
 
             //:::::::::: AO CARREGAR A PÁGINA :::::::::://
-            show_subcategories($('#category_id').val());
+            change_categories(i_company.val(), i_departament.val());
 
             //:::::::::: AO ALTERAR A EMPRESA :::::::::://
-            $('#category_id').on('change', function() {
-                $('#subcategory_id option:first-child').prop('selected', true);
+            i_company.on('change', function() {
+                change_categories($(this).val(), i_departament.val());
+            });
+
+            //:::::::::: AO ALTERAR O DEPARTAMENTO :::::::::://
+            i_departament.on('change', function() {
+                change_categories(i_company.val(), $(this).val());
+            });
+
+            //::::::::::::::::::::: ADICIONAR SUBCATEGORIAS DE ACORDO COM A CATEGORIA SELECIONADA :::::::::::::::::::://
+            function show_subcategories(category_id) {
+                i_subcategory.find('option').not(':first-child').prop('hidden', true);
+                $('.category-' + category_id).prop('hidden', false);
+                i_subcategory.val('');
+
+                if (category_id) {
+                    i_subcategory.attr('disabled', false)
+                        .find('option:first-child').text('Selecione uma subcategoria');
+                } else {
+                    i_subcategory.attr('disabled', true)
+                        .find('option:first-child').text('Selecione uma categoria para ver as subcategorias');
+                }
+
+                i_subcategory.selectpicker('refresh');
+            }
+
+            //:::::::::: AO CARREGAR A PÁGINA :::::::::://
+            show_subcategories(i_category.val());
+
+            //:::::::::: AO ALTERAR A EMPRESA :::::::::://
+            i_company.on('change', function() {
+                show_subcategories(i_category.val());
+            });
+
+            //:::::::::: AO ALTERAR O DEPARTAMENTO :::::::::://
+            i_departament.on('change', function() {
+                show_subcategories(i_category.val());
+            });
+
+            //:::::::::: AO ALTERAR A CATEGORIA :::::::::://
+            i_category.on('change', function() {
                 show_subcategories($(this).val());
             });
 
             //:::::::::::::::::::::::::::::::::::::: EXIBIR RESPOSTA AUTOMÁTICA :::::::::::::::::::::::::::::::::::::://
             function show_automatic_response(type, id) {
-
                 if (id == '') {
                     return;
                 }
@@ -325,12 +313,12 @@
                 });
             }
 
-            $('#category_id').on('change', function() {
-                show_automatic_response('category', $('#category_id').val());
+            i_category.on('change', function() {
+                show_automatic_response('category', $(this).val());
             });
 
-            $('#subcategory_id').on('change', function() {
-                show_automatic_response('subcategory', $('#subcategory_id').val());
+            i_subcategory.on('change', function() {
+                show_automatic_response('subcategory', $(this).val());
             });
 
             //::::::::::::::::::::::::::::::::: EXIBIR IMAGEM DA RESPOSTA AUTOMÁTICA ::::::::::::::::::::::::::::::::://

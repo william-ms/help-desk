@@ -6,8 +6,11 @@ use App\Events\NewNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketRequest;
+use App\Models\Category;
 use App\Models\Company;
+use App\Models\Departament;
 use App\Models\Notification;
+use App\Models\Subcategory;
 use App\Models\Ticket;
 use App\Models\TicketResponse;
 use App\Models\User;
@@ -91,7 +94,23 @@ class TicketController extends Controller
             ],
         ];
 
-        [$Companies, $Departaments, $Categories, $Subcategories] = $this->get_collections();
+        $Companies = Company::when(!auth()->user()->can('ticket.companies'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
+        
+        $Departaments = Departament::when(!auth()->user()->can('ticket.departaments'), function($query) {
+            $query->whereHas('users', function($query) {
+                $query->where('id', auth()->id());
+            });
+        })
+        ->get();
+
+        $Categories = Category::whereIn('company_id', $Companies->pluck('id'))->whereIn('departament_id', $Departaments->pluck('id'))->get();
+
+        $Subcategories = Subcategory::whereIn('category_id', $Categories->pluck('id'))->get();
 
         return view('admin.ticket.create', [
             'data_breadcrumbs' => $data_breadcrumbs,
@@ -116,14 +135,6 @@ class TicketController extends Controller
         $data['requester_id'] = auth()->id();
         $data['status'] = 1;    //Aberto
         $data['action'] = 1;    //Usuário cadastrou o ticket
-
-        if(empty($data['company_id'])) {
-            $data['company_id'] = auth()->user()->companies->first()->id;
-        }
-
-        if(empty($data['departament_id'])) {
-            $data['departament_id'] = auth()->user()->departaments->first()->id;
-        }
 
         $Ticket = Ticket::create($data);
 
