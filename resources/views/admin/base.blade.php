@@ -79,14 +79,14 @@
         <div class="navbar-wrapper">
             <div class="m-header">
                 {{-- LOGO LIGTH --}}
-                <div id="logo-light" class="p-3">
+                <div id="logo-light">
                     <a href="{{ route('admin.dashboard.index') }}" class="b-brand text-primary">
                         <img src="{{ asset('assets/images/logo-light.png') }}" alt="logo image" class="w-100 p-3" />
                     </a>
                 </div>
 
                 {{-- LOGO DARK --}}
-                <div id="logo-dark" class="p-3">
+                <div id="logo-dark">
                     <a href="{{ route('admin.dashboard.index') }}" class="b-brand text-primary">
                         <img src="{{ asset('assets/images/logo-dark.png') }}" alt="logo image" class="w-100 p-3" />
                     </a>
@@ -394,7 +394,7 @@
                     &copy
                     <script>
                         document.write(new Date().getFullYear())
-                    </script> bgMoon. <i class="ph-duotone ph-heart text-danger"></i>
+                    </script> Help Desk. <i class="ph-duotone ph-heart text-danger"></i>
                 </div>
             </div>
         </div>

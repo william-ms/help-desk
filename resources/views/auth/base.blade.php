@@ -56,7 +56,7 @@
                         &copy
                         <script>
                             document.write(new Date().getFullYear())
-                        </script> bgMoon. <i class="ph-duotone ph-heart text-danger"></i>
+                        </script> Help Desk. <i class="ph-duotone ph-heart text-danger"></i>
                     </div>
                 </div><!-- row -->
             </div><!-- auth-sidefooter -->

@@ -2,8 +2,10 @@
 
 @section('content')
     <div class="text-center">
-        <img src="{{ asset('assets/images/authentication/img-auth-reset-password.png') }}" alt="images" class="img-fluid mb-3">
-
+        <div class="w-50 mx-auto mb-4">
+            <img src="{{ asset('assets/images/logo-dark-full.png') }}" alt="images" class="img-fluid">
+        </div>
+        
         <h4 class="f-w-500 mb-4">Crie uma nova senha</h4>
     </div>
 

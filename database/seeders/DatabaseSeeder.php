@@ -65,8 +65,8 @@ class DatabaseSeeder extends Seeder
         $RoleUser = Role::factory()->user($Permissions);
         $RoleTechnical = Role::factory()->technical($Permissions);
 
-        $Company_1 = Company::create(['name' => 'bgMoon - Central']);
-        $Company_2 = Company::create(['name' => 'bgMoon - Polo']);
+        $Company_1 = Company::create(['name' => 'HelpDesk - Central']);
+        $Company_2 = Company::create(['name' => 'HelpDesk - Polo']);
 
         $Departament_1 = Departament::create(['name' => 'TI']);
         $Departament_2 = Departament::create(['name' => 'Recepção']);
