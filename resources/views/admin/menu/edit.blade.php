@@ -29,8 +29,8 @@
 
                             <div>
                                 @can('menu.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.menu.index') }}">
-                                        Listar menus
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.menu.index') }}" title="Listar menus">
+                                        <span class="d-none d-lg-inline">Listar menus</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -47,8 +47,8 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="menu_category_id">Categoria :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2  col-form-label required" for="menu_category_id">Categoria :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10 d-flex align-items-center">
                                                 <select class="form-control" id="menu_category_id" name="menu_category_id" data-live-search="true" required>
                                                     <option value="">Selecione uma categoria</option>
 
@@ -60,16 +60,16 @@
                                             </div>
                                         </div>
 
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="name">Menu :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2  col-form-label required" for="name">Menu :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $Menu->name }}" placeholder="Informe o nome do menu." required />
                                             </div>
                                         </div>
 
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="icon">Ícone :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2  col-form-label required" for="icon">Ícone :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <select name="icon" id="icon" class="form-control" data-live-search="true" required>
                                                     <option value="">Selecione um ícone</option>
                                                     @foreach ($Icons as $Icon)
@@ -80,14 +80,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="icon">Prefixo da rota :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2  col-form-label required" for="icon">Prefixo da rota :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="route" name="route" value="{{ !empty(old('route')) ? old('route') : $Menu->route }}" placeholder="Informe o prefixo da rota." required />
                                             </div>
 
-                                            <div class="col-2"></div>
-                                            <div class="col-10">
+                                            <div class="col-12 col-md-3 col-xxl-2 "></div>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <p class="ms-2 mb-0 f-12">Informe o prefixo da rota que você deseja criar o menu. ex: se a rota principal for <code>categoria.index</code> informe apenas <code>categoria</code>.</p>
                                                 <p class="ms-2 mb-0 f-12">A rota deve possuir apenas letras, use <code>_</code> caso precise separar as palavras.</p>
                                             </div>

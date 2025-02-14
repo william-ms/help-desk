@@ -190,18 +190,16 @@
                                             <div class="card-body">
                                                 <!-- [input] - Nome -->
                                                 <div class="row my-3">
-                                                    <label class="col-2 col-form-label required" for="name">Nome:</label>
-
-                                                    <div class="col-10 d-flex align-items-center">
+                                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Nome:</label>
+                                                    <div class="col-12 col-md-9 col-xxl-10 d-flex align-items-center">
                                                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') ?? $User->name }}" placeholder="Informe o seu nome" />
                                                     </div><!-- col-10 -->
                                                 </div><!-- row -->
 
                                                 <!-- [input] - Email -->
                                                 <div class="row my-3">
-                                                    <label class="col-2 col-form-label required" for="email">Email:</label>
-
-                                                    <div class="col-10 d-flex align-items-center">
+                                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="email">Email:</label>
+                                                    <div class="col-12 col-md-9 col-xxl-10 d-flex align-items-center">
                                                         <input type="email" class="form-control" id="email" name="email" value="{{ old('email') ?? $User->email }}" placeholder="Informe o seu email" />
                                                     </div><!-- col-10 -->
                                                 </div><!-- row -->
@@ -281,10 +279,10 @@
                                             <div class="card-body">
                                                 <div class="row">
                                                     @for ($i = 1; $i <= 10; $i++)
-                                                        <div class="col-2 form-check mb-3">
+                                                        <div class="col-4 col-sm-3 col-lg-4 col-xl-3 col-xxl-2 d-flex justify-content-center form-check m-0 mb-3">
                                                             <label class="form-check-label" for='{{ "avatar-{$i}.jpg" }}'>
                                                                 <div class="chat-avtar d-inline-flex mx-auto">
-                                                                    <img class="avatar rounded-circle img-fluid wid-90 img-thumbnail {{ "avatar-{$i}.jpg" == auth()->user()->avatar ? 'border-primary border-2' : '' }}" src="{{ asset("assets/images/user/avatar-{$i}.jpg") }}" alt="User image" />
+                                                                    <img class="avatar rounded-circle img-fluid wid-90 img-thumbnail {{ "avatar-{$i}.jpg" == auth()->user()->avatar ? 'border-primary border-2' : '' }}" src="{{ asset("assets/images/user/avatar-".$i.".jpg") }}" alt="User image" />
                                                                 </div>
                                                             </label>
 
@@ -310,8 +308,8 @@
                                             <div class="card-body">
                                                 <!-- [input] - Senha atual -->
                                                 <div class="row my-3 align-items-center">
-                                                    <label class="col-2 col-form-label" for="password_actual">Senha atual:</label>
-                                                    <div class="col-10 position-relative auth-pass-inputgroup">
+                                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="password_actual">Senha atual:</label>
+                                                    <div class="col-12 col-md-9 col-xxl-10 position-relative auth-pass-inputgroup">
                                                         <input type="password" class="form-control password-input" placeholder="Informe a senha atual" name="password_actual" id="password_actual" autocomplete="new-password" required>
 
                                                         <button class="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon" type="button" id="password-reveal" style="top:1px">
@@ -322,8 +320,8 @@
 
                                                 <!-- [input] - Nova senha -->
                                                 <div class="row my-3 align-items-center">
-                                                    <label class="col-2 col-form-label" for="password">Nova senha :</label>
-                                                    <div class="col-10 position-relative auth-pass-inputgroup">
+                                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="password">Nova senha :</label>
+                                                    <div class="col-12 col-md-9 col-xxl-10 position-relative auth-pass-inputgroup">
                                                         <input type="password" class="form-control password-input" placeholder="Informe uma nova senha" name="password" id="password" autocomplete="new-password" required>
 
                                                         <button class="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon" type="button" id="password-reveal" style="top:1px">
@@ -334,8 +332,8 @@
 
                                                 <!-- [input] - Confirmar senha -->
                                                 <div class="row my-3 align-items-center">
-                                                    <label class="col-2 col-form-label" for="password_confirmation">Confirmar senha :</label>
-                                                    <div class="col-10 position-relative auth-pass-inputgroup">
+                                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="password_confirmation">Confirmar senha :</label>
+                                                    <div class="col-12 col-md-9 col-xxl-10 position-relative auth-pass-inputgroup">
                                                         <input type="password" class="form-control password-input" name="password_confirmation" id="password-confirmation" placeholder="Confirmar a nova senha" required>
 
                                                         <button class="btn btn-link position-absolute end-0 text-decoration-none text-muted password-addon" type="button" id="password-reveal" style="top:1px">

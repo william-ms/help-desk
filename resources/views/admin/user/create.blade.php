@@ -25,8 +25,8 @@
 
                             <div>
                                 @can('menu.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.user.index') }}">
-                                        Listar usuários
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.user.index') }}" title="Listar usuários">
+                                        <span class="d-none d-lg-inline">Listar usuários</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -43,32 +43,32 @@
                                     <div class="col-12">
                                         <!-- [input] - Nome -->
                                         <div class="row my-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="name">Nome :</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Nome :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Informe o nome do usuário." required />
                                             </div>
                                         </div>
 
                                         <!-- [input] - Email -->
                                         <div class="row my-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="email">Email :</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="email">Email :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" placeholder="Informe o email do usuário." required />
                                             </div>
                                         </div>
 
                                         <!-- [input] - Senha -->
                                         <div class="row my-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="password">Senha :</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="password">Senha :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="password" class="form-control" id="password" name="password" value="{{ old('password') }}" placeholder="Informe a senha do usuário." required />
                                             </div>
                                         </div>
 
                                         {{-- [select] - Empresas --}}
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="companies">Empresas :</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="companies">Empresas :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <select class="form-control" id="companies" name="companies[]" data-live-search="true" multiple required>
                                                     @foreach ($Companies as $Company)
                                                         <option value="{{ $Company->id }}" {{ collect(old('companies'))->contains($Company->id) ? 'selected' : '' }}>
@@ -81,8 +81,8 @@
 
                                         {{-- [select] - Departamentos --}}
                                         <div class="row mb-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="departaments">Departamentos :</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="departaments">Departamentos :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <select class="form-control" id="departaments" name="departaments[]" data-live-search="true" multiple required>
                                                     @foreach ($Departaments as $Departament)
                                                         <option value="{{ $Departament->id }}" {{ collect(old('departaments'))->contains($Departament->id) ? 'selected' : '' }}>
@@ -95,8 +95,8 @@
 
                                         {{-- [select] - Função --}}
                                         <div class="row my-3 align-items-center">
-                                            <label class="col-2 col-form-label required" for="role">Função do usuário:</label>
-                                            <div class="col-10">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="role">Função do usuário:</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <select class="form-control" id="role" name="role" data-live-search="true" required>
                                                     <option value="">Selecione uma função</option>
 
@@ -127,11 +127,10 @@
                                                         <span>Não pertence à função</span>
                                                     </div>
 
-                                                    <div class="row m-0 permissions-wrapper">
+                                                    <div class="row m-0">
                                                         @foreach ($PermissionsGroupByName as $PermissionGroup => $Permissions)
-                                                            <div class="permission-wrapper col-md-6 col-xl-4 col-xxl-3 d-flex align-content-stretch">
-                                                                <div class="p-4 mx-2 my-3 flex-fill border border-info rounded">
-
+                                                            <div class="col-12 col-md-6 col-xl-4 p-2 d-flex align-content-stretch">
+                                                                <div class="p-4 flex-fill border border-info rounded">
                                                                     <div class="form-check p-0 pb-3 mb-3 d-flex align-items-center justify-content-between border-bottom">
                                                                         <h4 class="m-0">{{ $PermissionGroup }}</h4>
                                                                         <input class="form-check-input input-info all-check {{ explode('.', $Permissions[0]->name)[0] }}" data-group="{{ explode('.', $Permissions[0]->name)[0] }}" type="checkbox" value="" />

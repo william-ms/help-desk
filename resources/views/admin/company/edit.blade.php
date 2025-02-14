@@ -23,14 +23,13 @@
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h4 class="m-0">
                                 Editar empresa
-                                <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>
-                                {{ $Company->name }}
+                                <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>{{ $Company->name }}
                             </h4>
 
                             <div>
                                 @can('company.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.company.index') }}">
-                                        Listar empresas
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.company.index') }}" title="Listar empresas">
+                                        <span class="d-none d-lg-inline">Listar empresas</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -46,9 +45,9 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="name">Empresa :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Empresa :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $Company->name }}" placeholder="Informe o nome da empresa" required />
                                             </div>
                                         </div>

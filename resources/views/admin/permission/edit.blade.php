@@ -23,14 +23,13 @@
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h4 class="m-0">
                                 Editar permissão
-                                <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>
-                                {{ $Permission->name }}
+                                <i class="ti ti-chevrons-right text-primary position-relative me-1" style="top: 2px"></i>{{ $Permission->name }}
                             </h4>
 
                             <div>
                                 @can('permission.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.permission.index') }}">
-                                        Listar permissões
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.permission.index') }}" title="Listar permissões">
+                                        <span class="d-none d-lg-inline">Listar permissões</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -47,9 +46,9 @@
                                 <div class="row">
                                     <div class="col-12">
                                         {{-- [input] - Menu --}}
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label" for="menu_id">Menu :</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="menu_id">Menu :</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <select class="form-control" id="menu_id" name="menu_id" data-live-search="true">
                                                     <option value="">Selecione um menu</option>
 
@@ -61,29 +60,28 @@
                                         </div>
 
                                         {{-- [input] - Prefixo da rota --}}
-                                        <div class="row my-3 d-none">
-                                            <label class="col-2 col-form-label required" for="route-prefix">Prefixo da rota:</label>
-
-                                            <div class="col-10  d-flex align-items-center">
+                                        <div class="row my-3 d-none align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="route-prefix">Prefixo da rota:</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="route-prefix" name="route_prefix" value="{{ $Permission->prefix }}" placeholder="Informe o prefixo da rota" required />
                                             </div>
 
-                                            <div class="col-2"></div>
-                                            <div class="col-10">
+                                            <div class="col-12 col-md-3 col-xxl-2"></div>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <p class="ms-2 mb-0 f-12">Informe o prefixo da rota que você deseja criar o menu. ex: se a rota principal for <code>categoria.index</code> informe apenas <code>categoria</code>.</p>
                                                 <p class="ms-2 mb-0 f-12">O prefixo da rota deve possuir apenas letras, use <code>_</code> caso precise separar as palavras.</p>
                                             </div>
                                         </div>
 
                                         {{-- [input] - Método da rota --}}
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="route-method">Método da rota:</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="route-method">Método da rota:</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="route-method" name="route_method" value="{{ $Permission->method }}" placeholder="Informe o método da rota" required />
                                             </div>
 
-                                            <div class="col-2"></div>
-                                            <div class="col-10">
+                                            <div class="col-12 col-md-3 col-xxl-2"></div>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <p class="ms-2 mb-0 f-12">Informe o método da rota que você deseja criar o menu. ex: se a rota principal for <code>categoria.index</code> informe apenas <code>index</code>.</p>
                                                 <p class="ms-2 mb-0 f-12">O método da rota deve possuir apenas letras, use <code>_</code> caso precise separar as palavras.</p>
                                             </div>

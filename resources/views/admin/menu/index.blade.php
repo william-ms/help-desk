@@ -27,14 +27,14 @@
                                 @if (empty(request()->all()))
                                     @if ($gates['order'])
                                         <x-button form="order" icon="ti ti-arrows-down-up" title="Atualizar ordem dos menus">
-                                            Atualizar ordem
+                                            <span class="d-none d-lg-inline">Atualizar ordem</span>
                                         </x-button>
                                     @endif
                                 @endif
 
                                 @if ($gates['create'])
-                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu.create') }}">
-                                        Cadastrar menu
+                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu.create') }}" title="Cadastrar menu">
+                                        <span class="d-none d-lg-inline">Cadastrar menu</span>
                                     </x-button>
                                 @endif
                             </div>
@@ -55,14 +55,14 @@
                             <form action="{{ route('admin.menu.order') }}" method="POST" id="order">
                                 @csrf
 
-                                <table id="table" class="table table-sm table-striped table-bordered nowrap">
+                                <table id="table" class="table table-sm table-striped table-bordered nowrap responsive">
                                     <thead>
                                         <tr>
                                             <th style="width: 10%">#</th>
                                             <th class="text-center" style="width: 10%">Ícone</th>
-                                            <th style="width: 60%">Menu</th>
+                                            <th style="width: 60%" data-priority="2">Menu</th>
                                             <th style="width: 30%">Categoria</th>
-                                            <th class="text-end" style="width: 10%">Ordem</th>
+                                            <th class="text-end" style="width: 5%" data-priority="1">Ordem</th>
                                             <th class="text-center"style="width: 10%">Ações</th>
                                         </tr>
                                     </thead>
@@ -135,6 +135,7 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.bootstrap5.css" />
 
     <style>
@@ -154,6 +155,7 @@
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/rowGroup.bootstrap5.js"></script>
 

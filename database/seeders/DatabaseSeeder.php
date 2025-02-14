@@ -71,18 +71,18 @@ class DatabaseSeeder extends Seeder
         $Departament_1 = Departament::create(['name' => 'TI']);
         $Departament_2 = Departament::create(['name' => 'Recepção']);
 
-        $Category_1 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_2 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_3 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_2->id, 'name' => 'TEF', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_5 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
-        $Category_6 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_2->id, 'name' => 'Computador', 'automatic_response' => 'Resposta automática', 'resolution_time' => '02:00:00']);
+        $Category_1 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'resolution_time' => '02:00:00']);
+        $Category_2 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_1->id, 'name' => 'Computador', 'resolution_time' => '02:00:00']);
+        $Category_3 = Category::create(['company_id' => $Company_1->id, 'departament_id' => $Departament_2->id, 'name' => 'TEF', 'resolution_time' => '02:00:00']);
+        $Category_5 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_1->id, 'name' => 'Impressora', 'resolution_time' => '02:00:00']);
+        $Category_6 = Category::create(['company_id' => $Company_2->id, 'departament_id' => $Departament_2->id, 'name' => 'Computador', 'resolution_time' => '02:00:00']);
 
-        $Subcategory_1 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
-        $Subcategory_2 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não imprime', 'automatic_response' => 'Resposta automática']);
-        $Subcategory_3 = Subcategory::create(['category_id' => $Category_5->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
-        $Subcategory_4 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
-        $Subcategory_5 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Sem internet', 'automatic_response' => 'Resposta automática']);
-        $Subcategory_6 = Subcategory::create(['category_id' => $Category_6->id, 'name' => 'Não liga', 'automatic_response' => 'Resposta automática']);
+        $Subcategory_1 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não liga']);
+        $Subcategory_2 = Subcategory::create(['category_id' => $Category_1->id, 'name' => 'Não imprime']);
+        $Subcategory_3 = Subcategory::create(['category_id' => $Category_5->id, 'name' => 'Não liga']);
+        $Subcategory_4 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Não liga']);
+        $Subcategory_5 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Sem internet']);
+        $Subcategory_6 = Subcategory::create(['category_id' => $Category_6->id, 'name' => 'Não liga']);
 
         User::factory()->admin(
             collect([$Company_1, $Company_2]),
@@ -95,7 +95,7 @@ class DatabaseSeeder extends Seeder
             collect([$Departament_1, $Departament_2]),
             $RoleTechnical
         );
-        
+
         User::factory()->user(
             collect([$Company_1]),
             collect([$Departament_1]),

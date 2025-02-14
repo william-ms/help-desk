@@ -23,14 +23,13 @@
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
                             <h4 class="m-0">
                                 Editar função
-                                <i class="ti ti-chevrons-right text-primary position-relative" style="top: 2px"></i>
-                                {{ $Role->name }}
+                                <i class="ti ti-chevrons-right text-primary position-relative me-1" style="top: 2px"></i>{{ $Role->name }}
                             </h4>
 
                             <div>
                                 @can('role.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.role.index') }}">
-                                        Listar funções
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.role.index') }}" title="Listar funções">
+                                        <span class="d-none d-lg-inline">Listar funções</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -47,30 +46,30 @@
                                 <div class="row">
                                     <div class="col-12">
                                         {{-- [input] - Nome da função --}}
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="name">Nome da função:</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Nome da função:</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ !empty(old('name')) ? old('name') : $Role->name }}" aria-describedby="Nome da função a ser criada" placeholder="Informe o nome da função." />
                                             </div>
                                         </div>
 
                                         {{-- [input] - Guarda da função --}}
-                                        {{-- <div class="row my-3">
+                                        {{-- <div class="row my-3 align-items-center">
                                             <label class="col-2 col-form-label required" for="guard_name">Guarda da função:</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                            <div class="col-10">
                                                 <input type="text" class="form-control" id="guard_name" name="guard_name" value="{{ !empty(old('guard_name')) ? old('guard_name') : $Role->guard_name }}" aria-describedby="Guarda da função a ser criada" placeholder="Informe o guarda da função." required />
                                             </div>
                                         </div> --}}
 
                                         {{-- [input] - Permissões --}}
-                                        <div class="row permissions">
+                                        <div class="row permissions pt-3">
                                             <div class="col-12">
                                                 <h4 class="border-bottom pb-3 mb-3">Permissões</h4>
 
                                                 <div class="row m-0">
                                                     @foreach ($PermissionsGroupByName as $PermissionGroup => $Permissions)
-                                                        <div class="permission-wrapper d-flex align-content-stretch">
-                                                            <div class="p-4 mx-2 my-3 flex-fill border border-info rounded">
+                                                        <div class="col-12 col-md-6 col-xl-4 p-2 d-flex align-content-stretch">
+                                                            <div class="p-4 flex-fill border border-info rounded">
                                                                 <div class="pb-3 mb-3 d-flex align-content-center justify-content-between border-bottom">
                                                                     <h4 class="m-0">{{ $PermissionGroup }}</h4>
                                                                     <input class="form-check-input input-primary all-check {{ explode('.', $Permissions[0]->name)[0] }}" data-group="{{ explode('.', $Permissions[0]->name)[0] }}" type="checkbox" value="" />

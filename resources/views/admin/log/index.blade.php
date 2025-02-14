@@ -36,7 +36,7 @@
                                 <x-filter :data="$data_filter" />
                             </div>
 
-                            <table id="dom-jqry" class="table table-sm table-striped table-bordered nowrap">
+                            <table id="dom-jqry" class="table table-sm table-striped table-bordered nowrap responsive">
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
@@ -94,12 +94,14 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}" />
 @endpush
 
 @push('scripts')
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
 
     <script>
         $(document).ready(function() {

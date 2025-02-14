@@ -21,20 +21,20 @@
                 <div class="col-md-12">
                     <div class="card py-3">
                         <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                            <h4 class="m-0">Listagem de categorias de menu</h4>
+                            <h4 class="my-0 me-3">Listagem de categorias de menu</h4>
 
-                            <div>
+                            <div class="d-flex justify-content-right gap-1">
                                 @if (empty(request()->all()))
                                     @if ($gates['order'])
                                         <x-button form="order" icon="ti ti-arrows-down-up" title="Atualizar ordem das categorias de menu">
-                                            Atualizar ordem
+                                            <span class="d-none d-lg-inline">Atualizar ordem</span>
                                         </x-button>
                                     @endif
                                 @endif
 
                                 @if ($gates['create'])
-                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu_category.create') }}">
-                                        Cadastrar categoria de menu
+                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.menu_category.create') }}" title="Cadastrar categoria de menu">
+                                        <span class="d-none d-lg-inline">Cadastrar categoria de menu</span>
                                     </x-button>
                                 @endif
                             </div>
@@ -59,7 +59,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-end" style="width: 10%">#</th>
-                                            <th style="width: 70%">Categoria de menu</th>
+                                            <th>Categoria de menu</th>
                                             <th class="text-end" style="width: 10%">Ordem</th>
                                             <th class="text-center" style="width: 10%">Ações</th>
                                         </tr>
@@ -129,6 +129,7 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}" />
 
     <style>
         .pc-content table .form-control:not(.dropdown) {
@@ -141,6 +142,7 @@
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
 
     <!-- Sweet Alerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -213,6 +215,7 @@
                     language: {
                         url: "{{ asset('assets/js/plugins/dataTables.pt_BR.json') }}",
                     },
+                    responsive: true,
                 });
             @endif
         });

@@ -26,7 +26,7 @@
                             <div>
                                 @if ($gates['create'])
                                     <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.role.create') }}" title="Cadastrar função">
-                                        Cadastrar função
+                                        <span class="d-none d-lg-inline">Cadastrar função</span>
                                     </x-button>
                                 @endif
                             </div>
@@ -44,7 +44,7 @@
                                 <x-filter :data="$data_filter" />
                             </div>
 
-                            <table id="table" class="table table-sm table-striped table-bordered nowrap">
+                            <table id="table" class="table table-sm table-striped table-bordered nowrap responsive">
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
@@ -113,12 +113,14 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}" />
 @endpush
 
 @push('scripts')
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
 
     <!-- Sweet Alerts JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

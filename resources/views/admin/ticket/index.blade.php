@@ -62,35 +62,35 @@
                                         </div>
 
                                         <div class="help-sm-hidden">
-                                            <ul class="list-unstyled mt-2 mb-0 text-muted">
+                                            <div class="d-flex flex-wrap text-nowrap">
                                                 {{-- Empresa --}}
-                                                <li class="d-sm-inline-block d-block mt-1 me-1">
+                                                <span class="me-3">
                                                     <i class="ph-duotone ph-buildings me-1"></i>{{ $Ticket->company->name }}
-                                                </li>
+                                                </span>
 
                                                 {{-- Departamento --}}
-                                                <li class="d-sm-inline-block d-block mt-1 me-1">
+                                                <span class="me-3">
                                                     <i class="ph-duotone ph-archive me-1"></i>{{ $Ticket->departament->name }}
-                                                </li>
+                                                </span>
 
                                                 {{-- Quem aceitou o ticket --}}
                                                 @if (!empty($Ticket->assignee))
-                                                    <li class="d-sm-inline-block d-block mt-1 me-1">
+                                                    <span class="me-3">
                                                         <img src="{{ $Ticket->assignee->profile_image }}" alt="" class="wid-20 rounded me-1 img-fluid" />
                                                         Aceito por <b>{{ $Ticket->assignee->name }}</b>
-                                                    </li>
+                                                    </span>
                                                 @endif
 
                                                 {{-- Data e hora da última atualização --}}
-                                                <li class="d-sm-inline-block d-block mt-1 me-1">
+                                                <span class="me-3">
                                                     <i class="ph-duotone ph-calendar-blank"></i>Atualizado a 22 horas atrás
-                                                </li>
+                                                </span>
 
                                                 {{-- Número de mensagens --}}
-                                                <li class="d-sm-inline-block d-block mt-1">
+                                                <span class="me-3">
                                                     <i class="ph-duotone ph-chats"></i>9
-                                                </li>
-                                            </ul>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         {{-- Assunto --}}

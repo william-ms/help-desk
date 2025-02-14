@@ -25,8 +25,8 @@
 
                             <div>
                                 @if ($gates['create'])
-                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.category.create') }}">
-                                        Cadastrar categoria
+                                    <x-button componentType="a" icon="ti ti-plus" href="{{ route('admin.category.create') }}" title="Cadastrar categoria">
+                                        <span class="d-none d-lg-inline">Cadastrar categoria</span>
                                     </x-button>
                                 @endif
                             </div>
@@ -44,7 +44,7 @@
                                 <x-filter :data="$data_filter" />
                             </div>
 
-                            <table id="table" class="table table-sm table-striped table-bordered nowrap">
+                            <table id="table" class="table table-sm table-striped table-bordered nowrap responsive">
                                 <thead>
                                     <tr>
                                         <th style="width: 10%">#</th>
@@ -118,6 +118,7 @@
 
 @push('css')
     <link rel="stylesheet" href="{{ asset('assets/css/plugins/dataTables.bootstrap5.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/plugins/responsive.bootstrap5.min.css') }}" />
     <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.bootstrap5.css" />
 
     <style>
@@ -132,6 +133,7 @@
     <!-- Data Tables JS -->
     <script src="{{ asset('assets/js/plugins/dataTables.min.js') }}"></script>
     <script src="{{ asset('assets/js/plugins/dataTables.bootstrap5.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugins/dataTables.responsive.min.js') }}"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.js"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/rowGroup.bootstrap5.js"></script>
 

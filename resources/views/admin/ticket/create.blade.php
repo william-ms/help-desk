@@ -25,8 +25,8 @@
 
                             <div>
                                 @can('ticket.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.ticket.index') }}">
-                                        Listar tickets
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.ticket.index') }}" title="Listar tickets">
+                                        <span class="d-none d-lg-inline">Listar tickets</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -42,8 +42,8 @@
                                 @if ($Companies->count() > 1)
                                     {{-- [select] - Empresa --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="company_id">Empresa :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
                                                 <option value="">Selecione uma empresa</option>
 
@@ -62,8 +62,8 @@
                                 @if ($Departaments->count() > 1)
                                     {{-- [select] - Departamento --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="departament_id">Departamento :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="departament_id">Departamento :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="departament_id" name="departament_id" data-live-search="true" required>
                                                 <option value="">Selecione um departamento</option>
 
@@ -81,8 +81,8 @@
 
                                 {{-- [select] - Categoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="category_id">Categoria :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="category_id">Categoria :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <select class="form-control" id="category_id" name="category_id" data-live-search="true" required>
                                             <option value="">Selecione uma categoria</option>
 
@@ -97,8 +97,8 @@
 
                                 {{-- [select] - Subcategoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label" for="subcategory_id">Subcategoria :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="subcategory_id">Subcategoria :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <select class="form-control" id="subcategory_id" name="subcategory_id" data-live-search="true">
                                             <option value="">Selecione uma subcategoria</option>
 
@@ -113,16 +113,16 @@
 
                                 {{-- [input] - Assunto --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="subject">Assunto :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="subject">Assunto :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <input type="text" class="form-control" id="subject" name="subject" value="{{ old('subject') }}" placeholder="Informe um assunto" required />
                                     </div>
                                 </div>
 
                                 {{-- [input] - Descrição --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="description">Descrição :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="description">Descrição :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <textarea class="form-control" id="description" rows="10" name="description" placeholder="Informe uma descrição">{{ old('description') }}</textarea>
                                     </div>
                                 </div>

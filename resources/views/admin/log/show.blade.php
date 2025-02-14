@@ -30,8 +30,8 @@
 
                             <div>
                                 @can('log.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.log.index') }}">
-                                        Listar logs
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.log.index') }}" title="Listar logs">
+                                        <span class="d-none d-lg-inline">Listar logs</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -48,18 +48,18 @@
                                     </div>
 
                                     <div class="row pt-3 border-bottom align-items-center">
-                                        <p class="col-2 fw-bold">Usuário que executou</p>
-                                        <p class="col-10">{{ $Log->items->first()->user->name }}</p>
+                                        <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Usuário que executou:</p>
+                                        <p class="col-12 col-md-9 col-xxl-10">{{ $Log->items->first()->user->name }}</p>
                                     </div>
 
                                     <div class="row pt-3 border-bottom align-items-center">
-                                        <p class="col-2 fw-bold">Data e hora de execução</p>
-                                        <p class="col-10">{{ $Log->items->first()->created_at->format('d/m/Y H:i:s') }}</p>
+                                        <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Data e hora de execução:</p>
+                                        <p class="col-12 col-md-9 col-xxl-10">{{ $Log->items->first()->created_at->format('d/m/Y H:i:s') }}</p>
                                     </div>
 
                                     <div class="row pt-3 border-bottom align-items-center">
-                                        <p class="col-2 fw-bold">Ação</p>
-                                        <div class="col-10 pb-3">{!! $Log->items->first()->action_as_string() !!}</div>
+                                        <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Ação:</p>
+                                        <div class="col-12 col-md-9 col-xxl-10 pb-3">{!! $Log->items->first()->action_as_string() !!}</div>
                                     </div>
                                 </div>
                             </div>
@@ -68,18 +68,18 @@
                                 <div class="col-12 my-0 ">
                                     <div id="secondary" style="display: none;">
                                         <div class="row pt-3 border-bottom align-items-center">
-                                            <p class="col-2 fw-bold">Id do módulo</p>
-                                            <p class="col-10">{{ $Log->model_id }}</p>
+                                            <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Id do módulo:</p>
+                                            <p class="col-12 col-md-9 col-xxl-10">{{ $Log->model_id }}</p>
                                         </div>
 
                                         <div class="row pt-3 border-bottom align-items-center">
-                                            <p class="col-2 fw-bold">Nome do módulo</p>
-                                            <p class="col-10">{{ $Log->model_name }}</p>
+                                            <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Nome do módulo:</p>
+                                            <p class="col-12 col-md-9 col-xxl-10">{{ $Log->model_name }}</p>
                                         </div>
 
                                         <div class="row pt-3 border-bottom align-items-center">
-                                            <p class="col-2 fw-bold">Tipo do módulo</p>
-                                            <p class="col-10">{{ $Log->model_type }}</p>
+                                            <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Tipo do módulo:</p>
+                                            <p class="col-12 col-md-9 col-xxl-10">{{ $Log->model_type }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -113,18 +113,18 @@
                                                         <div class="row px-3">
                                                             <div class="col-12">
                                                                 <div class="row my-3 border-bottom align-items-center">
-                                                                    <p class="col-2 fw-bold">Usuário que executou</p>
-                                                                    <p class="col-10">{{ $LogItem->user->name }}</p>
+                                                                    <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Usuário que executou:</p>
+                                                                    <p class="col-12 col-md-9 col-xxl-10">{{ $LogItem->user->name }}</p>
                                                                 </div>
 
                                                                 <div class="row my-3 border-bottom align-items-center">
-                                                                    <p class="col-2 fw-bold">Data e hora de execução</p>
-                                                                    <p class="col-10">{{ $LogItem->created_at->format('d/m/Y H:i:s') }}</p>
+                                                                    <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Data e hora de execução:</p>
+                                                                    <p class="col-12 col-md-9 col-xxl-10">{{ $LogItem->created_at->format('d/m/Y H:i:s') }}</p>
                                                                 </div>
 
                                                                 <div class="row my-3 border-bottom align-items-center">
-                                                                    <p class="col-2 fw-bold">Ação</p>
-                                                                    <div class="col-10 pb-3">{!! $LogItem->action_as_string() !!}</div>
+                                                                    <p class="col-12 col-md-3 col-xxl-2 mb-1 mb-md-3 fw-bold">Ação:</p>
+                                                                    <div class="col-12 col-md-9 col-xxl-10 pb-3">{!! $LogItem->action_as_string() !!}</div>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -25,8 +25,8 @@
 
                             <div>
                                 @can('menu_category.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.menu_category.index') }}">
-                                        Listar categorias de menu
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.menu_category.index') }}" title="Listar categorias de menu">
+                                        <span class="d-none d-lg-inline">Listar categorias de menu</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -41,9 +41,9 @@
 
                                 <div class="row">
                                     <div class="col-12">
-                                        <div class="row my-3">
-                                            <label class="col-2 col-form-label required" for="name">Categoria de menu:</label>
-                                            <div class="col-10 d-flex align-items-center">
+                                        <div class="row my-3 align-items-center">
+                                            <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Categoria de menu:</label>
+                                            <div class="col-12 col-md-9 col-xxl-10">
                                                 <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Informe o nome da categoria de menu" required />
                                             </div>
                                         </div>

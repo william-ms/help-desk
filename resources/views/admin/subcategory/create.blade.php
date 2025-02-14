@@ -25,8 +25,8 @@
 
                             <div>
                                 @can('subcategory.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.subcategory.index') }}">
-                                        Listar subcategorias
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.subcategory.index') }}" title="Listar subcategorias">
+                                        <span class="d-none d-lg-inline">Listar subcategorias</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -42,8 +42,8 @@
                                 @if ($Companies->count() > 1)
                                     {{-- [select] - Empresa --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="company_id">Empresa :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
                                                 <option value="">Selecione uma empresa</option>
 
@@ -62,8 +62,8 @@
                                 @if ($Departaments->count() > 1)
                                     {{-- [select] - Departamento --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="departament_id">Departamento :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="departament_id">Departamento :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="departament_id" name="departament_id" data-live-search="true" required>
                                                 <option value="">Selecione um departamento</option>
 
@@ -81,8 +81,8 @@
 
                                 {{-- [select] - Categoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="category_id">Categoria :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="category_id">Categoria :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <select class="form-control" id="category_id" name="category_id" data-live-search="true" required>
                                             <option value="10000">Selecione uma categoria</option>
 
@@ -97,16 +97,16 @@
 
                                 {{-- [input] - Subcategoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="name">Subcategoria :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Subcategoria :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <input type="text" class="form-control" id="name" name="name" value="Teste" placeholder="Informe o nome da subcategoria" required />
                                     </div>
                                 </div>
 
                                 {{-- [input] -  Resposta automática --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label" for="automatic_response">Resposta automática :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="automatic_response">Resposta automática :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <textarea class="form-control" id="automatic_response" rows="10" name="automatic_response">{{ old('automatic_response') }}</textarea>
                                     </div>
                                 </div>

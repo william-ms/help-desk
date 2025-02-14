@@ -25,8 +25,8 @@
 
                             <div>
                                 @can('category.index')
-                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.category.index') }}">
-                                        Listar categorias
+                                    <x-button componentType="a" icon="ti ti-clipboard-list" href="{{ route('admin.category.index') }}" title="Listar categorias">
+                                        <span class="d-none d-lg-inline">Listar categorias</span>
                                     </x-button>
                                 @endcan
                             </div>
@@ -42,8 +42,8 @@
                                 @if ($Companies->count() > 1)
                                     {{-- [select] - Empresa --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="company_id">Empresa :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="company_id">Empresa :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="company_id" name="company_id" data-live-search="true" required>
                                                 <option value="">Selecione uma empresa</option>
 
@@ -62,8 +62,8 @@
                                 @if ($Departaments->count() > 1)
                                     {{-- [select] - Departamento --}}
                                     <div class="row my-3 align-items-center">
-                                        <label class="col-2 col-form-label required" for="departament_id">Departamento :</label>
-                                        <div class="col-10">
+                                        <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="departament_id">Departamento :</label>
+                                        <div class="col-12 col-md-9 col-xxl-10">
                                             <select class="form-control" id="departament_id" name="departament_id" data-live-search="true" required>
                                                 <option value="">Selecione um departamento</option>
 
@@ -81,16 +81,16 @@
 
                                 {{-- [input] - Categoria --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="name">Categoria :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="name">Categoria :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" placeholder="Informe o nome da categoria" required />
                                     </div>
                                 </div>
 
                                 {{-- [input] -  Resposta automática --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label" for="automatic_response">Resposta automática :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label" for="automatic_response">Resposta automática :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <textarea class="form-control" id="automatic_response" rows="10" name="automatic_response">{{ old('automatic_response') }}</textarea>
                                     </div>
                                 </div>
@@ -98,8 +98,8 @@
 
                                 {{-- [input] -  Tempo de resolução --}}
                                 <div class="row my-3 align-items-center">
-                                    <label class="col-2 col-form-label required" for="automatic_response">Tempo de resolução :</label>
-                                    <div class="col-10">
+                                    <label class="col-12 col-md-3 col-xxl-2 col-form-label required" for="automatic_response">Tempo de resolução :</label>
+                                    <div class="col-12 col-md-9 col-xxl-10">
                                         <input type="time" step="2" class="form-control" id="resolution_time" name="resolution_time" value="{{ old('resolution_time') }}" placeholder="Informe o tempo de resoulção" required />
                                     </div>
                                 </div>

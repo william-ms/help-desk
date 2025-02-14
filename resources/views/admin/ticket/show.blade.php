@@ -3,7 +3,7 @@
 @section('content')
     <section class="pc-container">
         <div class="pc-content">
-            <div class="page-header">
+            <div class="page-header py-1" style="min-height: 0;">
                 <div class="page-block">
                     <div class="row align-items-center">
                         <x-breadcrumb :breadcrumbs="$data_breadcrumbs" />
@@ -17,17 +17,17 @@
                 </div><!-- page-block -->
             </div><!-- page-header -->
 
-            <div class="row">
+            <div class="row pt-0">
                 <div class="col-lg-8">
                     <div class="card">
                         <div class="card-header">
-                            <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                 <h5>
                                     <i class="ph-duotone ph-ticket"></i>
                                     Ticket #{{ substr($Ticket->uuid, -6) }}
                                 </h5>
 
-                                <div>
+                                <div class="d-flex flex-wrap gap-2">
                                     @if (auth()->id() == $Ticket->requester_id)
                                         @if ($Ticket->status !== 4)
                                             {{-- [button] - Responder --}}
@@ -88,7 +88,7 @@
                                     {{-- Resposta do usuáio --}}
                                     <div class="border-bottom card-body {{ $loop->last ? 'last-response' : '' }}">
                                         <div class="row">
-                                            <div class="col-sm-auto mb-3 mb-sm-0">
+                                            <div class="col-auto mb-3 mb-sm-0">
                                                 <div class="d-sm-inline-block d-flex align-items-center">
                                                     <img class="wid-60 img-radius mb-2" src="{{ $Response->user->profile_image }}" alt="Generic placeholder image " />
                                                 </div>
