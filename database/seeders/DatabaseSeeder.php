@@ -10,8 +10,11 @@ use App\Models\MenuCategory;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Subcategory;
+use App\Models\Ticket;
+use App\Models\TicketResponse;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Ramsey\Uuid\Uuid;
 
 class DatabaseSeeder extends Seeder
 {
@@ -84,22 +87,63 @@ class DatabaseSeeder extends Seeder
         $Subcategory_5 = Subcategory::create(['category_id' => $Category_2->id, 'name' => 'Sem internet']);
         $Subcategory_6 = Subcategory::create(['category_id' => $Category_6->id, 'name' => 'Não liga']);
 
-        User::factory()->admin(
+        $Admin = User::factory()->admin(
             collect([$Company_1, $Company_2]),
             collect([$Departament_1, $Departament_2]),
             $RoleAdmin
         );
 
-        User::factory()->technical(
+        $Technical = User::factory()->technical(
             collect([$Company_1, $Company_2]),
             collect([$Departament_1, $Departament_2]),
             $RoleTechnical
         );
 
-        User::factory()->user(
+        $User = User::factory()->user(
             collect([$Company_1]),
             collect([$Departament_1]),
             $RoleUser
         );
+
+        $Ticket = Ticket::factory()->create([
+            'uuid' => (string) Uuid::uuid4(),
+            'company_id' => $Company_1->id,
+            'departament_id' => $Departament_1->id,
+            'category_id' => $Category_1->id,
+            'subcategory_id' => $Subcategory_2->id,
+            'requester_id' => $User->id,
+            'assignee_id' => $Technical->id,
+            'subject' => 'A impressora da recepção parou de imprimir',
+            'status' => 1,
+            'action' => 1,
+        ]);
+
+        TicketResponse::factory()->create([
+            'ticket_id' => $Ticket->id,
+            'user_id' => $User->id,
+            'type' => 1,
+            'response' => '<p>A impressora estava imprimindo normal antes do almo&ccedil;o, agora de tarde nenhum dos computadores est&aacute; conseguindo imprimir nela.</p>',
+        ]);
+
+        TicketResponse::factory()->create([
+            'ticket_id' => $Ticket->id,
+            'user_id' => $Technical->id,
+            'type' => 1,
+            'response' => "<p>Boa tarde. Primeiro, na barra de pesquisa do computador, digite 'impressoras', clica na op&ccedil;&atilde;o que aparecer, vai abrir uma lista das impressoras conectadas no computador. Confere se o nome da impressora est&aacute; nessa lista.</p>",
+        ]);
+
+        TicketResponse::factory()->create([
+            'ticket_id' => $Ticket->id,
+            'user_id' => $User->id,
+            'type' => 1,
+            'response' => '<p>Consegui abrir a lista, o nome dela est&aacute; aqui sim.</p>',
+        ]);
+
+        TicketResponse::factory()->create([
+            'ticket_id' => $Ticket->id,
+            'user_id' => $Technical->id,
+            'type' => 1,
+            'response' => '<p>Abre as op&ccedil;&otilde;es da impressora e limpa a fila de impress&atilde;o, depois reinicie o computador. Isso deve funcionar</p>',
+        ]);
     }
 }
